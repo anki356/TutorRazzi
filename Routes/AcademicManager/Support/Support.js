@@ -3,6 +3,7 @@ import express from 'express'
 
 
 import {  getStats, getTicketDetails, getTickets } from '../../../controllers/AcademicManager/Support/Support.js'
+import { authVerify } from '../../../controllers/AcademicManager/Auth/Auth.js'
 
 const router=express.Router()
 

@@ -1,3 +1,6 @@
+import Support from "../../../models/Support.js"
+import { responseObj } from "../../../util/response.js"
+
 const getStats=async(req,res)=>{
     const lastTicketRaisedDate=await Support.find({user_id:req.user._id},{createdAt:1}).sort({createdAt:-1}).limit(1)
     const totalPendingTickets=await Support.countDocuments({
@@ -31,4 +34,4 @@ const getStats=async(req,res)=>{
         const ticketDetails=await Support.findById({_id:req.query.ticket_id})
         res.json(responseObj(true,ticketDetails,"Ticket Details"))
     }
-    export default{getStats,getTickets,getTicketDetails}
+    export {getStats,getTickets,getTicketDetails}

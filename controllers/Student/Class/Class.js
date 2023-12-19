@@ -1,0 +1,532 @@
+import Class from "../../../models/Class.js"
+import ResourceRequest from "../../../models/ResourceRequest.js"
+import Review from "../../../models/Review.js"
+import Attendance from "../../../models/Attendance.js"
+import { responseObj } from "../../../util/response.js"
+import mongoose from "mongoose"
+import sendEmail from "../../../util/sendEmail.js"
+const ObjectID = mongoose.Types.ObjectId
+import { marked } from "marked"
+import Quote from "../../../models/Quote.js"
+import moment from "moment-timezone"
+import ExtraClassRequest from "../../../models/ExtraClassRequest.js"
+import Document from "../../../models/Document.js"
+import jwt from 'jsonwebtoken'
+import Student from "../../../models/Student.js"
+import { newResourceRequested } from "../../../util/EmailFormats/newResourceRequested.js"
+import { adminNewResourceRequest } from "../../../util/EmailFormats/adminNewResourceRequest.js"
+import unlinkFile from "../../../util/unlinkFile.js"
+import HomeWork from "../../../models/HomeWork.js"
+import Teacher from "../../../models/Teacher.js"
+import Task from "../../../models/Task.js"
+
+const dislikeClass = async (req, res, next) => {
+
+
+
+
+    const dislikeResponse = await Class.updateOne({_id:req.body.class_id},{$set:{
+      
+        response: "Disliked",
+        reason_disliking: req.body.reason
+    }})
+    res.json(responseObj(true, [], " Dislike Response saved Successfully", []))
+
+
+
+}
+
+const likeClass = async (req, res, next) => {
+    const likeResponse = await Class.updateOne({_id:req.body.class_id},{$set:{
+      
+        response: "Liked",
+    }})
+    res.json(responseObj(true, [], "Like Response Saved Successful"))
+}
+
+const requestExtraclass = async (req, res, next) => {
+   
+    const extraClassRequestResponse = await ExtraClassRequest.insertMany({
+        quote_id: req.body.quote_id,
+        message: req.body.message,
+
+    })
+    res.json(responseObj(true, extraClassRequestResponse, "Request for Extra Class Created Successfully"))
+}
+
+const requestTrialClass = async (req, res, next) => {
+   
+    let classResponseArray = []
+    let classResponse = await Class.findOne({
+        student_id: req.user._id,
+        "subject.name": req.body.subject ,
+        status: 'Done'
+    })
+   
+    if (classResponse) {
+        throw new Error("Subject Trial Class already done")
+
+
+
+
+    }
+
+    await req.body.start_time.forEach(async (element) => {
+        let newClassResponse = await Class.insertMany({
+            teacher_id: req.body.teacher_id,
+            student_id: req.user._id,
+            start_time: moment(element).format("YYYY-MM-DDTHH:mm:ss"),
+            end_time: moment(element).add(1, 'h').format("YYYY-MM-DDTHH:mm:ss"),
+            subject: { name: req.body.subject },
+            curriculum: { name: req.body.curriculum },
+            grade: { name: req.body.grade },
+            class_type: "Trial",
+            status: "Pending",
+            is_rescheduled: false,
+            details: req.body.details ? req.body.details : null
+        })
+        classResponseArray.push(newClassResponse)
+
+
+
+    });
+    res.json(responseObj(true, classResponseArray, "Trial Class request created Successfully"))
+
+
+
+
+}
+
+const getClassDetails = async (req, res, next) => {
+    let classDetails = {}
+    classDetails = await Class.findOne({ _id: req.query.class_id }).populate({
+        path: 'teacher_id', select: {
+            profile_image: 1, name: 1
+        }
+    })
+ let teacherResponse=await Teacher.findOne({
+    user_id:classDetails.teacher_id
+ },{
+    exp:1,
+    qualification:1
+ }) 
+ let reviews=await Review.countDocuments({
+    teacher_id:classDetails.teacher_id
+ }) 
+ let average_rating=await Review.aggregate([
+    {$match:{teacher_id:classDetails.teacher_id}},{
+        $group:{
+           _id:"$teacher_id",
+           avgRating:{$avg:"$rating"}
+    }}
+ ])
+let homeworkResponse=await HomeWork.find({
+    class_id:req.query.class_id
+})
+let taskResponse=await Task.find({
+    class_id:req.query.class_id
+})
+
+    res.json(responseObj(true, {classDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherResponse:teacherResponse,reviews,average_rating}, "Class Details successfully fetched"))
+}
+
+const scheduleClass = async (req, res, next) => {
+   
+    let classScheduled = await Class.find({
+        $and: [{
+            start_time: req.body.start_time,
+        }, {
+            $or: [{
+                teacher_id: req.body.teacher_id
+            }, {
+                student_id: req.user._id
+            }]
+        }]
+    })
+    if (classScheduled.length !== 0) {
+        throw new Error('This time slot has been already scheduled')
+    }
+
+    const scheduleClassResponse = await Class.findOneAndUpdate({ _id:req.params._id ,status:"Pending"}, {
+        $set: {
+
+            start_time: req.body.start_time,
+            end_time: moment(req.body.start_time).add(1, 'h').format("YYYY-MM-DDTHH:mm:ss"),
+            status: 'Scheduled'
+        }
+    })
+    let purchased_classes = await Class.find({ quote_id: scheduleClassResponse.quote_id }, { status: 1 })
+    let statusArray = purchased_classes.map((data) => {
+        return data.status
+    })
+
+    if (!statusArray.includes('pending')) {
+        await Quote.findByIdAndUpdate(scheduleClassResponse.quote_id, {
+            $set: {
+                schedule_status: 'done'
+            }
+        })
+    }
+    res.json(responseObj(true, scheduleClassResponse, "Class Scheduled Successfully"))
+
+
+
+}
+
+const rescheduleClass = async (req, res, next) => {
+   
+    let classScheduled = await Class.find({
+        $and: [{
+            start_time: req.body.start_time,
+        }, {
+            $or: [{
+                teacher_id: req.body.teacher_id
+            }, {
+                student_id: req.user._id
+            }]
+        },{
+            status:"Scheduled"
+        }]
+    })
+
+    if (classScheduled.length !== 0) {
+        throw new Error('This time slot has been already scheduled')
+    }
+
+    const rescheduleClassResponse = await Class.updateOne({ _id: new ObjectID(req.params._id) }, {
+        $set: {
+            is_rescheduled: true,
+            start_time: moment(req.body.start_time).format("YYYY-MM-DDTHH:mm:ss"),
+            end_time: moment(req.body.start_time).add(1, 'h').format("YYYY-MM-DDTHH:mm:ss"),
+            rescheduled_by: req.user._id,
+            status: 'Pending'
+        }
+    })
+    res.json(responseObj(true, [], "Class ReScheduled Successfully"))
+
+}
+
+const reviewClass = async (req, res, next) => {
+   
+    const reviewResponse = await Review.insertMany({
+        class_id: req.body.class_id,
+        message: req.body?.message,
+        rating: req.body.ratings,
+        given_by:req.user._id
+    })
+
+    res.json(responseObj(true, reviewResponse, "Review Created Successfully"))
+}
+
+const raiseRequestResource = async (req, res, next) => {
+   
+    let resourcerequestcount = await ResourceRequest.countDocuments()
+    let response = await ResourceRequest.insertMany({
+        request_id: resourcerequestcount + 1,
+        message: req.body.message,
+        class_id: req.body.class_id,
+      
+    })
+    const classResponse = await Class.findOne({ _id: req.body.class_id }, { teacher_id: 1, subject: 1, curriculum: 1, grade: 1,name:1 }).populate({
+        path: 'teacher_id', select: {
+            name: 1
+        }
+    })
+
+
+    const htmlContent = newResourceRequested(req.user.name, resourcerequestcount)
+    
+        sendEmail(req.user.email, "Resource Reqested", htmlContent, null)
+    
+
+
+    const adminHtmlContent = adminNewResourceRequest(req.user.name, req.body.message, classResponse)
+    sendEmail(req.user.email, "Resource Reqested", adminHtmlContent, null)
+    res.json(responseObj(true, response, "Resource Requested Successfully"))
+
+
+}
+
+const joinClass = async (req, res, next) => {
+    let classResponse = await Class.findOne({
+        _id: req.body.class_id
+    }, {
+        start_time: 1,
+        end_time: 1
+    })
+
+    if (!moment().isBetween(moment(classResponse.start_time), moment(classResponse.end_time))) {
+        throw new Error('You cannot Join Class at this time')
+    }
+    classResponse = await Class.updateOne({
+        _id: req.body.class_id
+    }, {
+
+        $set: {
+            status: 'Done'
+        }
+    })
+   
+    let attendanceResponse = await Attendance.insertMany({
+        check_in_datetime: moment().format("YYYY-MM-DDTHH:mm:ss"),
+        student_id: req.user._id,
+        class_id: req.body.class_id,
+
+    })
+return res.json(responseObj(true, attendanceResponse, "Class Joined"))
+
+}
+
+const leaveClass = async (req, res, next) => {
+   
+    let response = await Attendance.findOneAndUpdate({
+        class_id: req.body.class_id,
+        student_id: req.user._id
+    }, {
+        $set: {
+            check_out_datetime:moment().format("YYYY-MM-DDTHH:mm:ss")
+        }
+    })
+let classResponse=await Class.updateOne({
+    _id:req.body.class_id
+},{
+    $set:{
+        end_time:   moment().format("YYYY-MM-DDTHH:mm:ss")
+
+    }
+})
+  return   res.json(responseObj(true, {response,classResponse}, "Class Left"))
+}
+
+const setReminder = async (req, res, next) => {
+    const reminderResponse = await Reminder.insertMany({
+        class_id: req.body.class_id,
+        user_id: req.user._id
+    })
+    res.json(responseObj(true, reminderResponse, "Reminder Created Successfully"))
+}
+
+const acceptRescheduledClass = async (req, res, next) => {
+
+    let classDetails = await Class.find({
+        $and: [{
+            start_time: req.body.start_time,
+        }, {
+            $or: [{
+                teacher_id: req.body.teacher_id
+            }, {
+                student_id: req.user._id
+            }]
+        },{
+            status:"Scheduled"
+        }]
+    })
+    if (classDetails.length !== 0) {
+        throw new Error("Slot Already Booked")
+
+    }
+    let classResponse=await Class.findOne(
+        {_id:new ObjectId(req.params._id)},
+        {
+          rescheduled_by:req.user._id
+        }
+       )
+       if(classResponse){
+        throw new Error("You can't Accept your own Reschedule request.")
+       }
+    let rescheduleacceptResponse = await Class.findOneAndUpdate({ _id: new ObjectID(req.params._id) }, {
+        $set: {
+            status: 'Scheduled'
+        }
+    });
+    res.json(responseObj(true, rescheduleacceptResponse, "Rescheduled Class Accepted Successfully"))
+}
+
+const markTaskDone = async (req, res, next) => {
+   let taskResponse=await Task.updateOne({
+    _id:req.params._id
+   },{
+    $set:{
+        status:"Done"
+    }
+   })
+    res.json(responseObj(true, [], "Task Marked Done"))
+
+}
+const uploadHomework = async (req, res, next) => {
+    let documentResponse = await Document.create({
+        name: req.files[0].filename
+    })
+let homeworkResponse=await HomeWork.findOne({
+    _id:req.params._id
+})
+if(homeworkResponse.answer_document_id!==null&&homeworkResponse.answer_document_id!==undefined ){
+  let  documentTobeDeleted=await Document.findOne(
+        {_id:homeworkResponse.answer_document_id}
+    )
+  unlinkFile(documentTobeDeleted.name)  
+}
+   homeworkResponse=await HomeWork.updateOne({
+    _id:req.params._id
+  },{
+    $set:{
+        status:"Done",
+        answer_document_id:documentResponse._id
+    }
+  })
+
+    res.json(responseObj(true, [], "Home work uploaded"))
+}
+
+const getQuotes = async (req, res, next) => {
+   
+    const quoteResponse = await Quote.find({
+        student_id: req.user._id,
+        status: 'Pending'
+    }, { teacher_id: 1, subject_curriculum_grade: 1, amount: 1, hours: 1 }).populate({
+        path: "teacher_id", select: {
+            name: 1
+        }
+    })
+    res.json(responseObj(true, quoteResponse, 'Quotes are fetched successfully'))
+}
+
+const getExtraClassQuotes = async (req, res, next) => {
+    
+    const quoteResponse = await Quote.find({
+        student_id: req.user._id,
+        class_type: 'Extra'
+    })
+
+    res.json(responseObj(true, quoteResponse, 'Extra CLass Quotes are fetched properly'))
+}
+
+const getPurchasedClasses = async (req, res, next) => {
+   
+    let query = { student_id: req.user._id ,status:"Paid"}
+    if (req.query.search) {
+        query = {
+            $and: [
+                { student_id: req.user._id },
+                {status:"Paid"},
+                {
+                    $or: [
+                        {
+                            "subject.name": {
+
+                                $regex: req.query.search,
+                                $options: 'i'
+                            }
+                        }
+                        , {
+                            "curriculum.name": {
+
+                                $regex: req.query.search,
+                                $options: 'i'
+                            }
+                        },
+                        {
+                            "grade.name": {
+
+                                $regex: req.query.search,
+                                $options: 'i'
+                            }
+                        }
+
+
+
+                    ]
+                }
+            ]
+        }
+
+    }
+    let options = {
+        limit: Number(req.query.limit),
+        page: Number(req.query.page),
+        select: [
+            "subject_curriculum_grade", "teacher_id", "hours", "class_type", "schedule_status"
+        ],
+        populate: {
+            path: 'teacher_id',
+            select: {
+                name: 1
+            }
+        }
+
+    }
+    await Quote.paginate(query, options).then((results) => {
+
+        res.json(responseObj(true, results, ''))
+    })
+}
+
+const getPurchasedClassesByQuoteId = async (req, res, next) => {
+    let options = {
+        limit: Number(req.query.limit),
+        page: Number(req.query.page),
+        select: [
+
+            "subject", "start_time", "status", "teacher_id"
+        ],
+        populate: {
+            path: "teacher_id",
+            select: {
+                name: 1
+            }
+        }
+
+    }
+    Class.paginate({ quote_id: new ObjectID(req.query._id) }, options).then((result, err) => {
+        res.json(responseObj(true, result, 'Purchased Class Quotes are fetched successfully'))
+    })
+}
+
+
+
+const getLastTrialClass = async (req, res, next) => {
+   
+    const lastClassResponse = await Attendance.findOne({ student_id: req.user._id }).populate({'path':'class_id',select:{
+        start_time:1,subject:1,teacher_id:1,
+    },populate:{
+        path:"teacher_id",
+        select:{
+        "name":1
+        }
+    },match:{
+        class_type:"Trial"
+    }}).sort({ _id: -1 })
+    
+    if(lastClassResponse!==null){
+
+        const TrialResponse=await Class.findOne({
+            _id:lastClassResponse.class_id,
+            response:{
+                $ne : null
+            }
+        })
+       
+        if(TrialResponse!==null){
+            return res.json(responseObj(true,null,"Trial Class already responded"))
+        }
+        
+        res.json(responseObj(true, lastClassResponse.class_id, 'Last trial class details are fetched successfully'))
+    }
+    else{
+        return res.json(responseObj(true,null,"No Trial Class"))
+    }
+    
+
+
+}
+const getClassesBasedOnDate=async (req,res)=>{
+    const start_time=moment(req.body.date).startOf('day')
+    const end_time=moment(req.body.date).endOf('day')
+    const classes=await Class.find({
+      start_time:{$gte :start_time},
+      end_time:{$lte:end_time},
+      student_id:req.user._id
+    })
+    return res.json(responseObj(true,classes,null)) 
+  }
+export { getClassesBasedOnDate,dislikeClass, getLastTrialClass, likeClass, setReminder, getExtraClassQuotes, requestExtraclass, markTaskDone, uploadHomework, scheduleClass, requestTrialClass, getClassDetails, rescheduleClass, reviewClass, raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass, getQuotes, getPurchasedClasses, getPurchasedClassesByQuoteId }

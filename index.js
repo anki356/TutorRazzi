@@ -40,7 +40,7 @@ app.use("/api/",ParentRouter)
 app.use("/api/",TeacherAppRouter)
 app.use("/api/",AcademicManagerRouter)
 app.use("/api/",TeacherDashboardRouter)
-// app.use(errorHandlerMiddleware);
+app.use(errorHandlerMiddleware);
 app.use(notFound);
  const start = async () => {
     try {

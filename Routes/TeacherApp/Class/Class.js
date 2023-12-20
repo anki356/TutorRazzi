@@ -1,5 +1,5 @@
 import express from 'express'
-import { addTask, addHomework,joinClass,leaveClass, acceptRescheduledClass,getClassDetails, getRescheduledClasses, rescheduleClass, setReminder, addNotesToClass, getPastClasses, uploadClassMaterial, getClassesBasedOnDate, reviewClass, requestReUpload, scheduleClass, resolveResourceRequests } from '../../../controllers/TeacherApp/Class/Class.js'
+import { addTask, addHomework,joinClass,leaveClass, acceptRescheduledClass,getClassDetails, getRescheduledClasses, rescheduleClass, setReminder, addNotesToClass, getPastClasses, uploadClassMaterial, getClassesBasedOnDate, reviewClass, requestReUpload, scheduleClass, resolveResourceRequests, getUpcomingClassDetails } from '../../../controllers/TeacherApp/Class/Class.js'
 import { authVerify } from '../../../controllers/TeacherApp/Auth/Auth.js'
 import upload from "../../../util/upload.js"
 import { body,param,query } from 'express-validator'
@@ -71,4 +71,5 @@ const scheduleClassValidation=[
     body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time")
 ]
 router.patch("/schedule-class/:_id",authVerify,scheduleClassValidation,validationError,scheduleClass)
+router.get("/upcoming-class-details",authVerify,getUpcomingClassDetails)
 export default router

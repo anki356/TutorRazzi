@@ -1,5 +1,5 @@
 import express from 'express'
-import { getClassDetails,requestExtraclass,acceptRescheduledClass,getExtraClassQuotes, requestTrialClass,scheduleClass,rescheduleClass, reviewClass,raiseRequestResource,getClassQuotes, joinClass, leaveClass, getPurchasedClasses, getPurchasedClassesByQuoteId, setReminder, getClassesBasedOnDate, getLastTrialClass, likeClass, dislikeClass } from '../../../controllers/Parent/Class/Class.js'
+import { getClassDetails,requestExtraclass,acceptRescheduledClass,getExtraClassQuotes, requestTrialClass,scheduleClass,rescheduleClass, reviewClass,raiseRequestResource,getClassQuotes, joinClass, leaveClass, getPurchasedClasses, getPurchasedClassesByQuoteId, setReminder, getClassesBasedOnDate, getLastTrialClass, likeClass, dislikeClass, getUpcomingClassDetails } from '../../../controllers/Parent/Class/Class.js'
 import { authVerify } from '../../../controllers/Parent/Auth/Auth.js'
 import validationError from '../../../middleware/validationError.js'
 import { body,param,query } from 'express-validator'
@@ -64,4 +64,5 @@ router.get("/classes-by-date",authVerify,dateValidationChain,validationError,get
 router.get("/get-last-trial-class",authVerify,getLastTrialClass)
 router.post("/like-class",authVerify,likeClass)
 router.post("/dislike-class",authVerify,dislikeClass)
+router.get("/upcoming-class-details",authVerify,getUpcomingClassDetails)
 export default router

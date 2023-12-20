@@ -77,6 +77,19 @@ const getMonthlyReport=async(req,res,next)=>{
    return  res.json(responseObj(true,monthlyReport,null))
  }
 const addMonthlyReport=async(req,res)=>{
+    const monthlyResponse=await Class.find({
+start_time:{
+    $gte:moment().startOf('month').format("YYYY-MM-DDTHH:mm:ss"),
+    $lte:moment().endOf('month').format("YYYY-MM-DDTHH:mm:ss"),
+
+},
+teacher_id:req.user._id,
+student_id:req.body.student_id,
+status:"Done"
+    })
+    if(monthlyResponse.length===0){
+throw new Error("You cannot mark the student as You have not taught this student this month")
+    }
     const report=await Report.insertMany([{
 title:"Academic Performance",
 sub_title:"Subject Knowledge and Understanding",
@@ -188,6 +201,7 @@ year:moment().year()
         year:moment().year(),
         teacher_id:req.user._id
     })
+
     return res.json(responseObj(true,{report:report,additionalComment:additionalComment} ,"Student Report Inserted"))
 }
 export {getMonthlyReport,addMonthlyReport,getMonthlyReports}

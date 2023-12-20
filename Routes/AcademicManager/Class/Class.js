@@ -3,7 +3,7 @@ import validationError from "../../../middleware/validationError.js"
 const router = express.Router()
 
 import {authVerify} from "../../../controllers/AcademicManager/Auth/Auth.js"
-import { acceptRescheduledClass, acceptTrialClassRequest, addExtraClassQuote, getClassDetails, getHomeworks, getPastClasses, getRescheduledClasses, getResourceRequests, getTrialClasses, getUpcomingClasses, notifyStudent, notifyTeacher, rescheduleClass, resolveHomework, reviewClass, reviewTeacher } from "../../../controllers/AcademicManager/Class/Class.js"
+import { acceptRescheduledClass, acceptTrialClassRequest, addExtraClassQuote, getClassDetails, getHomeworks, getPastClasses, getRescheduledClasses, getResourceRequests, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, notifyStudent, notifyTeacher, rescheduleClass, resolveHomework, reviewClass, reviewTeacher } from "../../../controllers/AcademicManager/Class/Class.js"
 import { body, param } from "express-validator"
 import upload from "../../../util/upload.js"
 
@@ -55,4 +55,5 @@ const reviewValidation=[
 ]
 router.post("/review-class",authVerify,classReviewValidationChain,validationError,reviewClass)
 router.post("/review-teacher",authVerify,reviewValidation,validationError,reviewTeacher)
+router.get("/upcoming-class-details",authVerify,getUpcomingClassDetails)
 export default router

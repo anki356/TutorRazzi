@@ -667,5 +667,30 @@ const acceptTrialClassRequest = async (req, res, next) => {
 
 }
 
-  export {resolveResourceRequests,scheduleClass,acceptTrialClassRequest,acceptRescheduledClass,getRescheduledClasses,getPastClasses,getTrialClassesRequests,getUpcomingClasses,getClasssBasedOnMonth,getClassesBasedOnDate,getTrialClassResponse,setReminder,rescheduleClass,addNotesToClass,getClassDetails,joinClass,leaveClass,addTask,addHomework,requestReUpload,reviewClass}
+const getUpcomingClassDetails=async(req,res)=>{
+  let classDetails = {}
+  classDetails = await Class.findOne({ _id: req.query.class_id }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject_id: 1, teacher_id: 1, notes: 1 }).populate({
+    path: 'teacher_id', select: {
+     name: 1,profile_image:1
+    }
+  }).populate({
+    path: 'student_id', select: {
+      name: 1,mobile_number:1,profile_image:1
+    }
+  })
+  let studentDetails=await Student.findOne({user_id:classDetails.student_id},{
+    grade:1,
+    curriculum:1,
+    school:1
+  })
+  let teacherDetails=await Teacher.findOne({user_id:classDetails.teacher_id},{
+    qualification:1,
+
+  })
+ 
+  
+  let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
+  res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,teacherDetails:teacherDetails }, null))
+}
+  export {getUpcomingClassDetails,resolveResourceRequests,scheduleClass,acceptTrialClassRequest,acceptRescheduledClass,getRescheduledClasses,getPastClasses,getTrialClassesRequests,getUpcomingClasses,getClasssBasedOnMonth,getClassesBasedOnDate,getTrialClassResponse,setReminder,rescheduleClass,addNotesToClass,getClassDetails,joinClass,leaveClass,addTask,addHomework,requestReUpload,reviewClass}
   

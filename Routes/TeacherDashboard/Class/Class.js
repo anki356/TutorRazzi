@@ -1,7 +1,7 @@
 import { body, param, query } from "express-validator";
 import express from 'express'
 import validationError from "../../../middleware/validationError.js";
-import { acceptRescheduledClass, acceptTrialClassRequest, addHomework, addNotesToClass, addTask, getClassDetails, getClassesBasedOnDate, getClasssBasedOnMonth, getPastClasses, getRescheduledClasses, getTrialClassResponse, getTrialClassesRequests, getUpcomingClasses, joinClass, leaveClass, requestReUpload, rescheduleClass, reviewClass, scheduleClass, setReminder } from "../../../controllers/TeacherDashboard/Class/Class.js";
+import { acceptRescheduledClass, acceptTrialClassRequest, addHomework, addNotesToClass, addTask, getClassDetails, getClassesBasedOnDate, getClasssBasedOnMonth, getPastClasses, getRescheduledClasses, getTrialClassResponse, getTrialClassesRequests, getUpcomingClassDetails, getUpcomingClasses, joinClass, leaveClass, requestReUpload, rescheduleClass, reviewClass, scheduleClass, setReminder } from "../../../controllers/TeacherDashboard/Class/Class.js";
 import { authVerify } from "../../../controllers/TeacherDashboard/Auth/Auth.js";
 
 const router = express.Router()
@@ -71,4 +71,5 @@ const scheduleClassValidation=[
     body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time")
 ]
 router.patch("/schedule-class/:_id",authVerify,scheduleClassValidation,validationError,scheduleClass)
+router.get("/upcoming-class-details",authVerify,getUpcomingClassDetails)
 export default router

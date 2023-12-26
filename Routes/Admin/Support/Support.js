@@ -1,10 +1,11 @@
 import express from 'express'
-import { addSupport, getTicketDetails, getTickets } from '../../../controllers/TeacherApp/Support/Support.js'
+import { addSupport, getTicketDetails, getTickets } from '../../../controllers/Admin/Support/Support.js'
 import { authVerify } from '../../../controllers/TeacherApp/Auth/Auth.js'
 import { body } from 'express-validator'
 import validationError from '../../../middleware/validationError.js'
 import upload from '../../../util/upload.js'
-import { getStats } from '../../../controllers/Admin/Payment/Payment.js'
+import { getSupportStats } from '../../../controllers/Admin/Support/Support.js'
+
 
 const router=express.Router()
 const supportValidation=[
@@ -15,5 +16,5 @@ const supportValidation=[
 router.post("/support",authVerify,supportValidation,validationError,upload.any(),authVerify,addSupport)
 router.get("/tickets",authVerify,getTickets)
 router.get("/ticket-details",authVerify,getTicketDetails)
-router.get("/stats",authVerify,getStats)
+router.get("/support-stats",authVerify,getSupportStats)
 export default router

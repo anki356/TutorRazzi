@@ -20,18 +20,33 @@ const getTotalUpcomingClasses=async(req,res)=>{
 }
 
 const getAllStudents=async(req,res)=>{
-    let query={}
+    let users=await User.find({
+        status:true,
+        role:'student'
+    })
+    let query={user_id:{
+        $in:users.map((data)=>{
+            return data._id
+        })
+    }}
     let options={
         limit:req.query.limit,
         page:req.query.page,
         populate:{
             path:"user_id",
             select:{
-            mobile_nummber:1
-            }
+            "mobile_number":1,
+    
+            },
+           
+        },
+        select:{
+            "preferred_name":1,"user_id":1,"grade":1,"city":1,"state":1,"country":1
         }
     }
 Student.paginate(query,options,(err,result)=>{
+   
+   
     return res.json(responseObj(true,result,"Students"))
 })
 }
@@ -61,6 +76,10 @@ const getStudentClasses=async(req,res)=>{
        
        query.class_type="Trial"
       }
+      if(req.query.class_type==='Rescheduled'){
+       
+        query.is_rescheduled=true
+       }
 let options={
     limit:req.query.limit,
     page:req.query.page,
@@ -69,7 +88,10 @@ let options={
         select:{
             "name":1
         }
-    }   
+    } ,
+    select:{
+        "teacher_id":1,"subject":1,"start_time":1,"end_time":1
+    }  
 }
 
 Class.paginate(query,options,(err,result)=>{
@@ -98,7 +120,7 @@ const getClassDetails=async(req,res)=>{
     return res.json(responseObj(true,classResponse,"Class Details"))
 }
 const getStudentDetails=async(req,res)=>{
-    const studentResponse=await Student.findById(req.query.student_id).populate({path:"parent_id"})
+    const studentResponse=await Student.findOne({user_id:req.query.student_id}).populate({path:"parent_id"})
     return res.json(responseObj(true,studentResponse,"Student Details"))
 }
 

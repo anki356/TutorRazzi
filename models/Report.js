@@ -13,7 +13,6 @@ const ReportSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    
     rating:{
         type:mongoose.Schema.Types.Decimal128,
         required:true

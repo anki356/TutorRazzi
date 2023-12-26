@@ -82,7 +82,16 @@ const reviews=await Review.findOne({teacher_id:classDetails.teacher_id}).countDo
   ])  
   const homework=await HomeWork.find({class_id:req.query.class_id})
   const task=await Task.find({class_id:req.query.classScheduled})
-return res.json(responseObj(true,{classDetails:classDetails,exp:exp,ratingsResponse:ratingsResponse,reviews:reviews,homework:homework,Task:task},null))
+  let classReview=await Review.findOne({
+    class_id:req.query.class_id,
+    given_by:req.user._id
+  })
+  let teacherReview=await Review.findOne({
+    class_id:req.query.class_id,
+    given_by:req.user._id,
+    teacher_id:classDetails.teacher_id
+  })
+return res.json(responseObj(true,{classDetails:classDetails,exp:exp,ratingsResponse:ratingsResponse,reviews:reviews,homework:homework,Task:task,classReview:classReview,teacherReview:teacherReview},null))
 }
 const rescheduleClass=async(req,res,next)=>{
     

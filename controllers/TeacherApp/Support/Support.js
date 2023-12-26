@@ -4,16 +4,20 @@ import { responseObj } from "../../../util/response.js"
 import SupportResponses from "../../../models/SupportResponses.js"
 
 const addSupport=async (req,res,next)=>{
-    const documentResponse=await Document.insertMany({
-name:req.files[0].filename
-    })
+    let documentResponse
+    if(req.files){
+         documentResponse=await Document.insertMany({
+    name:req.files[0].filename
+        })
+
+    }
     const supportResponse=await Support.insertMany({
         ticket_id:await Support.countDocuments()+1,
         user_id:req.user._id,
         subject:req.body.title,
         description:req.body.description,
         status:"Pending",
-        document_id:documentResponse._id,
+        document_id:req.files?documentResponse._id:null,
 
     })
     res.json(responseObj(true,{documentResponse,supportResponse},null))

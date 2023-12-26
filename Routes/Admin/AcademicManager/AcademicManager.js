@@ -38,6 +38,6 @@ const academicManagerValidation=[
 router.get("/total-academic-managers",authVerify,getTotalAcademicManager)
 router.get("/all-academic-managers",authVerify,getAllAcademicManager)
 router.post("/add-academic-managers",authVerify,academicManagerValidation,validationError,addAcademicManager)
-router.post("/academic-manager-details",authVerify,getAcademicManagerDetails)
+router.get("/academic-manager-details",authVerify,getAcademicManagerDetails)
 router.patch("/manager/:manager_id",authVerify,deleteManager)
 export default router

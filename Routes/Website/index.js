@@ -6,10 +6,12 @@ import AuthRouter from "./Auth/Auth.js"
 import PaymentsRouter from "./Payments/Payments.js"
 import ClassRouter from "./Class/Class.js"
 import ProfileRouter from "./Profile/Profile.js"
-router.get("/website",TeachersRouter)
-router.get("/website",NewsRouter)
-router.get("/website",AuthRouter)
-router.get("/website",PaymentsRouter)
-router.get("/website",ClassRouter)
-router.get("/website",ProfileRouter)
+import SupportRouter from "./Support/Support.js"
+router.use("/website/",TeachersRouter)
+router.use("/website/",NewsRouter)
+router.use("/website/",AuthRouter)
+router.use("/website/",PaymentsRouter)
+router.use("/website/",ClassRouter)
+router.use("/website/",SupportRouter)
+router.use("/website/",ProfileRouter)
 export default router

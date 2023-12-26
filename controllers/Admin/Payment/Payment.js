@@ -21,8 +21,9 @@ $group:{
 }
         }
     ])
-    const getTeacherPayout=getTotalPayments[0].totalAmount*95/100
-    const profits=getTotalPayments[0].totalAmount*5/100
+    const getTeacherPayout=getTotalPayments.length>0?getTotalPayments[0].totalAmount*95/100:0
+    
+    const profits=getTotalPayments.length>0?getTotalPayments[0].totalAmount*5/100:0
     return res.json(responseObj(true,{getTotalPayments,getTeacherPayout,profits},"Payment Statistics"))
 }
 
@@ -43,7 +44,10 @@ const getWeeklyData=async (req,res,next)=>{
       },
       {
         $group: {
-          _id:  moment("$createdAt").startOf('week').format("YYYY-MM-DD") ,
+          _id: {
+            week: { $isoWeek: { $toDate: "$createdAt" } },
+            year: { $isoWeekYear: { $toDate: "$createdAt" } }
+          },
           totalData: { $sum: "$amount" }
         
         }
@@ -57,7 +61,7 @@ const getWeeklyData=async (req,res,next)=>{
          
         
           array.push({
-            date:moment().startOf('week').subtract(6,'week').add(i,'week').format("YYYY-MM-DD"),
+            week:moment().startOf('week').subtract(6,'week').add(i,'week').isoWeek(),
             totalAmount:0
                     })
         
@@ -68,10 +72,12 @@ const getWeeklyData=async (req,res,next)=>{
 
     response.forEach((data)=>{
      let index= array.findIndex((dataOne)=>{
-return dataOne.date===data._id
+return dataOne.week===data._id.week
       })
-      console.log(index)
-      array[index].totalAmount=data.totalData
+     if(index!==-1){
+
+       array[index].totalAmount=data.totalData
+     }
       
     })
     let newArray=[]
@@ -80,7 +86,7 @@ return dataOne.date===data._id
       newArray.push({
          
         totalAmount:data.totalAmount,
-        date:data.date,
+        week:data.week,
         teacher_payout:data.totalAmount*95/100,
         profits:data.totalAmount*5/100
       })
@@ -112,9 +118,9 @@ payment_type:"Credit"
 
 
   const getPaymentById=async(req,res)=>{
-    const paymentDetails=await Payment.findById({
-      _id:req.query.payemnt_id
-    }).populate({
+    const paymentDetails=await Payment.findById(
+      req.query.payment_id
+    ).populate({
       path:"class_id"
     })
     return res.json(responseObj(true,paymentDetails,"Payment Details"))

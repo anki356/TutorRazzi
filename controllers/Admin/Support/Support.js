@@ -17,14 +17,12 @@ name:req.files[0].filename
     })
     res.json(responseObj(true,{documentResponse,supportResponse},null))
 }
-const getStats=async(req,res)=>{
-const lastTicketRaisedDate=await Support.find({user_id:req.user._id},{createdAt:1}).sort({createdAt:-1}).limit(1)
+const getSupportStats=async(req,res)=>{
+const lastTicketRaisedDate=await Support.find({},{createdAt:1}).sort({createdAt:-1}).limit(1)
 const totalPendingTickets=await Support.countDocuments({
-    user_id:req.user._id,
     status:'Pending'
 })
 const totalResolvedTicket=await Support.countDocuments({
-    user_id:req.user._id,
     status:'Resolved'
 })
 res.json(responseObj(true,{lastTicketRaisedDate,totalPendingTickets,totalResolvedTicket},"Stats"))
@@ -34,8 +32,9 @@ const getTickets=async(req,res,next)=>{
         limit:req.query.limit,
         page:req.query.page
     }
-   
-Support.paginate({user_id:req.user._id},options).then((result)=>{
+   let query={}
+Support.paginate(query,options,(err,result)=>{
+    console.log(result)
     res.json(responseObj(true,result,"Tickets"))
 })
    
@@ -44,4 +43,4 @@ const getTicketDetails=async(req,res)=>{
     const ticketDetails=await Support.findById({_id:req.query.ticket_id})
     res.json(responseObj(true,ticketDetails,"Ticket Details"))
 }
-export {addSupport,getTickets,getTicketDetails,getStats}
+export {addSupport,getTickets,getTicketDetails,getSupportStats}

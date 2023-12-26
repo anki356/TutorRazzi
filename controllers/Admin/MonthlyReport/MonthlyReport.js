@@ -25,12 +25,13 @@ const getMonthlyReport=async(req,res,next)=>{
             as:'teacher'
         }},{
             $group :{
-                month:moment().month(),
-                year:moment().year(),
+                _id: {
+                    year: "$year",
+                    month:"$month"
+                },
                 totalRatings:{
                     "$avg":"$rating"
-                },
-                subject:"$teacher.$subject"
+                }
             }
         }
     ])

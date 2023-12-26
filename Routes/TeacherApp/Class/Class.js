@@ -31,8 +31,8 @@ const notesValidation=[
 ]
 const resourceRequestValidation=[
    
-    body('materials').notEmpty().withMessage("Materials Files are required"),
-    body("resource_request_id").notEmpty().custom((value)=>mongoose.Types.ObjectId.isValid(value)).withMessage("Invalid Resource Request Id")
+   
+    body("resource_request_id").notEmpty().withMessage("Invalid Resource Request Id")
 
 ]
 router.post('/resolve-request-resource', resourceRequestValidation,validationError,authVerify,resolveResourceRequests)

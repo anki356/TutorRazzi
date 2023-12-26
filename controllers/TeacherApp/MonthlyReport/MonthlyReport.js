@@ -52,6 +52,7 @@ const getMonthlyReport=async(req,res,next)=>{
                      month:"$month"
                  },
                  averageRating: { $avg: "$rating" },
+
                // You can use other accumulator operators based on your requirements
                  // Add other fields or calculations as needed
              }

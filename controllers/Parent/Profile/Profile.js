@@ -643,4 +643,13 @@ return res.json(responseObj(true,{"totalRescheduledClasses":recheduledClasses.le
     allpayments=await Payment.find({sender_id:req.user._id})
     res.json(responseObj(true,allpayments,''))
   }
-export {getAllPayments,getHomeworks,editUserProfile,getAllExams,getTotalClasesToday,getWatchHourweekly,getTotalClassesScheduled,getClassAttendedToday,getUpcomingClasses,getPendingPaymentClasses,getAttendance,getUserProfile,getPastClasses,getRescheduledClasses,getTrialClasses,getHomework};
+
+  const getAllStudents=async(req,res)=>{
+    let students=await Student.find({
+      parent_id:req.user._id
+    },{
+      user_id:1,preferred_name:1
+    })
+    res.json(responseObj(true,students,"All Students linked to parent"))
+  }
+export {getAllPayments,getHomeworks,editUserProfile,getAllExams,getTotalClasesToday,getWatchHourweekly,getTotalClassesScheduled,getClassAttendedToday,getUpcomingClasses,getPendingPaymentClasses,getAttendance,getUserProfile,getPastClasses,getRescheduledClasses,getTrialClasses,getHomework,getAllStudents};

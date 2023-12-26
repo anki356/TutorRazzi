@@ -4,7 +4,7 @@ import validationError from "../../../middleware/validationError.js";
 import { body } from "express-validator";
 const router=express.Router()
 const loginValidationChain = [
-    body('email').notEmpty().isEmail().trim(),
+    body('username').notEmpty().isEmail().trim(),
 body('password').notEmpty().withMessage('Password is required field.')
     .isLength({ min: 8 }).optional()
     .withMessage('Password should have atleast 8 characters.')];

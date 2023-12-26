@@ -127,8 +127,16 @@ let homeworkResponse=await HomeWork.find({
 let taskResponse=await Task.find({
     class_id:req.query.class_id
 })
-
-    res.json(responseObj(true, {classDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherResponse:teacherResponse,reviews,average_rating}, "Class Details successfully fetched"))
+let classReview=await Review.findOne({
+    class_id:req.query.class_id,
+    given_by:req.user._id
+  })
+  let teacherReview=await Review.findOne({
+    class_id:req.query.class_id,
+    given_by:req.user._id,
+    teacher_id:classDetails.teacher_id
+  })
+    res.json(responseObj(true, {classDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherResponse:teacherResponse,classReview:classReview,teacherReview:teacherReview,average_rating:average_rating,reviews:reviews}, "Class Details successfully fetched"))
 }
 
 const scheduleClass = async (req, res, next) => {

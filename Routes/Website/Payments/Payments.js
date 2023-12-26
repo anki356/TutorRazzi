@@ -1,12 +1,14 @@
 import express from 'express'
-import { authVerify } from '../../../controllers/Website/Auth/Auth'
-import { getAllPayments, getAllQuotes, rejectQuote } from '../../../controllers/Website/Payments/Payments'
+import { authVerify } from '../../../controllers/Website/Auth/Auth.js'
+import { getAllPayments, getAllQuotes, getPaymentDetails, payQuote, rejectQuote } from '../../../controllers/Website/Payments/Payments.js'
 import { body, param } from 'express-validator'
+import validationError from '../../../middleware/validationError.js'
 const router=express.Router()
 router.get("/all-payments",authVerify,getAllPayments)
-router.get("/all-quotes",authVerify,getAllQuotes)
+router.get("/all-payments",authVerify,getAllPayments)
+router.get("/payment-details",authVerify,getPaymentDetails)
 const paymentValidation=[
-    param('_id').notEmpty().custom((value)=>mongoose.Types.ObjectId.isValid(value)).withMessage("Invalid Quote"),  
+    param('_id').notEmpty().withMessage("Invalid Quote"),  
     body('amount').notEmpty().withMessage("Amount is Required"),
     body("tax").notEmpty().withMessage("Tax is Required"),
    body("net_amount").notEmpty().withMessage("Net Amount is Required"),
@@ -14,4 +16,5 @@ const paymentValidation=[
 ]
 router.patch("/pay-quote/:_id",authVerify,paymentValidation,validationError,payQuote)
 router.patch("/reject-quote/:_id",authVerify,rejectQuote)
+
 export default router

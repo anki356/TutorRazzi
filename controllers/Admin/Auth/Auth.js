@@ -31,9 +31,9 @@ const { password } = req.body;
 }
 const SignIn=async(req,res,next)=>{
    
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ username });
     if (!user || user.role !== 'admin') {
         throw new Error("Invalid credentials or no user exist.");
     }

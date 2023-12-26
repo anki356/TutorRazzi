@@ -98,7 +98,10 @@ let taskResponse=await Task.find({
 })
   
   let reminderResponse = await Reminder.findOne({ class_id: new ObjectId(req.query.class_id) })
-  res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse }, null))
+  let resource_requests=await ResourceRequest.find({
+    class_id:req.query.class_id
+  })
+  res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,resource_requests:resource_requests,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse }, null))
 }
 
 const addNotesToClass = async (req, res, next) => {

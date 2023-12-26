@@ -116,7 +116,7 @@ const authVerify = (req, res, next) => {
 
     token = token.replace("Bearer ", "");
 
-    jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
             console.log(err);
             const response = responseObj(false, null, 'Token has expired.');

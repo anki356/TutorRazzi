@@ -8,7 +8,7 @@ import CurriculumRouter from "./Curriculum/Curriculum.js"
 import TeacherRouter from "./Teacher/Teacher.js"
 import MonthlyReportRouter from "./MonthlyReport/MonthlyReport.js"
 import PaymentRouter from "./Payment/Payment.js";
-
+import SupportRouter from "./Support/Support.js"
 import ExamRouter from "./Exam/Exam.js"
 router.use("/parent/",AuthRouter)
 router.use("/parent/",ProfileRouter)
@@ -18,4 +18,6 @@ router.use("/parent",TeacherRouter)
 router.use("/parent",MonthlyReportRouter)
 router.use("/parent",PaymentRouter)
 router.use("/parent",ExamRouter)
+router.use("/parent",SupportRouter)
+
 export default router

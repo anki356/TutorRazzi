@@ -6,7 +6,6 @@ const ReviewSchema = new mongoose.Schema({
     class_id: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Class',
-        required: true
     },
     given_by: { type: mongoose.SchemaTypes.ObjectId, ref: 'User' },
     message: {

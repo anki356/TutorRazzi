@@ -11,6 +11,8 @@ import AcademicManagerRouter from "./AcademicManager/AcademicManager.js"
 import PaymentRouter from "./Payment/Payment.js"
 import SupportRouter from "./Support/Support.js"
 import RoleRouter from "./Role/Role.js"
+import NewsRouter from "./News/News.js"
+import MonthlyReport from "./MonthlyReport/MonthlyReport.js"
 router.use("/admin/",CurriculumRouter)
 router.use("/admin/",TeacherRouter)
 router.use("/admin/",AuthRouter)
@@ -20,4 +22,6 @@ router.use("/admin/",AcademicManagerRouter)
 router.use("/admin/",PaymentRouter)
 router.use("/admin/",SupportRouter)
 router.use("/admin/",RoleRouter)
+router.use("/admin/",NewsRouter)
+router.use("/admin/",MonthlyReport)
 export default router

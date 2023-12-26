@@ -1,7 +1,10 @@
-import User from "../../../models/User"
+import User from "../../../models/User.js"
 import Parent from "../../../models/Parent.js"
-import Student from "../../../models/Student"
-import { responseObj } from "../../../util/response"
+import Student from "../../../models/Student.js"
+import { responseObj } from "../../../util/response.js"
+import Testimonial from "../../../models/Testimonial.js"
+import SubscribedEmail from "../../../models/SubscribedEmail.js"
+import unlinkFile from "../../../util/unlinkFile.js"
 const getProfileDetails=async(req,res)=>{
     let user_id=req.user._id
     let userDetails=await User.findOne({_id:user_id})
@@ -14,6 +17,8 @@ if(userDetails.role==='parent'){
 else if(userDetails.role==='student'){
     profileDetails=await Student.findOne({
         user_id:req.user._id
+    }).populate({
+      path:"parent_id"
     })
 }
 return res.json(responseObj(true,{userDetails:userDetails,profileDetails:profileDetails},"User profile Details"))
@@ -25,6 +30,16 @@ const userDetails=await User.findOneAndUpdate({
 },{
     $set:{...req.body}
 })
+if(req.files){
+unlinkFile(userDetails.profile_image)
+  await User.updateMany({
+    _id:req.user._id
+  },{
+    $set:{
+      profile_image:req.files[0].filename
+    }
+  })
+}
 if(userDetails.role==='parent'){
     await Parent.updateOne({
         user_id:req.user._id
@@ -38,9 +53,10 @@ else if(userDetails.role==='student'){
     },{
         $set:{...req.body}
     })
+ 
 }
+res.json(responseObj(true,[],"profile Edited Successfully"))
 }
-
 const getHomework=async(req,res,next)=>{
  
     let query={
@@ -91,4 +107,30 @@ if(homeworkResponse.answer_document_id!==null){
 
     res.json(responseObj(true, [], "Home work uploaded"))
 }
-export {getProfileDetails,editProfileDetails,getHomework,uploadHomework}
+
+const subscribeToNewsLetter=async(req,res)=>{
+const newsletterResponse=await SubscribedEmail.create({
+  email:req.body.email
+})
+res.json(responseObj(true,newsletterResponse,"News Letter Subscribed"))
+}
+const getAllStudents=async(req,res)=>{
+  let students=await Student.find({
+    parent_id:req.user._id
+  },{
+    user_id:1,preferred_name:1
+  })
+  res.json(responseObj(true,students,"All Students linked to parent"))
+}
+
+const selectStudent=async(req,res)=>{
+  let user=await User.findOne({
+    user_id:req.body.student_id
+  })
+  const token = user.signJWT();
+  res.json(responseObj(true,{
+      access_token:token,
+      
+  },"Token with Student Details Attached",null) )
+}
+export {selectStudent,getProfileDetails,editProfileDetails,getHomework,uploadHomework,subscribeToNewsLetter,getAllStudents}

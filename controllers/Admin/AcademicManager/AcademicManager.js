@@ -1,20 +1,32 @@
 import AcademicManager from "../../../models/AcademicManager.js"
+import Student from "../../../models/Student.js"
+import Support from "../../../models/Support.js"
 import User from "../../../models/User.js"
 import makeId from "../../../util/makeId.js"
 import { responseObj } from "../../../util/response.js"
 import bcrypt from 'bcrypt'
+import mongoose from "mongoose"
+const ObjectId=mongoose.Types.ObjectId
 const getTotalAcademicManager=async(req,res)=>{
      let total_academic_managers = await AcademicManager.countDocuments({})
      return res.json(responseObj(false,total_academic_managers,"Total Number of Academic manager"))
 }
 
-const getAllAcademicManager=async(req,res)=>{
-    let query={
-
-    }
+const getAllAcademicManager=async(req,res)=>{ let users=await User.find({
+    status:true,
+    role:'academic manager'
+})
+let query={user_id:{
+    $in:users.map((data)=>{
+        return data._id
+    })
+}}
     let options={
         page:req.query.page,
-        limit:req.query.limit
+        limit:req.query.limit,
+        select:{
+            students:1,preferred_name:1,user_id:1
+        }
     }
     AcademicManager.paginate(query,options,(err,result)=>{
       return  res.json(responseObj(true,result,"All Academic Managers are"))
@@ -98,18 +110,30 @@ account_number:req.body.account_number
 
 
 const getAcademicManagerDetails=async(req,res)=>{
-    const academicManagerDetails=await AcademicManager.findOne({_id:req.query.manager_id}).populate({
-        path:"students"
-    }).populate({path:"teachers"})
-
-    return res.json(responseObj(true,academicManagerDetails,"Academic Manager Details"))
+    let academicManagerDetails=await AcademicManager.aggregate([
+        {$match:{
+            _id:new ObjectId(req.query.manager_id)
+        }},{
+            $lookup:{
+                from:'students',
+                localField:"students",
+                foreignField:"user_id",
+                as:"students"
+            }
+        }
+    ])
+    let supportTicketsResolved=await Support.countDocuments({
+        user_id:academicManagerDetails[0].user_id,
+        status:"Resolved"
+    })
+    return res.json(responseObj(true,{academicManagerDetails:academicManagerDetails,supportTicketsResolved:supportTicketsResolved},"Academic Manager Details"))
 }
 
 const deleteManager=async(req,res)=>{
     await User.updateOne({
         _id:req.params.manager_id
     },{$set:{
-        is_active:false
+        status:false
     }})
     return res.json(responseObj(true,[],'Manager Deleted Successfully'))
 }

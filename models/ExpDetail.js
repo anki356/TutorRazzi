@@ -11,7 +11,7 @@ const ExpDetailSchema=new mongoose.Schema({
     },
     end_date:{
         type:mongoose.Schema.Types.Date,
-        required:true
+        
     },
     stream:{
         type:String,

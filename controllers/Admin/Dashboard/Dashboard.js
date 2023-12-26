@@ -1,3 +1,4 @@
+import moment from "moment"
 import Class from "../../../models/Class.js"
 import Payment from "../../../models/Payment.js"
 
@@ -39,7 +40,7 @@ const getLastAmountReceived=async(req,res)=>{
     if(!totalPaymentReceived.length>0){
 return res.json(responseObj(true,0,"Last Payment Received"))
     }
-    return res.json(responseObj(true,totalPaymentReceived[0].TotalAmount*5/100,"Last Payment Received"))
+    return res.json(responseObj(true,totalPaymentReceived[0].net_amount*5/100,"Last Payment Received"))
 
 }
 const getTotalPaymentRemains=async(req,res)=>{
@@ -69,7 +70,7 @@ const totalProfileViews=async(req,res)=>{
     return res.json(responseObj(true,profileViewCountResponse.views,"No Of Profile Views"))
 }
 const getSixMonthPayment=async(req,res)=>{
-    const startOfDuration = moment().startOf('month').subtract(6,'M').format("YYYY-MM-DD");
+    const startOfDuration = moment().startOf('month').subtract(5,'M').format("YYYY-MM-DD");
     const endOfDuration = moment().format("YYYY-MM-DD");
   
     const response=await Payment.aggregate([
@@ -78,7 +79,7 @@ const getSixMonthPayment=async(req,res)=>{
             $and:[
 {createdAt: { $gte: startOfDuration, $lte: endOfDuration }},
 {payment_type:'Credit'},
-{status:'Done'}
+{status:'Paid'}
             ]
           
           
@@ -87,11 +88,12 @@ const getSixMonthPayment=async(req,res)=>{
       {
         $group: {
           _id:  {$substr: ["$createdAt", 0, 7]} ,
-          totalData: { $sum: "$amount" }
+          totalData: { $sum: {$multiply:["$net_amount",0.05]} }
         
         }
       }
     ])
+ 
     let array=[]
     
       
@@ -100,7 +102,7 @@ const getSixMonthPayment=async(req,res)=>{
          
         
           array.push({
-            month:moment().startOf('month').subtract(6,'M').add(i,'M').format("YYYY-MM"),
+            month:moment().startOf('month').subtract(5,'M').add(i,'M').format("YYYY-MM"),
             totalAmount:0
                     })
         
@@ -133,15 +135,20 @@ return dataOne.month===data._id
 const getTotalTrialRequests=async(req,res)=>{
     const totalTrialRequests=await Class.countDocuments({
         class_type:"Trial",
-        status:"Pending"
+        status:"Pending",
+        start_time:{
+          $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
+        }
     })
     return res.json(responseObj(true,totalTrialRequests,"Total Requests")) 
 }
 
 const getTotalBookings=async(req,res)=>{
     const totalBookings=await Class.countDocuments({
-        class_type:"Non-Trial",
-        status:"Scheduled"
+        status:"Scheduled",
+        start_time:{
+          $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
+        }
     })
     return res.json(responseObj(true,totalBookings,"Total Bookings")) 
 }
@@ -152,24 +159,13 @@ const getTotalStudents=async(req,res)=>{
 }
 
 const getTotalHoursCompleted=async(req,res)=>{
-    const totalHoursCompleted=await Class.aggregate([
-        { $match:{status:'Done'}},
-        {
-            $project: {
-              timeDifference: {
-                $subtract: ['$end_time', '$start_time']
-              }
-            }
-          },
-          {
-            $group: {
-              _id: null,
-              totalDifference: {
-                $sum: '$timeDifference'
-              }
-            }
-          }
-    ])
-    return res.json(responseObj(true,totalHoursCompleted,"Total Hours Completed"))
+    const totalHoursCompleted=await Class.find(
+       {status:'Done'})
+      let hoursCompleted=0
+      console.log(totalHoursCompleted)
+      totalHoursCompleted.forEach((data)=>{
+       hoursCompleted+= moment(data.end_time).diff(moment(data.start_time),'h')
+      })
+    return res.json(responseObj(true,hoursCompleted,"Total Hours Completed"))
 }
 export {getTotalTrialRequests,getTotalPaymentReceived,getLastAmountReceived,getTotalPaymentRemains,totalProfileViews,getSixMonthPayment,getTotalBookings,getTotalStudents,getTotalHoursCompleted}

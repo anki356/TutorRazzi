@@ -1,5 +1,5 @@
-import News from "../../../models/News"
-import { responseObj } from "../../../util/response"
+import News from "../../../models/News.js"
+import { responseObj } from "../../../util/response.js"
 
 const getNews=async(req,res)=>{
     let query={}
@@ -14,7 +14,7 @@ const getNews=async(req,res)=>{
         }
     }
    News.paginate(query,options,(err,result)=>{
-    return res.json(true,result,"News")
+    return res.json(responseObj(true,result,"News"))
    })
 }
 

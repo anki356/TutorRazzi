@@ -88,13 +88,22 @@ return  res.json(responseObj(true,totalTeachers,"Total Count of Teachers"))
 }
 
 const getTeacherList=async(req,res)=>{
-   let query={}
+   let users=await User.find({
+      status:true,
+      role:'teacher'
+  })
+  let query={user_id:{
+      $in:users.map((data)=>{
+          return data._id
+      })
+  }}
    let options={
       limit:req.query.limit,
       page:req.query.page,
       populate:{
          path:'user_id',
-      }
+      },
+      select:{"preferred_name":1,"subject_curriculum_grade":1,"city":1,"state":1,"country":1}
       
    }
 
@@ -108,7 +117,7 @@ const getTeacherDetails=async (req,res)=>{
       _id:req.query.teacher_id
    }).populate({path:'user_id'})
    const testimonialResponse=await Testimonial.find({teacher_id:teacherDetails.user_id})
-    return res.json(responseObj(true, {...teacherDetails,...testimonialResponse}, "Teacher Details"))
+    return res.json(responseObj(true, {teacherDetails:teacherDetails,testimonialResponse:testimonialResponse}, "Teacher Details"))
 }
 
 const deleteTeacher=async (req,res)=>{

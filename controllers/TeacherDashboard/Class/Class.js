@@ -444,7 +444,11 @@ let taskResponse=await Task.find({
 })
   
   let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id})
-  res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse }, null))
+  let resource_requests=await ResourceRequest.find({
+    class_id:req.query.class_id
+  })
+ 
+  res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,resource_requests:resource_requests }, null))
 
   }
   const joinClass = async (req, res, next) => {

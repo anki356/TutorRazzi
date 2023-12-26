@@ -9,7 +9,6 @@ const UserSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-
         unique: true
     },
     name:{
@@ -22,7 +21,7 @@ const UserSchema = new mongoose.Schema({
     mobile_number: {
         type: Number,
         
-        unique: true
+       
     },
     role: {
         type: String,

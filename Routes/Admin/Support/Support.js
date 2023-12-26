@@ -13,7 +13,7 @@ const supportValidation=[
     body('title').notEmpty().withMessage("Title is required"),
     body('description').notEmpty().withMessage("Description is required")
 ]
-router.post("/support",authVerify,supportValidation,validationError,upload.any(),authVerify,addSupport)
+router.post("/support",authVerify,supportValidation,validationError,addSupport)
 router.get("/tickets",authVerify,getTickets)
 router.get("/ticket-details",authVerify,getTicketDetails)
 router.get("/support-stats",authVerify,getSupportStats)

@@ -21,7 +21,7 @@ const { password } = req.body;
     const user = await User.create(req.body);
  
     const token = user.signJWT();
-    sendEmail(req.body.email,"New Account Created",newUserEmail(user.name,user.email))
+   
     return res.json(responseObj(true,{token,user},"Login Successfully Created")) 
 
     

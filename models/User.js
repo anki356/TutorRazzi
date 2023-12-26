@@ -1,6 +1,7 @@
 import moment from "moment";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import mongoosePaginate from 'mongoose-paginate-v2'
 const UserSchema = new mongoose.Schema({
     profile_image: {
         type: String,
@@ -65,6 +66,6 @@ UserSchema.methods.signJWT = function () {
         return process.env.APP_URL+"/"+this.profile_image
     }
  })
-
+UserSchema.plugin(mongoosePaginate)
 
 export default mongoose.model("User", UserSchema)

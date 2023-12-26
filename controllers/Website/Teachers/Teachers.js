@@ -72,14 +72,10 @@ const getGreatTeachersList=async(req,res)=>{
     let query={
 
     }
-    const studentResponse = await Student.findOne({ user_id: req.user._id }, { subjects: 1,curriculum:1,grade:1 })
-
-    let subjects = studentResponse.subjects.map((data) => {
-        return data.name
-    })
+    
     
    if(req.query.subject&&req.query.curriculum&&req.query.grade){
-    subjects=[req.query.subject]
+    
     query["subject_curriculum_grade"]={
         $elemMatch:{
             "subject":req.query.subject,
@@ -123,13 +119,7 @@ $addFields:{
             user_id: 1,
             "preferred_name": 1,
             "users.profile_image":1,
-            subjects: {
-                $filter: {
-                  input: "$subject_curriculum_grade",  
-                  as: "item",
-                  cond: { $in: ["$$item.subject", subjects] }
-                }
-              },
+            subject_curriculum_grade:1,
             averageRating: {
                 $avg: "$reviews.rating"
             },

@@ -5,7 +5,7 @@ import { body, param } from 'express-validator'
 import validationError from '../../../middleware/validationError.js'
 const router=express.Router()
 router.get("/all-payments",authVerify,getAllPayments)
-router.get("/all-payments",authVerify,getAllPayments)
+router.get("/all-quotes",authVerify,getAllQuotes)
 router.get("/payment-details",authVerify,getPaymentDetails)
 const paymentValidation=[
     param('_id').notEmpty().withMessage("Invalid Quote"),  

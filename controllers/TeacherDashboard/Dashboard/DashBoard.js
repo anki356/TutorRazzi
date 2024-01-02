@@ -32,7 +32,10 @@ const currentYear = new Date().getFullYear(); // Get the current year
 const getPaymentsData=await Payment.aggregate([{
     $match:{
         class_id:{
-            $in:classResponse.map((data)=>data._id)
+        
+            $elemMatch:{$in:classResponse.map((data)=>data._id)}
+        
+            
         }
     }
 },{
@@ -91,11 +94,11 @@ return dataOne.date===data._id
   
   
     classResponse=await Class.find({teacher_id:req.user._id})
-    const totalPaymentThisWeek=await Payment([
+    const totalPaymentThisWeek=await Payment.aggregate([
         {
             $match:{
         
-                class_id:{$in:classResponse.map((data)=>data._id)},
+                class_id: { $elemMatch:{$in:classResponse.map((data)=>data._id)}},
                 createdAt: {
                   $gte: moment().startOf('week').format("YYYY-MM-DDTHH:mm"),
                   $lte: moment().format("YYYY-MM-DDTHH:mm"),
@@ -110,12 +113,12 @@ return dataOne.date===data._id
             },
           },
     ])
-   
+ 
     const lastWeekPayment=await Payment.aggregate([
       {
         $match:{
     
-          class_id:{$in:classResponse.map((data)=>data._id)},
+            class_id:{  $elemMatch:{$in:classResponse.map((data)=>data._id)}},
           createdAt: {
             $gte: moment().subtract(1,'week').startOf('week').format("YYYY-MM-DDTHH:mm"),
             $lte: moment().endOf('week').subtract(1,'week').format("YYYY-MM-DDTHH:mm"),
@@ -132,6 +135,7 @@ return dataOne.date===data._id
     let totalPaymentThisWeekAmount=totalPaymentThisWeek.length>0?totalPaymentThisWeek[0].total_payments:0
     let totalPaymentLastweekAmount=lastWeekPayment.length>0?lastWeekPayment[0].total_payments:0
     let percentageChange=0
+   
     if(totalPaymentLastweekAmount>0){
        percentageChange=(totalPaymentThisWeekAmount-totalPaymentLastweekAmount)/totalPaymentLastweekAmount*100
     }

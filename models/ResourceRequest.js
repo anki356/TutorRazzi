@@ -6,7 +6,7 @@ const RequestResourceSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    title: {
+    message: {
         type: String,
         required: true
     },

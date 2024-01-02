@@ -288,7 +288,7 @@ const getResourceRequests=async(req,res)=>{
    
    }
    if(req.query.search){
-    query.title={
+    query.message={
        
          $regex: req.query.search,$options: 'i'
        }
@@ -340,7 +340,7 @@ const notifyTeacher=async(req,res)=>{
       "name":1
     }
   })
-    const content=teacherResourceRequests(classDetails.student_id.name,details.title,classDetails.teacher_id.name,classDetails.subject.name,classDetails.grade.name)
+    const content=teacherResourceRequests(classDetails.student_id.name,details.message,classDetails.teacher_id.name,classDetails.subject.name,classDetails.grade.name)
     const teacherResponse=await User.findOne({_id:classDetails.teacher_id},{email:1})
     console.log(teacherResponse)
     await sendEmail(teacherResponse.email,"Resource Requested",content)

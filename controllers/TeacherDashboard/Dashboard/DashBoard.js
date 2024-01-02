@@ -97,8 +97,8 @@ return dataOne.date===data._id
         
                 class_id:{$in:classResponse.map((data)=>data._id)},
                 createdAt: {
-                  $gte: moment().startOf('week').format("YYYY-MM-DDTHH:mm:ss"),
-                  $lte: moment().format("YYYY-MM-DDTHH:mm:ss"),
+                  $gte: moment().startOf('week').format("YYYY-MM-DDTHH:mm"),
+                  $lte: moment().format("YYYY-MM-DDTHH:mm"),
                 },
                 
             }
@@ -117,8 +117,8 @@ return dataOne.date===data._id
     
           class_id:{$in:classResponse.map((data)=>data._id)},
           createdAt: {
-            $gte: moment().subtract(1,'week').startOf('week').format("YYYY-MM-DDTHH:mm:ss"),
-            $lte: moment().endOf('week').subtract(1,'week').format("YYYY-MM-DDTHH:mm:ss"),
+            $gte: moment().subtract(1,'week').startOf('week').format("YYYY-MM-DDTHH:mm"),
+            $lte: moment().endOf('week').subtract(1,'week').format("YYYY-MM-DDTHH:mm"),
           },
         }
     },{

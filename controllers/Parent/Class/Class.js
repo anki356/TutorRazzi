@@ -142,7 +142,7 @@ const raiseRequestResource=async(req,res,next)=>{
    
     let response=await ResourceRequest.insertMany({
         request_id:resourcerequestcount+1,
-        message:req.body.message,
+        title:req.body.title,
         class_id:req.body.class_id,
        
     })
@@ -157,7 +157,7 @@ const raiseRequestResource=async(req,res,next)=>{
    
 
 console.log(req.user,classResponse)
-   const adminHtmlContent = adminNewResourceRequest(req.user.name, req.body.message, classResponse)
+   const adminHtmlContent = adminNewResourceRequest(req.user.name, req.body.title, classResponse)
    sendEmail("anki356@gmail.com", "Resource Reqested", adminHtmlContent, null)
    res.json(responseObj(true, response, "Resource Requested Successfully"))
 

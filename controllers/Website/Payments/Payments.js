@@ -15,7 +15,7 @@ const getAllPayments=async(req,res)=>{
         sender_id:req.user._id,
         status:"Paid"
     }
-    console.log(query)
+
     let options={
         limit:req.query.limit,
         page:req.query.page,

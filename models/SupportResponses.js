@@ -21,6 +21,11 @@ const SupportResponseSchema= new mongoose.Schema({
         default: moment().format("YYYY-MM-DDTHH:mm"),
         required: false
     },
+    is_sender:{
+        type:Boolean,
+        default:false
+    }
 })
+
 export default mongoose.model('SupportResponse', SupportResponseSchema)
 

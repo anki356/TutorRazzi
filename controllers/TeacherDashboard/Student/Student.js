@@ -50,7 +50,8 @@ const getAllStudents=async(req,res)=>{
         page:req.query.page,
         select:{
             grade:1,
-preferred_name:1
+preferred_name:1,
+user_id:1
         }
     }
    Student.paginate(query,options,(err,allStudents)=>{

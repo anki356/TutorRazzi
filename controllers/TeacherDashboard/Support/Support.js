@@ -47,12 +47,17 @@ Support.paginate({user_id:req.user._id},options).then((result)=>{
 }
 const getTicketDetails=async(req,res)=>{
     const ticketDetails=await Support.findById({_id:req.query.ticket_id}).populate({
-        path:"user_id"
+        path:"user_id",select:{
+            name:1
+        }
     })
     const responses=await SupportResponses.find({
         support_id:req.query.ticket_id
     }).populate({
-        path:"user_id"
+        path:"user_id",
+        select:{
+            name:1
+        }
     })
   return  res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses},"Ticket Details"))
 }

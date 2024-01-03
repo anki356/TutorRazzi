@@ -15,6 +15,7 @@ const getTotalStudents=async(req,res)=>{
             $in:classResponse.map((data)=>data.student_id)
         }
     }
+    
     let totalStudents=await Student.countDocuments(query)
     res.json(responseObj(true,{"totalStudents":totalStudents},"Total Students"))
 
@@ -35,7 +36,7 @@ const getTrialRequests=async(req,res)=>{
 const getAllStudents=async(req,res)=>{
     let classResponse=await Class.find({
         teacher_id:req.user._id,
-        class_type:"Non Trial"
+        class_type:"Non-Trial"
     },{
         student_id:1
     })

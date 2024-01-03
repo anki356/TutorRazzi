@@ -2,7 +2,7 @@ import moment from "moment"
 import Class from "../../../models/Class.js"
 import { responseObj } from "../../../util/response.js"
 import Student from "../../../models/Student.js"
-
+import User from "../../../models/User.js"
 const getTotalStudents=async(req,res)=>{
     let classResponse=await Class.find({
         teacher_id:req.user._id,
@@ -60,7 +60,10 @@ user_id:1
    
 }
 const getStudentById=async(req,res)=>{
-  let studentsDetails=  await Student.findOne({user_id:req.query.student_id},{grade:1,curriculum:1,preferrred_name:1})
+  let studentsDetails=  await Student.findOne({user_id:req.query.student_id},{grade:1,curriculum:1,preferred_name:1})
+  let profile_photo=await User.findOne({
+_id:req.query.student_id
+  },profile_image)
   let query={
     student_id:req.query.student_id,
     teacher_id:req.user._id
@@ -74,7 +77,7 @@ const getStudentById=async(req,res)=>{
   }
   let classDetails=await Class.paginate(query,options,(err,classDetails)=>{
 
-      return res.json(responseObj(true,{studentsDetails:studentsDetails,classDetails:classDetails},"Student Details"))
+      return res.json(responseObj(true,{studentsDetails:studentsDetails,classDetails:classDetails,"profile_image":profile_photo.profile_image},"Student Details"))
   })
 
 }

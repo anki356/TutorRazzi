@@ -3,7 +3,7 @@ import express from 'express'
 import { body } from 'express-validator'
 import validationError from '../../../middleware/validationError.js'
 import upload from '../../../util/upload.js'
-import { addSupport, getStats, getTicketDetails, getTickets } from '../../../controllers/TeacherDashboard/Support/Support.js'
+import { addSupport, getStats, getTicketDetails, getTickets, markResolveTicket, saveResponse } from '../../../controllers/TeacherDashboard/Support/Support.js'
 import { authVerify } from '../../../controllers/TeacherDashboard/Auth/Auth.js'
 
 const router=express.Router()
@@ -15,4 +15,6 @@ router.post("/support",authVerify,supportValidation,validationError,addSupport)
 router.get("/tickets",authVerify,getTickets)
 router.get("/ticket-details",authVerify,getTicketDetails)
 router.get("/support-stats",authVerify,getStats)
+router.post("/save-response",authVerify,saveResponse)
+router.patch("/resolve-ticket/:support_id",authVerify,markResolveTicket)
 export default router

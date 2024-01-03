@@ -52,6 +52,23 @@ const getTicketDetails=async(req,res)=>{
     }).populate({
         path:"user_id"
     })
-    res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses},"Ticket Details"))
+  return  res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses},"Ticket Details"))
 }
-export {addSupport,getTickets,getTicketDetails,getStats}
+const saveResponse=async(req,res)=>{
+    const responses=await SupportResponses.create({
+        user_id:req.user._id,
+        support_id:req.body.support_id,
+        response:req.body.response
+    })
+    return  res.json(responseObj(true,responses,"Response Saved Successfully"))
+}
+
+const markResolveTicket=async(req,res)=>{
+    await Support.updateOne({
+        _id:req.params.support_id
+    },{
+status:"Resolved"
+    })
+    return  res.json(responseObj(true,[],"Ticket marked Resolved"))
+}
+export {addSupport,getTickets,getTicketDetails,getStats,saveResponse,markResolveTicket}

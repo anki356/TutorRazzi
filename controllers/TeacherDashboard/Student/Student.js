@@ -77,7 +77,7 @@ _id:req.query.student_id
   }
    Class.paginate(query,options,(err,classDetails)=>{
 
-      return res.json(responseObj(true,{studentsDetails:studentsDetails,classDetails:classDetails,"profile_image":profile_photo.profile_image},"Student Details"))
+      return res.json(responseObj(true,{studentsDetails:studentsDetails,classDetails:classDetails,"profile_image":profile_photo.profile_image_url},"Student Details"))
   })
 
 }

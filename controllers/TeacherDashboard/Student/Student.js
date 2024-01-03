@@ -5,7 +5,8 @@ import Student from "../../../models/Student.js"
 
 const getTotalStudents=async(req,res)=>{
     let classResponse=await Class.find({
-        teacher_id:req.user._id
+        teacher_id:req.user._id,
+        class_type:"Non-Trial"
     },{
         student_id:1
     })
@@ -33,7 +34,8 @@ const getTrialRequests=async(req,res)=>{
 }
 const getAllStudents=async(req,res)=>{
     let classResponse=await Class.find({
-        teacher_id:req.user._id
+        teacher_id:req.user._id,
+        class_type:"Non Trial"
     },{
         student_id:1
     })

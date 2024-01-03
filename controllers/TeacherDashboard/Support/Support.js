@@ -77,13 +77,13 @@ const markResolveTicket=async(req,res)=>{
     },{
 status:"Resolved"
     })
-    const ticketDetails=await Support.findById({_id:req.query.ticket_id}).populate({
+    const ticketDetails=await Support.findById({_id:req.params.support_id}).populate({
         path:"user_id",select:{
             name:1
         }
     })
     const responses=await SupportResponses.find({
-        support_id:req.query.ticket_id
+        support_id:req.params.support_id
     }).populate({
         path:"user_id",
         select:{

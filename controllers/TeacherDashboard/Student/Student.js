@@ -63,7 +63,7 @@ const getStudentById=async(req,res)=>{
   let studentsDetails=  await Student.findOne({user_id:req.query.student_id},{grade:1,curriculum:1,preferred_name:1})
   let profile_photo=await User.findOne({
 _id:req.query.student_id
-  },profile_image)
+  },{profile_image:1})
   let query={
     student_id:req.query.student_id,
     teacher_id:req.user._id

@@ -46,7 +46,9 @@ Support.paginate({user_id:req.user._id},options).then((result)=>{
    
 }
 const getTicketDetails=async(req,res)=>{
-    const ticketDetails=await Support.findById({_id:req.query.ticket_id})
+    const ticketDetails=await Support.findById({_id:req.query.ticket_id}).populate({
+        path:"user_id"
+    })
     const responses=await SupportResponses.find({
         support_id:req.query.ticket_id
     }).populate({

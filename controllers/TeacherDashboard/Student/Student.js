@@ -75,7 +75,7 @@ _id:req.query.student_id
        "subject" :1,details:1,start_time:1,end_time:1,status:1
     }
   }
-  let classDetails=await Class.paginate(query,options,(err,classDetails)=>{
+   Class.paginate(query,options,(err,classDetails)=>{
 
       return res.json(responseObj(true,{studentsDetails:studentsDetails,classDetails:classDetails,"profile_image":profile_photo.profile_image},"Student Details"))
   })

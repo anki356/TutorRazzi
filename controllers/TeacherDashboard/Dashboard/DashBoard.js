@@ -187,7 +187,7 @@ return dataOne.date===data._id
   }
     
   
-    res.json(responseObj(true,{trialRequests:trialRequests,rescheduleRequests:rescheduleRequests,resourceRequests:resourceRequests,getPaymentsData:newArray,totalPaymentThisWeek:totalPaymentThisWeekAmount,percentageMonthChange:percentageChange,totalPaymentThisMonth:totalPaymentThisMonthAmount,percentageMonthChange:percentageMonthChange},''))
+    res.json(responseObj(true,{trialRequests:trialRequests,rescheduleRequests:rescheduleRequests,resourceRequests:resourceRequests,getPaymentsData:newArray,totalPaymentThisWeek:totalPaymentThisWeekAmount,percentageWeekChange:percentageChange,totalPaymentThisMonth:totalPaymentThisMonthAmount,percentageMonthChange:percentageMonthChange},''))
     
 }
 const getPendingHomeworks=async(req,res)=>{

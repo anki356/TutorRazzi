@@ -198,7 +198,8 @@ const isStudentReportPending=async(req,res)=>{
         start_time:{
             $gte:moment().startOf('month').format("YYYY-MM-DDTHH:mm:ss"),
             $lte:moment().endOf('month').format("YYYY-MM-DDTHH:mm:ss")
-        }
+        },
+        status:'Done'
     })
     return res.json(responseObj(true,isPendingResponse!==null,null))
 }

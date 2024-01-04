@@ -94,6 +94,7 @@ return dataOne.date===data._id
   
   
     classResponse=await Class.find({teacher_id:req.user._id})
+    
     const totalPaymentThisWeek=await Payment.aggregate([
         {
             $match:{
@@ -139,9 +140,54 @@ return dataOne.date===data._id
     if(totalPaymentLastweekAmount>0){
        percentageChange=(totalPaymentThisWeekAmount-totalPaymentLastweekAmount)/totalPaymentLastweekAmount*100
     }
+    const totalPaymentThisMonth=await Payment.aggregate([
+      {
+          $match:{
+      
+              class_id: { $elemMatch:{$in:classResponse.map((data)=>data._id)}},
+              createdAt: {
+                $gte: moment().startOf('month').format("YYYY-MM-DDTHH:mm"),
+                $lte: moment().endOf('month').format("YYYY-MM-DDTHH:mm")
+              },
+              
+          }
+      },
+     {
+          $group: {
+            _id: null,
+            total_payments: { $sum: '$net_amount' },
+          },
+        },
+  ])
+
+  const lastMonthPayment=await Payment.aggregate([
+    {
+      $match:{
+  
+          class_id:{  $elemMatch:{$in:classResponse.map((data)=>data._id)}},
+        createdAt: {
+          $gte: moment().subtract(1,'month').startOf('month').format("YYYY-MM-DDTHH:mm"),
+          $lte: moment().subtract(1,'month').endOf('month').format("YYYY-MM-DDTHH:mm")
+        },
+      }
+  },{
+      $group: {
+        _id: null,
+        total_payments: { $sum: '$net_amount' },
+      },
+    },
+  ])
+  
+  let totalPaymentThisMonthAmount=totalPaymentThisMonth.length>0?totalPaymentThisMonth[0].total_payments:0
+  let totalPaymentLastMonthAmount=lastMonthPayment.length>0?lastMonthPayment[0].total_payments:0
+  let percentageMonthChange=0
+ 
+  if(totalPaymentLastMonthAmount>0){
+    percentageMonthChange=(totalPaymentThisMonthAmount-totalPaymentLastMonthAmount)/totalPaymentLastMonthAmount*100
+  }
     
   
-    res.json(responseObj(true,{trialRequests:trialRequests,rescheduleRequests:rescheduleRequests,resourceRequests:resourceRequests,getPaymentsData:newArray,totalPaymentThisWeek:totalPaymentThisWeekAmount,lastWeekPayment:totalPaymentLastweekAmount,percentageChange:percentageChange},''))
+    res.json(responseObj(true,{trialRequests:trialRequests,rescheduleRequests:rescheduleRequests,resourceRequests:resourceRequests,getPaymentsData:newArray,totalPaymentThisWeek:totalPaymentThisWeekAmount,percentageMonthChange:percentageChange,totalPaymentThisMonth:totalPaymentThisMonthAmount,percentageMonthChange:percentageMonthChange},''))
     
 }
 const getPendingHomeworks=async(req,res)=>{

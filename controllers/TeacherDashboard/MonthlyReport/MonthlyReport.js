@@ -4,6 +4,7 @@ import { responseObj } from "../../../util/response.js"
 import AdditionalComment from "../../../models/AdditionalComment.js"
 import moment from "moment"
 import Report from "../../../models/Report.js"
+import Class from "../../../models/Class.js"
 const ObjectID=mongoose.Types.ObjectId
 const getMonthlyReport=async(req,res,next)=>{
     const monthlyReport=await Report.aggregate([

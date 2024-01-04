@@ -37,6 +37,7 @@ let getAllQuotes=async(req,res)=>{
         student_id:req.user._id,
         status:"Pending"
     }
+    console.log(req.user._id)
     let options={
         limit:req.query.limit,
         page:req.query.page,

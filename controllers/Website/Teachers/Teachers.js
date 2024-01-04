@@ -296,6 +296,6 @@ const postContact=async(req,res)=>{
     let contactResponse=await Contact.create({
         ...req.body
     })
-    res.json(responseObj(true,contactResponse,null))
+    res.json(responseObj(true,contactResponse,"Contact Saved Successfully"))
 }
 export {getGrades,getCurriculums,getSubjects,postContact,getGreatTeachers,getTestimonials,getFeedBacks,getGreatTeachersList,getTeacherDetailsById,requestTrialClass,postReview}

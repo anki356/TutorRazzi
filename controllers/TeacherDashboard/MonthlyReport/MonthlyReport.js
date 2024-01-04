@@ -190,4 +190,15 @@ const additionalComment=await AdditionalComment.findOne({student_id:new ObjectID
     year:req.query.year, teacher_id:req.user._id})
     res.json(responseObj(true,{ratings:averageGrade[0]?.totalRatings?averageGrade[0]?.totalRatings:0,report:report,additionalComment:additionalComment},null))
 }
-export {getMonthlyReport,addMonthlyReport,getMonthlyReportDetails}
+const isStudentReportPending=async(req,res)=>{
+    let isPendingResponse=await Class.findOne({
+        student_id:req.query.student_id,
+        teacher_id:req.user._id,
+        start_time:{
+            $gte:moment().startOf('month').format("YYYY-MM-DDTHH:mm:ss"),
+            $lte:moment().endOf('month').format("YYYY-MM-DDTHH:mm:ss")
+        }
+    })
+    return res.json(responseObj(true,isPendingResponse!==null,null))
+}
+export {getMonthlyReport,addMonthlyReport,getMonthlyReportDetails,isStudentReportPending}

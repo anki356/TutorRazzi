@@ -1,6 +1,6 @@
 import express  from "express";
 import { authVerify } from "../../../controllers/TeacherDashboard/Auth/Auth.js";
-import { addMonthlyReport, getMonthlyReport, getMonthlyReportDetails } from "../../../controllers/TeacherDashboard/MonthlyReport/MonthlyReport.js";
+import { addMonthlyReport, getMonthlyReport, getMonthlyReportDetails, isStudentReportPending } from "../../../controllers/TeacherDashboard/MonthlyReport/MonthlyReport.js";
 import { body } from "express-validator";
 import validationError from "../../../middleware/validationError.js";
 const router=express.Router()
@@ -33,4 +33,5 @@ const ReportValidation=[
 ]
 router.post("/add-monthly-report",authVerify,ReportValidation,validationError,addMonthlyReport)
 router.get("/get-monthly-report-details",authVerify,getMonthlyReportDetails)
+router.get("/is-student-report-pending",authVerify,isStudentReportPending)
 export default router

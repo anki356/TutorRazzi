@@ -57,7 +57,10 @@ class_id:{$in:classResponse.map((data)=>data._id)}
        page:req.query.page,
        sort:{
            createdAt:-1
-       }
+       },
+       populate:[{
+        path:'sender_id'
+       },{path:'class_id'}]
    }
    
 Payment.paginate(query,options,(err,paymentResponse)=>{

@@ -65,5 +65,10 @@ PaymentSchema.virtual('amount_received_teacher').get(function () {
         return 0.95*this.net_amount
     }
 })
+PaymentSchema.virtual('class_count').get(function () {
+    if(this.class_id!==undefined&&this.class_id.length>0){
+        return this.class_id.length
+    }
+})
 
 export default mongoose.model("Payment", PaymentSchema)

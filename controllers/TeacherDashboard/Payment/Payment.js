@@ -100,10 +100,12 @@ const getPaymentDetails=async(req,res,next)=>{
        amount:1,net_amount:1,trx_ref_no:1,createdAt:1,status:1
    }).populate({path:'class_id',select:{
        subject:1,
-       start_time:1
+       start_time:1,
+       grade:1,
+       curriculum:1
    },populate:[{
        path:'student_id',select:{
-           name:1
+           name:1,profile_image:1
        }
    },{
        path:'teacher_id',select:{

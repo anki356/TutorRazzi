@@ -97,7 +97,7 @@ Payment.paginate(query,options,(err,paymentResponse)=>{
 
 const getPaymentDetails=async(req,res,next)=>{
    const payment = await Payment.findOne({_id: req.query._id},{
-       amount:1,net_amount:1,trx_ref_no:1,createdAt:1
+       amount:1,net_amount:1,trx_ref_no:1,createdAt:1,status:1
    }).populate({path:'class_id',select:{
        subject:1,
        start_time:1

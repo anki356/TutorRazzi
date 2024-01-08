@@ -17,9 +17,11 @@ const getUpcomingClasses = async (req, res, next) => {
   let options = {
     limit: req.query.limit ? Number(req.query.limit) : 5,
     page: Number(req.query.page),
-    populate:{
+    populate:[{
       path:'student_id'
-    }
+    },{
+      path:"teacher_id"
+    }]
   }
   let query = {
     $and: [
@@ -112,12 +114,11 @@ const getPastClasses = async (req, res, next) => {
   let options = {
     limit: req.query.limit ? Number(req.query.limit) : 5,
     page: Number(req.query.page),
-   populate:{
-    "path":"student_id",
-    select:{
-      "name":1
-    }
-   }
+    populate:[{
+      path:'student_id'
+    },{
+      path:"teacher_id"
+    }]
   }
   if (req.query.search) {
     query = {
@@ -185,12 +186,11 @@ const getRescheduledClasses = async (req, res, next) => {
   let options = {
     limit: req.query.limit ? Number(req.query.limit) : 5,
     page: Number(req.query.page),
-    populate:{
-      "path":"teacher_id",
-      select:{
-        "name":1
-      }
-    }
+    populate:[{
+      path:'student_id'
+    },{
+      path:"teacher_id"
+    }]
   }
   let query = {
     $and: [
@@ -332,7 +332,12 @@ const getTrialClassesRequests = async (req, res, next) => {
   }
   let options = {
     limit: req.query.limit ? Number(req.query.limit) : 5,
-    page: Number(req.query.page)
+    page: Number(req.query.page),
+    populate:[{
+      path:'student_id'
+    },{
+      path:"teacher_id"
+    }]
   }
   Class.paginate(query, options, (err, result) => {
     res.json(responseObj(true, result, null))

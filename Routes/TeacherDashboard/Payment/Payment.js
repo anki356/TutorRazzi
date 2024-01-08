@@ -1,6 +1,6 @@
 import express from 'express'
 import { authVerify } from '../../../controllers/TeacherDashboard/Auth/Auth.js'
-import { getPaymentDetails, getPaymentWeekly, getPayments, getWalletBalance,getWithdrawls,lastWithdrawl } from '../../../controllers/TeacherDashboard/Payment/Payment.js'
+import { getPaymentDetails, getPaymentWeekly, getPayments, getWalletBalance,getWithdrawls,lastWithdrawl, withdraw } from '../../../controllers/TeacherDashboard/Payment/Payment.js'
 import { body } from 'express-validator'
 import validationError from "../../../middleware/validationError.js"
 const router=express.Router()

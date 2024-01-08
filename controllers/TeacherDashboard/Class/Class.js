@@ -10,6 +10,7 @@ import moment from "moment"
 import Review from "../../../models/Review.js"
 import Quote from "../../../models/Quote.js"
 import ResourceRequest from "../../../models/ResourceRequest.js"
+import Teacher from "../../../models/Teacher.js"
 const getUpcomingClasses = async (req, res, next) => {
   
   

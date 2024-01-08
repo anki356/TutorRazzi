@@ -42,7 +42,7 @@ app.use("/api/",TeacherAppRouter)
 app.use("/api/",AcademicManagerRouter)
 app.use("/api/",TeacherDashboardRouter)
 app.use("/api/",WebsiteRouter)
-// app.use(errorHandlerMiddleware);
+app.use(errorHandlerMiddleware);
 app.use(notFound);
  const start = async () => {
 

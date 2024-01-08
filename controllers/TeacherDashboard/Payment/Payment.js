@@ -101,6 +101,7 @@ const getPaymentDetails=async(req,res,next)=>{
    }).populate({path:'class_id',select:{
        subject:1,
        start_time:1,
+       end_time:1,
        grade:1,
        curriculum:1
    },populate:[{
@@ -115,4 +116,25 @@ const getPaymentDetails=async(req,res,next)=>{
    res.json(responseObj(true,payment,null))
 }
 
-export {getPaymentWeekly,getWalletBalance,lastWithdrawl,getPayments,getPaymentDetails,getWithdrawls}
+const withdraw=async (req,res,next)=>{
+    const WalletResponse=await Wallet.findOneAndUpdate({
+        user_id:req.user._id
+    },{
+        $inc:{
+    amount:-req.body.amount
+        }
+    })
+    
+    const PaymentResponse=await Payment.insertMany({
+        sender_id:req.user._id,
+        payment_type:'Debit',
+        amount:req.body.amount,
+        wallet_id:WalletResponse._id,
+        trx_ref_no:req.body.trx_ref_no,
+        net_amount:req.body.amount,
+        status:"Paid"
+    
+    })
+    res.json(responseObj(true,{WalletResponse,PaymentResponse},null))
+    }
+export {getPaymentWeekly,getWalletBalance,lastWithdrawl,getPayments,getPaymentDetails,getWithdrawls,withdraw}

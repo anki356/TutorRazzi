@@ -72,7 +72,7 @@ _id:req.query.student_id
     limit:req.query.limit,
     page:req.query.page,
     select:{
-       "subject" :1,details:1,start_time:1,end_time:1,status:1
+       "subject" :1,"details":1,"start_time":1,"end_time":1,"status":1,"is_rescheduled":1,"class_type":1
     }
   }
    Class.paginate(query,options,(err,classDetails)=>{

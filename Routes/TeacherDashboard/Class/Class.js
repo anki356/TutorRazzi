@@ -1,7 +1,7 @@
 import { body, param, query } from "express-validator";
 import express from 'express'
 import validationError from "../../../middleware/validationError.js";
-import { acceptRescheduledClass, acceptTrialClassRequest, addHomework, addNotesToClass, addTask, getClassDetails, getClassesBasedOnDate, getClasssBasedOnMonth, getPastClasses, getRescheduledClasses, getTrialClassResponse, getTrialClassesRequests, getUpcomingClassDetails, getUpcomingClasses, joinClass, leaveClass, requestReUpload, rescheduleClass, resolveResourceRequests, reviewClass, scheduleClass, setReminder } from "../../../controllers/TeacherDashboard/Class/Class.js";
+import { acceptClassRequest, acceptRescheduledClass, acceptTrialClassRequest, addHomework, addNotesToClass, addTask, getClassDetails, getClassesBasedOnDate, getClasssBasedOnMonth, getPastClasses, getRescheduledClasses, getTrialClassResponse, getTrialClassesRequests, getUpcomingClassDetails, getUpcomingClasses, joinClass, leaveClass, requestReUpload, rescheduleClass, resolveResourceRequests, reviewClass, scheduleClass, setReminder } from "../../../controllers/TeacherDashboard/Class/Class.js";
 import { authVerify } from "../../../controllers/TeacherDashboard/Auth/Auth.js";
 
 const router = express.Router()
@@ -66,7 +66,7 @@ const dateValidationChain=[
     query("date").notEmpty().withMessage("Date is Required"),
    
 ]
-router.patch("/accept-trial-class/:_id",authVerify,acceptRescheduleValidationChain,validationError,acceptTrialClassRequest)
+router.patch("/accept-class/:_id",authVerify,acceptRescheduleValidationChain,validationError,acceptClassRequest)
 const monthValidationChain=[
     query("month").notEmpty().withMessage("Month is Required"),
    

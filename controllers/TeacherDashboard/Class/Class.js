@@ -632,13 +632,13 @@ throw new Error("Slot Already Booked")
   status:'Scheduled'
   }
 });
-return res.json(responseObj(true,[],"Accepted Resched Request"))
+return res.json(responseObj(true,[],"Accepted Rescheduled Request"))
 
 }
 
-const acceptTrialClassRequest = async (req, res, next) => {
+const acceptClassRequest = async (req, res, next) => {
   let details=await Class.findOne({_id:req.params._id})
-
+if(details.class_type==='Trial' && details.is_rescheduled===false){
   let classDetails = await Class.find({
     $and: [{
       start_time: req.body.start_time,
@@ -674,6 +674,41 @@ const acceptTrialClassRequest = async (req, res, next) => {
     }
   })
   return res.json(responseObj(true, [], null))
+}else{
+  let classDetails= await Class.find({$and:[{
+    start_time:req.body.start_time,
+},{$or:[{
+    teacher_id:req.user._id
+},{
+    student_id:details.student_id
+}]},{
+  status:"Scheduled"
+}]})
+if(classDetails.length!==0){
+throw new Error("Slot Already Booked")
+   
+}
+let classResponse=await Class.findOne(
+{_id:req.params._id,
+
+  rescheduled_by:req.user._id
+
+}
+)
+
+if(classResponse!==null){
+throw new Error("You can't Accept your own Reschedule request.")
+}
+let rescheduleacceptResponse=await Class.findOneAndUpdate({_id:req.params._id},{
+$set:{
+   
+status:'Scheduled'
+}
+});
+return res.json(responseObj(true,[],"Accepted Rescheduled Request"))
+
+}
+  
 
 
 }
@@ -703,5 +738,5 @@ const getUpcomingClassDetails=async(req,res)=>{
   let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
   res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,teacherDetails:teacherDetails }, null))
 }
-  export {getUpcomingClassDetails,resolveResourceRequests,scheduleClass,acceptTrialClassRequest,acceptRescheduledClass,getRescheduledClasses,getPastClasses,getTrialClassesRequests,getUpcomingClasses,getClasssBasedOnMonth,getClassesBasedOnDate,getTrialClassResponse,setReminder,rescheduleClass,addNotesToClass,getClassDetails,joinClass,leaveClass,addTask,addHomework,requestReUpload,reviewClass}
+  export {getUpcomingClassDetails,resolveResourceRequests,scheduleClass,acceptClassRequest,acceptRescheduledClass,getRescheduledClasses,getPastClasses,getTrialClassesRequests,getUpcomingClasses,getClasssBasedOnMonth,getClassesBasedOnDate,getTrialClassResponse,setReminder,rescheduleClass,addNotesToClass,getClassDetails,joinClass,leaveClass,addTask,addHomework,requestReUpload,reviewClass}
   

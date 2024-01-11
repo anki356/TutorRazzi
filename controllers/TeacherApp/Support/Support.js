@@ -5,7 +5,7 @@ import SupportResponses from "../../../models/SupportResponses.js"
 
 const addSupport=async (req,res,next)=>{
     let documentResponse
-    if(req.files){
+    if(req.files.length){
          documentResponse=await Document.insertMany({
     name:req.files[0].filename
         })
@@ -17,7 +17,7 @@ const addSupport=async (req,res,next)=>{
         subject:req.body.title,
         description:req.body.description,
         status:"Pending",
-        document_id:req.files?documentResponse._id:null,
+        document_id:req.files.length>0?documentResponse._id:null,
         category:req.body.category
 
     })

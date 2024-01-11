@@ -23,6 +23,11 @@ const SupportSchema = new mongoose.Schema({
         enum: ['Pending', 'Resolved'],
         required: true
     },
+    category:{
+type:"String",
+enum:["High","Medium","Low"],
+required: true
+    },
     document_id: {
         type: mongoose.SchemaTypes.ObjectId,
       ref:"Document"

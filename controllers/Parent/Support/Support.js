@@ -32,6 +32,7 @@ const addSupport=async (req,res,next)=>{
         description:req.body.description,
         status:"Pending",
         document_id:req.files?documentResponse._id:null,
+        category:req.body.category
 
     })
     res.json(responseObj(true,{documentResponse,supportResponse},null))

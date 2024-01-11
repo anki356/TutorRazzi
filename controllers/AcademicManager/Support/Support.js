@@ -14,6 +14,7 @@ name:req.files[0].filename
         description:req.body.description,
         status:"Pending",
         document_id:documentResponse._id,
+        category:req.body.category
 
     })
     res.json(responseObj(true,{documentResponse,supportResponse},null))

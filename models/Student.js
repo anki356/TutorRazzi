@@ -71,4 +71,33 @@ const StudentSchema = new mongoose.Schema({
     versionKey: false
 })
 StudentSchema.plugin(mongoosePaginate)
+StudentSchema.set('toJSON', { virtuals: true });
+StudentSchema.virtual('grade_name').get(function(){
+
+    if(this.grade!==undefined){
+       
+    return this.grade.name
+    }
+})
+StudentSchema.virtual('subject_name').get(function(){
+    
+    if(this.subjects!==undefined){
+        let subjects=this.subjects
+       subjects.forEach((data)=>{
+        data=data.name
+       })
+       return subjects
+    }
+    
+    
+})
+StudentSchema.virtual('curriculum_name').get(function(){
+    
+    if(this.curriculum!==undefined){
+        return this.curriculum.name
+    }
+    
+    
+})
+
 export default mongoose.model("Student", StudentSchema)

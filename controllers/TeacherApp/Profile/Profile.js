@@ -399,10 +399,10 @@ const getTotalStudents = async (req, res, next) => {
     }
   }
   Student.paginate(query, options, (err, studentResponse) => {
-// if(studentResponse.docs.length===0){
-//   return res.json(responseObj(false,[],"No Students found"))
+if(studentResponse.docs.length===0){
+  return res.json(responseObj(false,[],"No Students found"))
  
-// }
+}
     res.json(responseObj(true, studentResponse, null))
   })
 

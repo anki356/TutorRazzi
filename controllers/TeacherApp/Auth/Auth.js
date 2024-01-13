@@ -46,7 +46,7 @@ const SignIn=async(req,res,next)=>{
         access_token:token,
         user:user
         
-    },"Successful Login",null) )
+    },"Successful Login") )
 }
 const changePassword=async(req,res,next)=>{
   
@@ -66,7 +66,7 @@ $set:{...req.body}
            
             
             await sendEmail(req.user.email,"Password Changed",changePasswordEmail(req.user.name))
-            res.json(responseObj(true,[],"Password Changed",null))
+            res.json(responseObj(true,[],"Password Changed"))
         }
     
     
@@ -85,7 +85,7 @@ const token = userResponse.signJWT();
 res.json(responseObj(true,{
     access_token:token
     
-},"Otp Verified",null) )
+},"Otp Verified") )
 }
 const verifyEmail=async(req,res,next)=>{
     let userResponse=await User.findOne({email:req.body.email})

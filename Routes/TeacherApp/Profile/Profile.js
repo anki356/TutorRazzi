@@ -1,10 +1,11 @@
 import express from 'express'
 const router = new express.Router()
 import upload from '../../../util/upload.js'
-import  {getTotalStudents, getTrialClassesRequests, getUpcomingClasses,overallPerformance,acceptTrialClassRequest, getTrialClasses, getMyProfile, editPhoto, editProfile, getAllExams} from "../../../controllers/TeacherApp/Profile/Profile.js"
+import  {getTotalStudents, getTrialClassesRequests, getUpcomingClasses,overallPerformance,acceptTrialClassRequest, getTrialClasses, getMyProfile, editPhoto, editProfile} from "../../../controllers/TeacherApp/Profile/Profile.js"
 import { authVerify } from '../../../controllers/TeacherApp/Auth/Auth.js'
 import validationError from '../../../middleware/validationError.js'
 import { body,param } from 'express-validator'
+import { getAllExams } from '../../../controllers/TeacherApp/Student/Student.js'
 router.get("/trial-classes-requests",authVerify,getTrialClassesRequests)
 router.get("/upcoming-classes",authVerify,getUpcomingClasses)
 router.get("/overall-performance",authVerify,overallPerformance)

@@ -53,4 +53,24 @@ const QuoteSchema = new mongoose.Schema({
     versionKey: false
 })
 QuoteSchema.plugin(mongoosePaginate);
+QuoteSchema.set('toJSON', { virtuals: true });
+QuoteSchema.virtual('subject_name').get(function(){
+    if(this.subject_curriculum_grade){
+
+        return this.subject_curriculum_grade.subject;
+    }
+})
+QuoteSchema.virtual('grade_name').get(function(){
+    if(this.subject_curriculum_grade){
+
+        return this.subject_curriculum_grade.grade;
+    }
+})
+QuoteSchema.virtual('curriculum_name').get(function(){
+    if(this.subject_curriculum_grade){
+
+        return this.subject_curriculum_grade.curriculum;
+    }
+})
+
 export default mongoose.model("Quote", QuoteSchema)

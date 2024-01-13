@@ -20,6 +20,8 @@ import HomeWork from "../../../models/HomeWork.js"
 import Teacher from "../../../models/Teacher.js"
 import Task from "../../../models/Task.js"
 import Reminder from "../../../models/Reminder.js"
+import { addNotifications } from "../../../util/addNotification.js"
+import User from "../../../models/User.js"
 
 const dislikeClass = async (req, res, next) => {
 
@@ -247,10 +249,20 @@ const raiseRequestResource = async (req, res, next) => {
     
         sendEmail(req.user.email, "Resource Reqested", htmlContent, null)
     
-
+const teacherResponse=await User.findOne({
+    _id:classResponse.teacher_id
+})
 
     const adminHtmlContent = adminNewResourceRequest(req.user.name, req.body.message, classResponse)
-    sendEmail(req.user.email, "Resource Reqested", adminHtmlContent, null)
+    sendEmail(teacherResponse.email, "Resource Reqested", adminHtmlContent, null)
+    let class_name=classResponse.name!==null&&classResponse.name!==undefined?classResponse.name:classResponse.subject.name+" of " +classResponse.grade.name+" By "+classResponse.teacher_id.name
+
+
+    addNotifications({
+        user_id:teacherResponse._id,
+        title:"Resource Requested ",
+        description:`${req.user.name} has requested resources for your Class ${class_name}`
+    })
     res.json(responseObj(true, response, "Resource Requested Successfully"))
 
 

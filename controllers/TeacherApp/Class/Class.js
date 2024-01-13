@@ -32,7 +32,12 @@ const requestReUpload=async(req,res)=>{
 }
 
 const scheduleClass = async (req, res, next) => {
-   
+   let classDetails=await Class.findOne({
+    _id:req.params._id
+   })
+   if(classDetails===null){
+    throw new Error("No Class Found")
+   }
   let classScheduled = await Class.find({
       $and: [{
           start_time: req.body.start_time,

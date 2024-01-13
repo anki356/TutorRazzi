@@ -32,7 +32,8 @@ const getQuotes=async (req,res,next)=>{
     Quote.paginate({
         student_id:new ObjectId(req.query.student_id)},options,(err,pendingClassQuotes)=>{
 if(pendingClassQuotes.docs.length===0){
-    throw new Error("No Class quotes found")
+    res.json(responseObj(false,[],"No Class quotes found"))
+   
 }
             res.json(responseObj(true,pendingClassQuotes,null))
         })
@@ -96,7 +97,7 @@ if(req.query.search){
 }
     Class.paginate(query,options,(err,scheduledClasses)=>{
 if(scheduledClasses.docs.length===0){
-    throw new Error("No Scheduled Classes Found")
+    res.json(responseObj(true,[],"No Classes Found"))
 }
         res.json(responseObj(true,scheduledClasses,null))
     })
@@ -115,7 +116,9 @@ const getAllExams=async(req,res,next)=>{
     }
   Exam.paginate(query,options,(err,result)=>{
     if(result.docs.length===0){
-        throw new Error("No Exams found")
+        res.json(responseObj(true,[],"No Exams found"))
+
+       
     }
     return res.json(responseObj(true,result,"Exams  are here"))
   })

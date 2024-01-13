@@ -400,7 +400,8 @@ const getTotalStudents = async (req, res, next) => {
   }
   Student.paginate(query, options, (err, studentResponse) => {
 if(studentResponse.docs.length===0){
-  throw new Error ("No Students found")
+  return res.json(responseObj(false,[],"No Students found"))
+ 
 }
     res.json(responseObj(true, studentResponse, null))
   })
@@ -540,7 +541,7 @@ const getTrialClasses = async (req, res, next) => {
   }
   Class.paginate(query, options, (err, result) => {
     if(result.docs.length===0){
-      throw new Error("NO Classes Found")
+      return res.json(responseObj(false, [], "No Classes Found"))
     }
     res.json(responseObj(true, result, null))
   })

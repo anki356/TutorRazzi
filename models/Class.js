@@ -132,11 +132,38 @@ ClassSchema.virtual('time_left').get(function () {
 
 })
 ClassSchema.virtual('materials_url').get(function(){
-    let materials_list= this.materials;
-    this.materials.forEach((material)=>{
-this.materials.url=process.env.APP_URL
-    })
-    return this.materials
+    if(this.materials!==undefined){
+        let materials_list= this.materials;
+        materials_list.forEach((material)=>{
+            material.url=process.env.APP_URL
+                })
+                return materials_list
+    }
+    
+    
+})
+ClassSchema.virtual('grade_name').get(function(){
+
+    if(this.grade!==undefined){
+       
+    return this.grade.name
+    }
+})
+ClassSchema.virtual('subject_name').get(function(){
+    
+    if(this.subject!==undefined){
+        return this.subject.name
+    }
+    
+    
+})
+ClassSchema.virtual('curriculum_name').get(function(){
+    
+    if(this.curriculum!==undefined){
+        return this.curriculum.name
+    }
+    
+
 })
 ClassSchema.plugin(mongoosePaginate)
 ClassSchema.plugin(mongooseAggregatePaginate)

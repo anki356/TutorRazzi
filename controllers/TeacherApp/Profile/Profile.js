@@ -480,7 +480,7 @@ const getAllExams = async (req, res, next) => {
     }
   }
   StudentResponse = await Student.findOne(query, { exams: 1 })
-  
+ 
   res.json(responseObj(true, StudentResponse, null))
 }
 const getTrialClasses = async (req, res, next) => {

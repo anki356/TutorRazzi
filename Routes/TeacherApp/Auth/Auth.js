@@ -1,5 +1,5 @@
 import express from "express";
-import { SignUp,SignIn, changePassword, verifyEmail, verifyOTP } from "../../../controllers/TeacherApp/Auth/Auth.js";
+import { SignUp,SignIn, changePassword, verifyEmail, verifyOTP, authVerify } from "../../../controllers/TeacherApp/Auth/Auth.js";
 import validationError from "../../../middleware/validationError.js";
 import { body ,param} from "express-validator";
 const router=express.Router()

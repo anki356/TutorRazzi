@@ -116,7 +116,7 @@ const getAllExams=async(req,res,next)=>{
     }
   Exam.paginate(query,options,(err,result)=>{
     if(result.docs.length===0){
-        res.json(responseObj(true,[],"No Exams found"))
+        res.json(responseObj(false,[],"No Exams found"))
 
        
     }

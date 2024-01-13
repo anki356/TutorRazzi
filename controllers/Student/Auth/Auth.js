@@ -80,7 +80,7 @@ const verifyOTP=async(req,res,next)=>{
 
 const userResponse=await User.findOne({resetToken:req.body.otp})
 if(!userResponse){
-    throw new Error('Invalid or expired reset token.')
+    throw new Error('Invalid reset token.')
 }
 
 const token = userResponse.signJWT();
@@ -92,7 +92,7 @@ res.json(responseObj(true,{
 const verifyEmail=async(req,res,next)=>{
     let userResponse=await User.findOne({email:req.body.email})
     //false condition before
-    if(userResponse.length===null){
+    if(userResponse.length===null|| userResponse.role!=='student'){
 
 throw new Error("User Email not found")
 

@@ -144,7 +144,18 @@ const getTrialClassesRequests = async (req, res, next) => {
   }
   let options = {
     limit: req.query.limit ? Number(req.query.limit) : 5,
-    page: Number(req.query.page)
+    page: Number(req.query.page)||1,
+    populate:[{
+      path:'student_id',
+      select:{
+        name:1
+      }
+    },{
+      path:'teacher_id',
+      select:{
+        name:1
+      }
+    }]
   }
   Class.paginate(query, options, (err, result) => {
     res.json(responseObj(true, result, null))
@@ -155,10 +166,18 @@ const getUpcomingClasses = async (req, res, next) => {
   
   let options = {
     limit: req.query.limit ? Number(req.query.limit) : 5,
-    page: Number(req.query.page),
-    populate:{
-      path:'student_id'
-    }
+    page: Number(req.query.page)||1,
+    populate:[{
+      path:'student_id',
+      select:{
+        name:1
+      }
+    },{
+      path:'teacher_id',
+      select:{
+        name:1
+      } 
+    }]
   }
   let query = {
     $and: [
@@ -222,6 +241,9 @@ const getUpcomingClasses = async (req, res, next) => {
   }
   
   Class.paginate(query, options, (err, results) => {
+    if(results.docs.length===0){
+      throw new Error("No CLaases Found")
+    }
     if (results) {
       res.json(responseObj(true, results, null))
     }
@@ -230,6 +252,7 @@ const getUpcomingClasses = async (req, res, next) => {
 }
 const overallPerformance = async (req, res, next) => {
   const classResponse = await Class.find({ teacher_id: req.user._id }, { _id: 1 })
+
   const total_earnings_response = await Payment.aggregate([
     {
       $match: {
@@ -365,17 +388,29 @@ const getTotalStudents = async (req, res, next) => {
     select: {
       "preferred_name": 1,
       "grade": 1,
-      "curriculum": 1
+      "curriculum": 1,
+      "user_id":1
+    },
+    populate:{
+      path:'user_id',
+      select:{
+        "profile_image":1,"_id":1
+      }
     }
   }
   Student.paginate(query, options, (err, studentResponse) => {
-
+if(studentResponse.docs.length===0){
+  throw new Error ("No Students found")
+}
     res.json(responseObj(true, studentResponse, null))
   })
 
 }
 const acceptTrialClassRequest = async (req, res, next) => {
   let details=await Class.findOne({_id:req.params._id})
+  if(details===null){
+    throw new Error("No Details Found of class Id")
+  }
   let classDetails = await Class.find({
     $and: [{
       start_time: details.start_time,
@@ -504,6 +539,9 @@ const getTrialClasses = async (req, res, next) => {
     }
   }
   Class.paginate(query, options, (err, result) => {
+    if(result.docs.length===0){
+      throw new Error("NO Classes Found")
+    }
     res.json(responseObj(true, result, null))
   })
 }

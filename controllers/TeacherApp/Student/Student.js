@@ -13,6 +13,9 @@ const getBasicDetails=async (req,res,next)=>{
             email:1,mobile_number:1
         }
     })
+    if(studentResponse===null){
+        throw new Error("Student Id is incorrect")
+    }
     res.json(responseObj(true,studentResponse,null))
 }
 const getQuotes=async (req,res,next)=>{
@@ -28,7 +31,9 @@ const getQuotes=async (req,res,next)=>{
     }
     Quote.paginate({
         student_id:new ObjectId(req.query.student_id)},options,(err,pendingClassQuotes)=>{
-
+if(pendingClassQuotes.docs.length===0){
+    throw new Error("No Class quotes found")
+}
             res.json(responseObj(true,pendingClassQuotes,null))
         })
     
@@ -54,6 +59,9 @@ const getScheduledClasses=async (req,res,next)=>{
             curriculum:1,
             grade:1
 
+        },
+        sort:{
+            start_time:-1
         }
     }
 let query={status:'Scheduled',
@@ -87,7 +95,9 @@ if(req.query.search){
     }
 }
     Class.paginate(query,options,(err,scheduledClasses)=>{
-
+if(scheduledClasses.docs.length===0){
+    throw new Error("No Scheduled Classes Found")
+}
         res.json(responseObj(true,scheduledClasses,null))
     })
     
@@ -104,6 +114,9 @@ const getAllExams=async(req,res,next)=>{
       page:req.query.page
     }
   Exam.paginate(query,options,(err,result)=>{
+    if(result.docs.length===0){
+        throw new Error("No Exams found")
+    }
     return res.json(responseObj(true,result,"Exams  are here"))
   })
     

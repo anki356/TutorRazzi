@@ -1,6 +1,7 @@
+import { responseObj } from "../util/response.js";
 
 const notFound = (req,res) => {
-      res.status(404).json({message:'requested route is not valid'});
+      const response = responseObj(false,  null,"Requested Route not found",error);
+      return res.status(404).json(response);
 }
-
 export default notFound;

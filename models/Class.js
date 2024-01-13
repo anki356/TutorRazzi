@@ -131,6 +131,13 @@ ClassSchema.virtual('time_left').get(function () {
     }
 
 })
+ClassSchema.virtual('materials_url').get(function(){
+    let materials_list= this.materials;
+    this.materials.forEach((material)=>{
+this.materials.url=process.env.APP_URL
+    })
+    return this.materials
+})
 ClassSchema.plugin(mongoosePaginate)
 ClassSchema.plugin(mongooseAggregatePaginate)
 

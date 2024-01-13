@@ -157,6 +157,22 @@ ClassSchema.virtual('subject_name').get(function(){
     
     
 })
+ClassSchema.virtual('teacher_name').get(function(){
+    
+    if(this.teacher_id!==undefined){
+        return this.teacher_id.name
+    }
+    
+    
+})
+ClassSchema.virtual('student_name').get(function(){
+    
+    if(this.student_id!==undefined){
+        return this.student_id.name
+    }
+    
+    
+})
 ClassSchema.virtual('curriculum_name').get(function(){
     
     if(this.curriculum!==undefined){

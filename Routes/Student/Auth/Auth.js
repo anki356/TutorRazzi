@@ -13,7 +13,7 @@ body('password').notEmpty().withMessage('Password is required field.')
     body('password').notEmpty().withMessage('Password is required field.')
         .isLength({ min: 8 }).optional()
         .withMessage('Password should have atleast 8 characters.')];
-
+       
 const router=express.Router()
 router.post("/SignUp",loginValidationChain,validationError,SignUp)
 router.post("/SignIn",loginValidationChain,validationError,SignIn)

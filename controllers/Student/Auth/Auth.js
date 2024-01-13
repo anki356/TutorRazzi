@@ -82,7 +82,11 @@ const userResponse=await User.findOne({resetToken:req.body.otp})
 if(!userResponse){
     throw new Error('Invalid reset token.')
 }
-
+await User.updateMany({
+    $set:{
+        resetToken:null
+    }
+})
 const token = userResponse.signJWT();
 res.json(responseObj(true,{
     access_token:token
@@ -118,7 +122,7 @@ console.log(req.body)
     }
 
     token = token.replace("Bearer ", "");
-
+console.log(token);
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
             console.log(err);

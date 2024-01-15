@@ -30,7 +30,7 @@ syllabus:{
 },
 createdAt: {
     type: String,
-    default: moment().format("YYYY-MM-DDTHH:mm"),
+    default:()=> moment().format("YYYY-MM-DDTHH:mm"),
     required: false
 }
 

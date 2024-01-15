@@ -7,7 +7,7 @@ const CouponSchema=new mongoose.Schema({
         } ,discount :{type:Number ,required:true
     }, createdAt: {
         type: String,
-        default: moment().format("YYYY-MM-DDTHH:mm"),
+        default:()=> moment().format("YYYY-MM-DDTHH:mm"),
         required: false
     }
 },{

@@ -12,7 +12,7 @@ const WalletSchema=new mongoose.Schema({
         default:0
     },createdAt: {
         type: String,
-        default: moment().format("YYYY-MM-DDTHH:mm"),
+        default:()=> moment().format("YYYY-MM-DDTHH:mm"),
         required: false
     }
 

@@ -63,7 +63,7 @@ const StudentSchema = new mongoose.Schema({
         type: [Exam.schema]
     }, createdAt: {
         type: String,
-        default: moment().format("YYYY-MM-DDTHH:mm"),
+        default:()=> moment().format("YYYY-MM-DDTHH:mm"),
         required: false
     }
 }, {

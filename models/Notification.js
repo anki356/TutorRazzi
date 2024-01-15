@@ -21,7 +21,7 @@ const NotificationSchema=new mongoose.Schema({
     default:false
     }, createdAt: {
         type: String,
-        default: moment().format("YYYY-MM-DDTHH:mm:ss"),
+        default:()=> moment().format("YYYY-MM-DDTHH:mm:ss"),
         required: false
     }
 },{  

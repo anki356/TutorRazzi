@@ -56,7 +56,7 @@ const changePassword=async(req,res,next)=>{
 
     req.body.password = await bcrypt.hash(password, 10);
        
-
+console.log(req.user)
             const userResponse = await User.findOneAndUpdate({
                 email: req.user.email},
                 {
@@ -79,6 +79,7 @@ $set:{...req.body}
 const verifyOTP=async(req,res,next)=>{
 
 const userResponse=await User.findOne({resetToken:req.body.otp})
+console.log(userResponse)
 if(!userResponse){
     throw new Error('Invalid reset token.')
 }
@@ -103,7 +104,7 @@ throw new Error("User Email not found")
     }
 
 
-        const verificationCode = Math.floor(Math.random() * 1000000);
+    const verificationCode = Math.floor(100000 + Math.random() * 900000);
     userResponse=await User.updateOne({email:req.body.email},{resetToken:verificationCode})
    // Create a transporter using the Ethereal account
   sendEmail("anki356@gmail.com","Verification Email", "Verificaion code is "+verificationCode)

@@ -12,6 +12,7 @@ import Task from "../../../models/Task.js"
 import Student from "../../../models/Student.js"
 import ResourceRequest from "../../../models/ResourceRequest.js"
 import Teacher from "../../../models/Teacher.js"
+import { getExtraClassQuotes } from "../../Student/Class/Class.js"
 const setReminder = async (req, res, next) => {
   const reminderResponse = await Reminder.insertMany({
     class_id: req.body.class_id,
@@ -117,7 +118,7 @@ let taskResponse=await Task.find({
   }
   let ratings=await Review.findOne({
     class_id:req.query.class_id,
-    user_id:classDetails.teacher_id
+    user_id:getExtraClassQuotes.user._id
    })
   res.json(responseObj(true, { classDetails: classDetails,resource_requests:resource_requests,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,ratings:ratings }, null))
 }
@@ -395,12 +396,30 @@ const reviewClass=async(req,res,next)=>{
   if(classDetails===null){
     throw new Error("Incorrect Class ID")
   }
-  const reviewResponse=await Review.insertMany({
+  let reviewResponse=await Review.findOne({
+    class_id:req.body.class_id,
+    given_by:req.user._id
+  })
+  
+  if(reviewResponse===null){
+     reviewResponse=await Review.insertMany({
       class_id:req.body.class_id,
       message:req.body?.message,
       ratings:req.body.ratings,
       given_by:req.user._id
   })
+  }
+  else{
+reviewResponse=await Review.updateOne({
+  _id:reviewResponse._id
+},{
+  $set:{
+    message:req.body?.message,
+    ratings:req.body.ratings,
+  }
+})
+  }
+ 
  
   return res.json(responseObj(true,reviewResponse,null))
 }

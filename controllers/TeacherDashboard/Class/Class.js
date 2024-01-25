@@ -605,7 +605,7 @@ const resolveResourceRequests=async(req,res)=>{
         })
     })
  
-  await Class.updateOne({_id:req.body.class_id},{$set:{materials:classResponse.materials}})
+  await Class.updateOne({_id:classResponse._id},{$set:{materials:classResponse.materials}})
   await ResourceRequest.updateOne({_id:req.body.resource_request_id},{
       $set:{
           status:'Resolved'

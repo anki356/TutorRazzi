@@ -567,12 +567,12 @@ let taskResponse=await Task.find({
       class_id:req.body.class_id,
       given_by:req.user._id
     })
-    
+    console.log(reviewResponse)
     if(reviewResponse===null){
        reviewResponse=await Review.insertMany({
         class_id:req.body.class_id,
         message:req.body?.message,
-        ratings:req.body.ratings,
+        rating:req.body.rating,
         given_by:req.user._id
     })
     }
@@ -582,7 +582,7 @@ let taskResponse=await Task.find({
   },{
     $set:{
       message:req.body?.message,
-      ratings:req.body.ratings,
+      rating:req.body.rating,
     }
   })
     }

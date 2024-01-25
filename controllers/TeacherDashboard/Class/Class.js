@@ -557,15 +557,39 @@ let taskResponse=await Task.find({
 
   }
   const reviewClass=async(req,res,next)=>{
-    const reviewResponse=await Review.insertMany({
+    let classDetails=await Class.findOne({
+      _id : req.params.classId
+    })
+    if(classDetails===null){
+      throw new Error("Incorrect Class ID")
+    }
+    let reviewResponse=await Review.findOne({
+      class_id:req.body.class_id,
+      given_by:req.user._id
+    })
+    
+    if(reviewResponse===null){
+       reviewResponse=await Review.insertMany({
         class_id:req.body.class_id,
         message:req.body?.message,
-        rating:req.body.rating,
+        ratings:req.body.ratings,
         given_by:req.user._id
     })
+    }
+    else{
+  reviewResponse=await Review.updateOne({
+    _id:reviewResponse._id
+  },{
+    $set:{
+      message:req.body?.message,
+      ratings:req.body.ratings,
+    }
+  })
+    }
+   
    
     return res.json(responseObj(true,reviewResponse,null))
-}
+  }
 const getTrialClassResponse=async(req,res)=>{
   const response=await TrialClassResponse.findOne({class_id:req.query.class_id})
   return res.json(responseObj(true,response,null))

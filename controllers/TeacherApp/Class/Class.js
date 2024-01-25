@@ -118,7 +118,7 @@ let taskResponse=await Task.find({
   }
   let ratings=await Review.findOne({
     class_id:req.query.class_id,
-    user_id:req.user._id
+    given_by:req.user._id
    })
   res.json(responseObj(true, { classDetails: classDetails,resource_requests:resource_requests,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,ratings:ratings }, null))
 }

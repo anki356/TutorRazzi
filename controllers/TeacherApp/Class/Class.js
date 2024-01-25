@@ -115,8 +115,11 @@ let taskResponse=await Task.find({
   if(studentDetails===null){
     throw new Error("Student Details not found")
   }
-  
-  res.json(responseObj(true, { classDetails: classDetails,resource_requests:resource_requests,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse }, null))
+  let ratings=await Review.findOne({
+    class_id:req.query.class_id,
+    user_id:classDetails.teacher_id
+   })
+  res.json(responseObj(true, { classDetails: classDetails,resource_requests:resource_requests,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,ratings:ratings }, null))
 }
 
 const addNotesToClass = async (req, res, next) => {

@@ -595,20 +595,16 @@ const resolveResourceRequests=async(req,res)=>{
   },{
     materials:1
   })
-  if(Array.isArray(req.files)){
+  console.log(req.files)
+  
 
     req.files.forEach((data)=>{
   
       classResponse.materials.push({
-            name:data.fileName
+            name:data.filename
         })
     })
-  }
-  else{
-    classResponse.materials.push({
-      name:req.files.fileName
-  })
-  }
+ 
   await Class.updateOne({_id:req.body.class_id},{$set:{materials:classResponse.materials}})
   await ResourceRequest.updateOne({_id:req.body.resource_request_id},{
       $set:{

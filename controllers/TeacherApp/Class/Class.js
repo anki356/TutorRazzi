@@ -391,7 +391,7 @@ const uploadClassMaterial=async (req,res,next)=>{
 }
 const reviewClass=async(req,res,next)=>{
   let classDetails=await Class.findOne({
-    _id : req.params.classId
+    _id : req.body.class_id
   })
   if(classDetails===null){
     throw new Error("Incorrect Class ID")

@@ -419,13 +419,25 @@ const setReminder = async (req, res, next) => {
     res.json(responseObj(true,[],"Class Rescheduled"))
   
   }
-  const addNotesToClass = async (req, res) => {
-    let notesResponse = await Class.updateOne({ _id: req.params._id }, {
+  const addNotesToClass = async (req, res, next) => {
+    let notesResponseAlready=await Class.findOne({
+      _id: new ObjectId(req.params._id)
+    },{
+      notes:1,_id:1
+    })
+    if(notesResponseAlready===null){
+  throw new Error("Class ID Is incorrect")
+    }
+    if(notesResponseAlready.notes!==null){
+      throw new Error("Notes already added")
+    }
+    let notesResponse = await Class.updateOne({ _id: new ObjectId(req.params._id) }, {
       $set: {
         notes: req.body.notes
       }
     })
-    res.json(responseObj(true, [], "Notes Added"))
+  
+    res.json(responseObj(true, [], "Notes Added Successfully"))
   }
   const getClassDetails=async(req,res)=>{
     let classDetails = {}

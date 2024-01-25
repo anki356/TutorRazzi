@@ -405,7 +405,7 @@ const reviewClass=async(req,res,next)=>{
      reviewResponse=await Review.insertMany({
       class_id:req.body.class_id,
       message:req.body?.message,
-      rating:req.body.ratings,
+      rating:req.body.rating,
       given_by:req.user._id
   })
   }
@@ -415,7 +415,7 @@ reviewResponse=await Review.updateOne({
 },{
   $set:{
     message:req.body?.message,
-    rating:req.body.ratings,
+    rating:req.body.rating,
   }
 })
   }

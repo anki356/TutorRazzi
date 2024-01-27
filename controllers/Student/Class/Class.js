@@ -349,11 +349,12 @@ let classDetails=await Class.findOne({
 
     }
     let classResponse=await Class.findOne(
-        {_id:req.params._id},
-        {
+        {_id:req.params._id,
+        
           rescheduled_by:req.user._id
         }
        )
+       console.log(classResponse)
        if(classResponse!==null){
         throw new Error("You can't Accept your own Reschedule request.")
        }

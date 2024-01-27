@@ -328,10 +328,12 @@ const setReminder = async (req, res, next) => {
 }
 
 const acceptRescheduledClass = async (req, res, next) => {
-
-    let classDetails = await Class.find({
+let classDetails=await Class.findOne({
+    _id:req.params._id
+})
+    classDetails = await Class.find({
         $and: [{
-            start_time: req.body.start_time,
+            start_time: classDetails.start_time,
         }, {
             $or: [{
                 teacher_id: req.body.teacher_id
@@ -347,7 +349,7 @@ const acceptRescheduledClass = async (req, res, next) => {
 
     }
     let classResponse=await Class.findOne(
-        {_id:new ObjectId(req.params._id)},
+        {_id:req.params._id},
         {
           rescheduled_by:req.user._id
         }

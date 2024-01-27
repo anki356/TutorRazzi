@@ -1,7 +1,7 @@
 import { body, param, query } from "express-validator";
 import express from 'express'
 import validationError from "../../../middleware/validationError.js";
-import { acceptClassRequest, acceptRescheduledClass, addHomework, addNotesToClass, addTask, getClassDetails, getClassesBasedOnDate, getClasssBasedOnMonth, getPastClasses, getRescheduledClasses, getTrialClassResponse, getTrialClassesRequests, getUpcomingClassDetails, getUpcomingClasses, joinClass, leaveClass, requestReUpload, rescheduleClass, resolveResourceRequests, reviewClass, scheduleClass, setReminder } from "../../../controllers/TeacherDashboard/Class/Class.js";
+import { acceptClassRequest, acceptRescheduledClass, addHomework, addNotesToClass, addTask, getClassDetails, getClassesBasedOnDate, getClasssBasedOnMonth, getPastClasses, getRescheduledClasses, getTrialClassResponse, getTrialClassesRequests, getUpcomingClassDetails, getUpcomingClasses, joinClass, leaveClass, requestReUpload, rescheduleClass, resolveResourceRequests, reviewClass, scheduleClass, setReminder, uploadClassMaterial } from "../../../controllers/TeacherDashboard/Class/Class.js";
 import { authVerify } from "../../../controllers/TeacherDashboard/Auth/Auth.js";
 
 const router = express.Router()
@@ -71,12 +71,18 @@ const monthValidationChain=[
     query("month").notEmpty().withMessage("Month is Required"),
    
 ]
+const classMaterialvalidationChain=[
+    param('_id').notEmpty().withMessage("Invalid Class"),
+   
+]
+router.patch("/upload-class-material/:_id",authVerify,classMaterialvalidationChain,validationError,uploadClassMaterial)
 router.get("/classes-by-date",authVerify,dateValidationChain,validationError,getClassesBasedOnDate)
 router.get("/classes-by-month",authVerify,monthValidationChain,validationError,getClasssBasedOnMonth)
 const scheduleClassValidation=[
     param('_id').notEmpty().withMessage("Invalid Quote Id"),
     body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time")
 ]
+
 router.patch("/schedule-class/:_id",authVerify,scheduleClassValidation,validationError,scheduleClass)
 router.get("/upcoming-class-details",authVerify,getUpcomingClassDetails)
 export default router

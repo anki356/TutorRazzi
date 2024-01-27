@@ -590,6 +590,22 @@ let taskResponse=await Task.find({
    
     return res.json(responseObj(true,reviewResponse,null))
   }
+  const uploadClassMaterial=async (req,res,next)=>{
+    let classDetails=await Class.findOne({
+      _id : req.params.classId
+    })
+    if(classDetails===null){
+      throw new Error("Incorrect Class ID")
+    }
+    const classId = req.params._id;
+    let ClassMaterials=await Class.findOne({
+      _id:new ObjectId(classId)
+    },{materials:1})
+    ClassMaterials.materials.push({name:req.files[0].filename})
+    let classResponse=await Class.updateOne({
+      _id : new ObjectId(classId)},{$set:{ materials:ClassMaterials.materials}});
+    res.json(responseObj(true,[],"Class Materials Uploaded Successfully"))
+  }
 const getTrialClassResponse=async(req,res)=>{
   const response=await TrialClassResponse.findOne({class_id:req.query.class_id})
   return res.json(responseObj(true,response,null))
@@ -781,5 +797,5 @@ const getUpcomingClassDetails=async(req,res)=>{
   let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
   res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,teacherDetails:teacherDetails }, null))
 }
-  export {getUpcomingClassDetails,resolveResourceRequests,scheduleClass,acceptClassRequest,acceptRescheduledClass,getRescheduledClasses,getPastClasses,getTrialClassesRequests,getUpcomingClasses,getClasssBasedOnMonth,getClassesBasedOnDate,getTrialClassResponse,setReminder,rescheduleClass,addNotesToClass,getClassDetails,joinClass,leaveClass,addTask,addHomework,requestReUpload,reviewClass}
+  export {getUpcomingClassDetails,uploadClassMaterial,resolveResourceRequests,scheduleClass,acceptClassRequest,acceptRescheduledClass,getRescheduledClasses,getPastClasses,getTrialClassesRequests,getUpcomingClasses,getClasssBasedOnMonth,getClassesBasedOnDate,getTrialClassResponse,setReminder,rescheduleClass,addNotesToClass,getClassDetails,joinClass,leaveClass,addTask,addHomework,requestReUpload,reviewClass}
   

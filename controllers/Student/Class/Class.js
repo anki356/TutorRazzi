@@ -354,7 +354,7 @@ let classDetails=await Class.findOne({
           rescheduled_by:req.user._id
         }
        )
-       if(classResponse){
+       if(classResponse!==null){
         throw new Error("You can't Accept your own Reschedule request.")
        }
     let rescheduleacceptResponse = await Class.findOneAndUpdate({ _id: new ObjectID(req.params._id) }, {

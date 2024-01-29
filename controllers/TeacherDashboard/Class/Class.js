@@ -268,8 +268,6 @@ const getRescheduledClasses = async (req, res, next) => {
       result.docs.forEach((data)=>{
         if(data.rescheduled_by===req.user._id){
 data.is_user=true
-        }else{
-          data.is_user=false
         }
       })
       res.json(responseObj(true,result, null))
@@ -353,8 +351,8 @@ const getTrialClassesRequests = async (req, res, next) => {
 data.is_user=true
       }
       else{
-        data.is_user=false
-      }
+          data.is_user=false
+        }
     })
     res.json(responseObj(true, result, null))
   })

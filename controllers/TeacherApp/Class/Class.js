@@ -366,6 +366,11 @@ const getRescheduledClasses = async (req, res, next) => {
       if(result.docs.length===0){
         return res.json(responseObj(false, result, "No Data found"))
       }
+      result.docs.forEach((data)=>{
+        if(data?.rescheduled_by===req.user._id){
+  data.is_user=true
+        }
+      })
       res.json(responseObj(true,result, null))
     }
     else {

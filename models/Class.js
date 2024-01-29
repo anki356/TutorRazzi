@@ -142,15 +142,7 @@ ClassSchema.virtual('materials_url').get(function(){
     
     
 })
-ClassSchema.virtual('rescheduled_by_user').get(function(){
-    if(this.rescheduled_by!==undefined){
-        if(this.rescheduled_by===req.user._id){
-            return true
-        }
-    }
-    
-    
-})
+
 ClassSchema.virtual('grade_name').get(function(){
 
     if(this.grade!==undefined){

@@ -382,11 +382,11 @@ const uploadClassMaterial=async (req,res,next)=>{
   }
   const classId = req.params._id;
   let ClassMaterials=await Class.findOne({
-    _id:new ObjectId(classId)
+    _id:new ObjectId(req.params._id)
   },{materials:1})
   ClassMaterials.materials.push({name:req.files[0].filename})
   let classResponse=await Class.updateOne({
-    _id : new ObjectId(classId)},{$set:{ materials:ClassMaterials.materials}});
+    _id : new ObjectId(req.params._id)},{$set:{ materials:ClassMaterials.materials}});
   res.json(responseObj(true,[],"Class Materials Uploaded Successfully"))
 }
 const reviewClass=async(req,res,next)=>{

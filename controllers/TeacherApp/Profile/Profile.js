@@ -158,14 +158,7 @@ const getTrialClassesRequests = async (req, res, next) => {
     }]
   }
   Class.paginate(query, options, (err, result) => {
-    result.docs.forEach((data)=>{
-      if(data?.rescheduled_by===req.user._id){
-data.is_user=true
-      }
-      else{
-        data.is_user=false
-      }
-    })
+   
     res.json(responseObj(true, result, null))
   })
 }

@@ -11,6 +11,8 @@ import Review from "../../../models/Review.js"
 import Quote from "../../../models/Quote.js"
 import ResourceRequest from "../../../models/ResourceRequest.js"
 import Teacher from "../../../models/Teacher.js"
+import mongoose from "mongoose"
+const ObjectId=mongoose.Schema.Types.ObjectId
 const getUpcomingClasses = async (req, res, next) => {
   
   
@@ -265,11 +267,8 @@ const getRescheduledClasses = async (req, res, next) => {
   Class.paginate(query, options, (err, result) => {
  
     if (result) {
-      result.docs.forEach((data)=>{
-        if(data.rescheduled_by===req.user._id){
-data.is_user=true
-        }
-      })
+    
+    
       res.json(responseObj(true,result, null))
     }
     else {
@@ -346,14 +345,7 @@ const getTrialClassesRequests = async (req, res, next) => {
     }]
   }
   Class.paginate(query, options, (err, result) => {
-    result.docs.forEach((data)=>{
-      if(data?.rescheduled_by===req.user._id){
-data.is_user=true
-      }
-      else{
-          data.is_user=false
-        }
-    })
+   
     res.json(responseObj(true, result, null))
   })
 }
@@ -621,7 +613,7 @@ let taskResponse=await Task.find({
     res.json(responseObj(true,[],"Class Materials Uploaded Successfully"))
   }
 const getTrialClassResponse=async(req,res)=>{
-  const response=await TrialClassResponse.findOne({class_id:req.query.class_id})
+  const response=await Class.findOne({class_id:req.query.class_id})
   return res.json(responseObj(true,response,null))
 }
 const getClassesBasedOnDate=async (req,res)=>{

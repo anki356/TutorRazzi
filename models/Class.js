@@ -93,13 +93,16 @@ required:true
         type:String
     },
     rescheduled_by:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', 
+        type:String,
+        enum: ['student', 'teacher', 'null'],
+        default: 'null',
+        required: false
     }, createdAt: {
         type: String,
         default:()=> moment().format("YYYY-MM-DDTHH:mm"),
         required: false
-    }
+    },
+
    
 },{
      

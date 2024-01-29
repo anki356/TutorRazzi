@@ -162,6 +162,9 @@ const getTrialClassesRequests = async (req, res, next) => {
       if(data?.rescheduled_by===req.user._id){
 data.is_user=true
       }
+      else{
+        data.is_user=false
+      }
     })
     res.json(responseObj(true, result, null))
   })

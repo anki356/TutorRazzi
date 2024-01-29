@@ -209,7 +209,7 @@ const rescheduleClass = async (req, res, next) => {
             is_rescheduled: true,
             start_time: moment(req.body.start_time).format("YYYY-MM-DDTHH:mm:ss"),
             end_time: moment(req.body.start_time).add(1, 'h').format("YYYY-MM-DDTHH:mm:ss"),
-            rescheduled_by: req.user._id,
+            rescheduled_by: 'student',
             status: 'Pending'
         }
     })
@@ -351,7 +351,7 @@ let classDetails=await Class.findOne({
     let classResponse=await Class.findOne(
         {_id:req.params._id,
         
-          rescheduled_by:req.user._id
+          rescheduled_by:'student'
         }
        )
        console.log(classResponse)

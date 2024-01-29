@@ -419,7 +419,7 @@ const setReminder = async (req, res, next) => {
     is_rescheduled:true,
     start_time:moment(req.body.start_time).format("YYYY-MM-DD:HH:mm:ss"),
     end_time:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DD:HH:mm:ss"),
-    rescheduled_by:req.user._id,
+    rescheduled_by:'teacher',
     status:'Pending'
     }})
     res.json(responseObj(true,[],"Class Rescheduled"))
@@ -683,7 +683,7 @@ throw new Error("Slot Already Booked")
  let classResponse=await Class.findOne(
   {_id:req.params._id,
   
-    rescheduled_by:req.user._id
+    rescheduled_by:'teacher'
   
   }
  )

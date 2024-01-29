@@ -375,7 +375,7 @@ const getRescheduledClasses = async (req, res, next) => {
 }
 const uploadClassMaterial=async (req,res,next)=>{
   let classDetails=await Class.findOne({
-    _id : req.params.classId
+    _id : req.params._id
   })
   if(classDetails===null){
     throw new Error("Incorrect Class ID")

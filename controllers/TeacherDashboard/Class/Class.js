@@ -86,6 +86,14 @@ const getUpcomingClasses = async (req, res, next) => {
 
 
     }
+    if(moment(req.query.search).isValid()){
+      query["$and"].push({
+        start_time:{
+          $gte:moment(req.query.search).format("YYYY-MM-DDTHH:mm:ss"),
+          $lt:moment(req.query.search).add(1,'d').format("YYYY-MM-DDTHH:mm:ss")
+        }
+      })
+    }
   }
   
   Class.paginate(query, options, (err, results) => {
@@ -170,6 +178,14 @@ const getPastClasses = async (req, res, next) => {
       ]
 
     }
+    if(moment(req.query.search).isValid()){
+      query["$and"].push({
+        start_time:{
+          $gte:moment(req.query.search).format("YYYY-MM-DDTHH:mm:ss"),
+          $lt:moment(req.query.search).add(1,'d').format("YYYY-MM-DDTHH:mm:ss")
+        }
+      })
+    }
   }
   
   Class.paginate(query, options, (err, result) => {
@@ -214,7 +230,9 @@ const getRescheduledClasses = async (req, res, next) => {
       $and: [
         {
 
-          start_date: { $gt: new Date() },
+          start_time:{$and:[{
+            $gte: moment().format("YYYY-MM-DDTHH:mm:ss")
+          }]}
         }, {
           teacher_id: req.user._id,
 
@@ -262,6 +280,14 @@ const getRescheduledClasses = async (req, res, next) => {
       ]
 
 
+    }
+    if(moment(req.query.search).isValid()){
+      query["$and"].push({
+        start_time:{
+          $gte:moment(req.query.search).format("YYYY-MM-DDTHH:mm:ss"),
+          $lt:moment(req.query.search).add(1,'d').format("YYYY-MM-DDTHH:mm:ss")
+        }
+      })
     }
   }
   Class.paginate(query, options, (err, result) => {
@@ -333,6 +359,14 @@ const getTrialClassesRequests = async (req, res, next) => {
           ]
 
       }]
+    }
+    if(moment(req.query.search).isValid()){
+      query["$and"].push({
+        start_time:{
+          $gte:moment(req.query.search).format("YYYY-MM-DDTHH:mm:ss"),
+          $lt:moment(req.query.search).add(1,'d').format("YYYY-MM-DDTHH:mm:ss")
+        }
+      })
     }
   }
   let options = {

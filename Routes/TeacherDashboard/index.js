@@ -10,6 +10,7 @@ import PaymentRouter from "./Payment/Payment.js"
 import SupportRouter from "./Support/Support.js"
 import ClassRouter from "./Class/Class.js"
 import ReportRouter from "./MonthlyReport/MonthlyReport.js"
+import ChatRouter from "./Chat/Chat.js"
 router.use("/teacher-dashboard/",AuthRouter)
 router.use("/teacher-dashboard/",DashboardRouter)
 router.use("/teacher-dashboard/",ProfileRouter)
@@ -18,4 +19,5 @@ router.use("/teacher-dashboard/",StudentRouter)
 router.use("/teacher-dashboard/",PaymentRouter)
 router.use("/teacher-dashboard/",SupportRouter)
 router.use("/teacher-dashboard/",ReportRouter)
+router.use("/teacher-dashboard/",ChatRouter)
 export default router

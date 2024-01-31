@@ -88,7 +88,7 @@ const getUpcomingClasses = async (req, res, next) => {
     }
     
   }
-  if(req.query.date!==null){
+  if(req.query.date){
     query["$and"].push({
       start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
       end_time:{
@@ -181,7 +181,7 @@ const getPastClasses = async (req, res, next) => {
     }
  
   }
-  if(req.query.date!==null){
+  if(req.query.date){
     query["$and"].push({
       start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
       end_time:{
@@ -284,7 +284,7 @@ const getRescheduledClasses = async (req, res, next) => {
     }
   
   }
-  if(req.query.date!==null){
+  if(req.query.date){
     query["$and"].push({
       start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
       end_time:{
@@ -364,7 +364,7 @@ const getTrialClassesRequests = async (req, res, next) => {
     }
 
   }
-  if(req.query.date!==null){
+  if(req.query.date){
     query["$and"].push({
       start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
       end_time:{

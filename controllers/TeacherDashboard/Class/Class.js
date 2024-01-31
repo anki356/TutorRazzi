@@ -86,14 +86,15 @@ const getUpcomingClasses = async (req, res, next) => {
 
 
     }
-    if(moment(req.query.search).isValid()){
-      query["$and"].push({
-        start_time:{
-          $gte:moment(req.query.search).format("YYYY-MM-DDTHH:mm:ss"),
-          $lt:moment(req.query.search).add(1,'d').format("YYYY-MM-DDTHH:mm:ss")
-        }
-      })
-    }
+    
+  }
+  if(req.query.date){
+    query["$and"].push({
+      start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
+      end_time:{
+        $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+      }
+    })
   }
   
   Class.paginate(query, options, (err, results) => {
@@ -178,16 +179,16 @@ const getPastClasses = async (req, res, next) => {
       ]
 
     }
-    if(moment(req.query.search).isValid()){
-      query["$and"].push({
-        start_time:{
-          $gte:moment(req.query.search).format("YYYY-MM-DDTHH:mm:ss"),
-          $lt:moment(req.query.search).add(1,'d').format("YYYY-MM-DDTHH:mm:ss")
-        }
-      })
-    }
+ 
   }
-  
+  if(req.query.date){
+    query["$and"].push({
+      start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
+      end_time:{
+        $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+      }
+    })
+  }
   Class.paginate(query, options, (err, result) => {
     if (result) {
       res.json(responseObj(true, result, null))
@@ -281,14 +282,15 @@ const getRescheduledClasses = async (req, res, next) => {
 
 
     }
-    if(moment(req.query.search).isValid()){
-      query["$and"].push({
-        start_time:{
-          $gte:moment(req.query.search).format("YYYY-MM-DDTHH:mm:ss"),
-          $lt:moment(req.query.search).add(1,'d').format("YYYY-MM-DDTHH:mm:ss")
-        }
-      })
-    }
+  
+  }
+  if(req.query.date){
+    query["$and"].push({
+      start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
+      end_time:{
+        $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+      }
+    })
   }
   Class.paginate(query, options, (err, result) => {
  
@@ -360,14 +362,15 @@ const getTrialClassesRequests = async (req, res, next) => {
 
       }]
     }
-    if(moment(req.query.search).isValid()){
-      query["$and"].push({
-        start_time:{
-          $gte:moment(req.query.search).format("YYYY-MM-DDTHH:mm:ss"),
-          $lt:moment(req.query.search).add(1,'d').format("YYYY-MM-DDTHH:mm:ss")
-        }
-      })
-    }
+
+  }
+  if(req.query.date){
+    query["$and"].push({
+      start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
+      end_time:{
+        $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+      }
+    })
   }
   let options = {
     limit: req.query.limit ? Number(req.query.limit) : 5,

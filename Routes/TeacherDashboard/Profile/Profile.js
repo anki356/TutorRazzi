@@ -16,7 +16,7 @@ const teacherValidation=[
     body('degree_details').notEmpty().withMessage("Degree Details is Required"),
     body('exp_details').notEmpty().withMessage("Exp Details is Required"),
    
-    body('subject_cuuriculum').notEmpty().withMessage("Subject and Curriculum Is Required"),
+    body('subject_curriculum').notEmpty().withMessage("Subject and Curriculum Is Required"),
     
     
     body('dob').notEmpty().withMessage("DOB Is Required"),
@@ -24,7 +24,7 @@ const teacherValidation=[
     body('ifsc_code').notEmpty().withMessage("IFSC Code Is Required"),
     body('account_number').notEmpty().withMessage("Account Number Is Required"),
    
-    body('address').notEmpty().withMessage("Address is Required"),
+    
     body('bio').notEmpty().withMessage("Bio is Required")
 ]
 router.get("/profile",authVerify,getUserProfile)

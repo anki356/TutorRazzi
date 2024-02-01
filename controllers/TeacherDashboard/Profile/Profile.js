@@ -4,13 +4,15 @@ import User from "../../../models/User.js"
 import { responseObj } from "../../../util/response.js"
 
 const getUserProfile=async(req,res)=>{
-    const userDetails=await Teacher.findOne({
+    const teacherDetails=await Teacher.findOne({
         user_id:req.user._id
-    }).populate({
-        path:"user_id"
     })
     const testimonialResponse=await Testimonial.find({teacher_id:req.user._id})
-    return res.json(responseObj(true,{userDetails:userDetails,testimonialResponse:testimonialResponse},"User Details"))
+  
+ let userDetails=await User.findOne({
+  _id:req.user._id
+ })
+    return res.json(responseObj(true,{teacherDetails:teacherDetails,userDetails:userDetails,testimonialResponse:testimonialResponse},"User Details"))
 }
 
 const editProfile=async(req,res)=>{
@@ -56,5 +58,41 @@ await User.updateOne({
 })
 return res.json(responseObj(true,[],"User Profile Edited"))
 }
+const completeProfile=async(req,res)=>{
+  const teacherResponse= await Teacher.insertMany({
+    preferred_name:req.body.name,
+   user_id:userResponse[0]._id,
+   city:req.body.city,
+   state:req.body.state,
+   pincode:req.body.pincode,
+   country:req.body.country,
+   address:req.body.address,
+  
+   
+degree:[{
+name:req.body.bachelor_degree_name,
+start_date:req.body.bachelor_degree_start_date,
+end_date:req.body.bachelor_degree_end_date,
+stream:req.body.bachelor_stream,
+college:req.body.bachelor_college_name
+},{
+name:req.body.master_degree_name,
+start_date:req.body.master_degree_start_date,
+end_date:req.body.master_degree_end_date,
+stream:req.body.master_stream,
+college:req.body.master_college_name
+}],
+subject_grade_curriculum:req.body.subject_grade_curriculum,
+exp:req.body.exp,
+dob:req.body.dob,
+gender:req.body.gender,
+bank_name:req.body.bank_name,
+branch_name:req.body.branch_name,
+ifsc_code:req.body.ifsc_code,
+account_number:req.body.account_number
 
+
+   })
+  return  res.json(responseObj(true,teacherResponse,"Teacher Profile Completed Successfully"))
+}
 export {getUserProfile,editProfile}

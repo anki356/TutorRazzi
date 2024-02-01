@@ -35,7 +35,10 @@ const SignIn=async(req,res,next)=>{
     if (!user || user.role !== 'teacher') {
         throw new Error("Invalid credentials or no user exist.");
     }
-
+const teacherDetails=await Teacher.findOne({
+    user_id:user._id
+})
+let is_complete=teacherDetails!==null
     const verifyPassword = await bcrypt.compare(password, user.password);
 
     if (!verifyPassword) {
@@ -44,7 +47,8 @@ const SignIn=async(req,res,next)=>{
     const token = user.signJWT();
     res.json(responseObj(true,{
         access_token:token,
-        user:user
+        user:user,
+        is_complete:is_complete
         
     },"Successful Login",null) )
 }

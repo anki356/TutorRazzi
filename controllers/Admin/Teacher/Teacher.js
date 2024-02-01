@@ -4,33 +4,31 @@ import Testimonial from "../../../models/Testimonial.js";
 import User from "../../../models/User.js"
 import makeId from "../../../util/makeId.js";
 import { responseObj } from "../../../util/response.js"
-import bcrypt from'bcrypt';
+import bcrypt, { hash } from'bcrypt';
+import sendEmail from "../../../util/sendEmail.js";
+import { newTeacherSignup } from "../../../util/EmailFormats/newTeacherSignup.js";
 
 const addTeacher=async(req,res,next)=>{
- let password= await  bcrypt.hash(makeId(5), 10)
+ let hash= await  bcrypt.hash(req.body.password, 10)
  let userResponse=await User.findOne({
    email: req.body.email,
-   role:'Teacher'
+   
  })
  if(userResponse===null){
-   userResponse = await User.insertMany({
+   userResponse = await User.create({
       email: req.body.email,
-      password: password,
+      password: hash,
       mobile_number: req.body.mobile_number,
       role:"teacher",
       name:req.body.name
   })
- }else{
-   await User.updateOne({
-       email:req.body.email
-   },{
-       $set:{
-           name: req.body.name,
-       mobile_number:req.body.mobile_number
+  let content=newTeacherSignup(req.body.name,req.body.email,req.body.password)
+  sendEmail(req.body.email,"New Teacher Sign In created",content)
+ }else {
 
-       }
-   })
+  return res.json(responseObj(false,"User Already Exist"))
 }
+
            
 
 

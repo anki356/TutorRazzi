@@ -34,7 +34,7 @@ const addTeacher=async(req,res,next)=>{
 
 
         
-         return  res.json(responseObj(true,teacherResponse,"Teacher Added Successfully"))
+         return  res.json(responseObj(true,userResponse,"Teacher Added Successfully"))
       
          
 }

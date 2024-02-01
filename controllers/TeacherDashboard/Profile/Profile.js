@@ -106,7 +106,7 @@ const completeProfile=async(req,res)=>{
   })
   const teacherResponse= await Teacher.insertMany({
     preferred_name:req.body.name,
-   user_id:userResponse[0]._id,
+   user_id:req.user._id,
    city:req.body.city,
    state:req.body.state,
    country:req.body.country,

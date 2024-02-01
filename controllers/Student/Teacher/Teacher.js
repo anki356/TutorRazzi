@@ -6,15 +6,15 @@ import { responseObj } from "../../../util/response.js"
 import mongoose from 'mongoose'
 import Testimonial from "../../../models/Testimonial.js"
 const ObjectID = mongoose.Types.ObjectId
-const getTeacherBySubjectCurriculumGrade = async (req, res, next) => {
+const getTeacherBySubjectCurriculum = async (req, res, next) => {
     const teacherResponse = await Teacher.aggregate([{
         $match: {
             
-                subject_curriculum_grade:{
+                subject_curriculum:{
                     $elemMatch:{
 subject:req.query.subject,
 curriculum:req.query.curriculum,
-grade:req.query.grade
+// grade:req.query.grade
                     }
                 }
             

@@ -4,8 +4,10 @@ import User from "../../../models/User.js"
 import { responseObj } from "../../../util/response.js"
 
 const getUserProfile=async(req,res)=>{
-  const profile_image=await User.findOne({
+  const profile_image_details=await User.findOne({
     _id:req.user._id
+  },{
+    profile_image:1
   })
     const teacherPersonalDetails=await Teacher.findOne({
         user_id:req.user._id
@@ -26,10 +28,15 @@ const getUserProfile=async(req,res)=>{
     },{
       exp_details:1
     })
+    const subject_curriculums=await Teacher.findOne({
+      user_id:req.user._id
+    },{
+      subject_curriculum:1
+    })
     const testimonialResponse=await Testimonial.find({teacher_id:req.user._id})
  
  
-    return res.json(responseObj(true,{profile_image:profile_image,education_details:education_details,experience_details:experience_details,teacherPersonalDetails:teacherPersonalDetails,testimonialResponse:testimonialResponse},"User Details"))
+    return res.json(responseObj(true,{profile_image:profile_image_details.profile_image,education_details:education_details.degree,experience_details:experience_details.exp_details,teacherPersonalDetails:teacherPersonalDetails,testimonialResponse:testimonialResponse,subject_curriculums:subject_curriculums.subject_curriculum},"User Details"))
 }
 
 const editProfile=async(req,res)=>{

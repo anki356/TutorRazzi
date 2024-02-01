@@ -3,7 +3,7 @@ import DegreeDetail from "./DegreeDetail.js";
 import ExpDetail from "./ExpDetail.js";
 import Grade from "./Grade.js";
 import moment from "moment";
-import SubjectCurriculumGrade from "./SubjectCurriculumGrade.js";
+import SubjectCurriculum from "./SubjectCurriculumSchema.js";
 import Testimonial from "./Testimonial.js";
 import mongoosePaginate from "mongoose-paginate-v2";
 import Subject from "./Subject.js";
@@ -58,8 +58,8 @@ const TeacherSchema = new mongoose.Schema({
 
 
     },
-    subject_curriculum_grade:{
-type :[SubjectCurriculumGrade.Schema]
+    subject_curriculum:{
+type :[SubjectCurriculum.Schema]
 
     },
     exp_details: {

@@ -4,15 +4,32 @@ import User from "../../../models/User.js"
 import { responseObj } from "../../../util/response.js"
 
 const getUserProfile=async(req,res)=>{
-    const teacherDetails=await Teacher.findOne({
+  const profile_image=await User.findOne({
+    _id:req.user._id
+  })
+    const teacherPersonalDetails=await Teacher.findOne({
         user_id:req.user._id
+    },{
+      preferred_name:1,gender:1,city:1,dob:1,city:1,state:1,country:1,bio:1
+    }).populate({
+      path:"user_id",select:{
+        email:1,mobile_number:1
+      }
+    })
+    const education_details=await Teacher.findOne({
+      user_id:req.user._id
+    },{
+      degree:1
+    })
+    const experience_details=await Teacher.findOne({
+      user_id:req.user._id
+    },{
+      exp_details:1
     })
     const testimonialResponse=await Testimonial.find({teacher_id:req.user._id})
-  
- let userDetails=await User.findOne({
-  _id:req.user._id
- })
-    return res.json(responseObj(true,{teacherDetails:teacherDetails,userDetails:userDetails,testimonialResponse:testimonialResponse},"User Details"))
+ 
+ 
+    return res.json(responseObj(true,{profile_image:profile_image,education_details:education_details,experience_details:experience_details,teacherPersonalDetails:teacherPersonalDetails,testimonialResponse:testimonialResponse},"User Details"))
 }
 
 const editProfile=async(req,res)=>{

@@ -93,6 +93,17 @@ await User.updateOne({
 return res.json(responseObj(true,[],"User Profile Edited"))
 }
 const completeProfile=async(req,res)=>{
+  await User.updateOne({
+    _id:req.user._id
+  },{
+    $set:{
+      ...req.body,
+      profile_image:req.files[0].filename
+    }
+  })
+  req.body.exp_details.forEach((data)=>{
+    data.exp=Number(data.end_year)-Number(data.start_year)
+  })
   const teacherResponse= await Teacher.insertMany({
     preferred_name:req.body.name,
    user_id:userResponse[0]._id,
@@ -103,30 +114,19 @@ const completeProfile=async(req,res)=>{
    address:req.body.address,
   
    
-degree:[{
-name:req.body.bachelor_degree_name,
-start_date:req.body.bachelor_degree_start_date,
-end_date:req.body.bachelor_degree_end_date,
-stream:req.body.bachelor_stream,
-college:req.body.bachelor_college_name
-},{
-name:req.body.master_degree_name,
-start_date:req.body.master_degree_start_date,
-end_date:req.body.master_degree_end_date,
-stream:req.body.master_stream,
-college:req.body.master_college_name
-}],
-subject_grade_curriculum:req.body.subject_grade_curriculum,
+degree:req.body.degree_details,
+exp_details:req.body.exp_details,
+subject_curriculum:req.body.subject_curriculum,
 exp:req.body.exp,
 dob:req.body.dob,
 gender:req.body.gender,
 bank_name:req.body.bank_name,
 branch_name:req.body.branch_name,
 ifsc_code:req.body.ifsc_code,
-account_number:req.body.account_number
-
+account_number:req.body.account_number,
+bio:req.body.bio
 
    })
   return  res.json(responseObj(true,teacherResponse,"Teacher Profile Completed Successfully"))
 }
-export {getUserProfile,editProfile}
+export {getUserProfile,editProfile,completeProfile}

@@ -33,48 +33,7 @@ const addTeacher=async(req,res,next)=>{
 
 
 
-          const teacherResponse= await Teacher.insertMany({
-           preferred_name:req.body.name,
-          user_id:userResponse[0]._id,
-          city:req.body.city,
-          state:req.body.state,
-          pincode:req.body.pincode,
-          country:req.body.country,
-          address:req.body.address,
-         
-          
-degree:[{
-   name:req.body.bachelor_degree_name,
-   start_date:req.body.bachelor_degree_start_date,
-   end_date:req.body.bachelor_degree_end_date,
-   stream:req.body.bachelor_stream,
-   college:req.body.bachelor_college_name
-},{
-   name:req.body.master_degree_name,
-   start_date:req.body.master_degree_start_date,
-   end_date:req.body.master_degree_end_date,
-   stream:req.body.master_stream,
-   college:req.body.master_college_name
-}],
-subject:{
-   name:req.body.subject
-},
-grade:{
-   name:req.body.grade
-},
-curriculum:{
-   name:req.body.curriculum
-},
-exp:req.body.exp,
-dob:req.body.dob,
-gender:req.body.gender,
-bank_name:req.body.bank_name,
-branch_name:req.body.branch_name,
-ifsc_code:req.body.ifsc_code,
-account_number:req.body.account_number
-       
-       
-          })
+        
          return  res.json(responseObj(true,teacherResponse,"Teacher Added Successfully"))
       
          

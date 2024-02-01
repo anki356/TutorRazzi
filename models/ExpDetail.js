@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 import moment from "moment";
 const ExpDetailSchema=new mongoose.Schema({
-  
+  exp:{
+type:Number,
+required:true
+  },
     start_year:{
         type:String,
         required:true

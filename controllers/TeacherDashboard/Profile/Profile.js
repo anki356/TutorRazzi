@@ -46,7 +46,7 @@ ifsc_code:1,
 account_number: 1,
  })
  
-    return res.json(responseObj(true,{profile_image:profile_image_details.profile_image,education_details:education_details.degree,experience_details:experience_details.exp_details,teacherPersonalDetails:teacherPersonalDetails,testimonialResponse:testimonialResponse,subject_curriculums:subject_curriculums.subject_curriculum,bank_details},"User Details"))
+    return res.json(responseObj(true,{profile_image:profile_image_details.profile_image_url,education_details:education_details.degree,experience_details:experience_details.exp_details,teacherPersonalDetails:teacherPersonalDetails,testimonialResponse:testimonialResponse,subject_curriculums:subject_curriculums.subject_curriculum,bank_details},"User Details"))
 }
 
 const editProfile=async(req,res)=>{

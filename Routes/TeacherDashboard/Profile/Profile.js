@@ -21,10 +21,9 @@ const teacherValidation=[
     
     body('dob').notEmpty().withMessage("DOB Is Required"),
     body('bank_name').notEmpty().withMessage("Bank Name Is Required"),
-    body('branch_name').notEmpty().withMessage("Branch Name Is Required"),
     body('ifsc_code').notEmpty().withMessage("IFSC Code Is Required"),
     body('account_number').notEmpty().withMessage("Account Number Is Required"),
-    body('pincode').notEmpty().withMessage("Pincode is Required"),
+   
     body('address').notEmpty().withMessage("Address is Required"),
     body('bio').notEmpty().withMessage("Bio is Required")
 ]

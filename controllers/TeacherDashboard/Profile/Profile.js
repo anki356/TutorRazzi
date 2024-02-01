@@ -109,9 +109,7 @@ const completeProfile=async(req,res)=>{
    user_id:userResponse[0]._id,
    city:req.body.city,
    state:req.body.state,
-   pincode:req.body.pincode,
    country:req.body.country,
-   address:req.body.address,
   
    
 degree:req.body.degree_details,
@@ -121,7 +119,6 @@ exp:req.body.exp,
 dob:req.body.dob,
 gender:req.body.gender,
 bank_name:req.body.bank_name,
-branch_name:req.body.branch_name,
 ifsc_code:req.body.ifsc_code,
 account_number:req.body.account_number,
 bio:req.body.bio

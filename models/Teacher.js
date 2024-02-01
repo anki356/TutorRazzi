@@ -44,7 +44,7 @@ const TeacherSchema = new mongoose.Schema({
     },
 
     dob: {
-        type: mongoose.SchemaTypes.Date,
+        type:String,
 
 
     },

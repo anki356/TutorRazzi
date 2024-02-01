@@ -1,8 +1,9 @@
-import SubjectCurriculumGrade from "../../../models/SubjectCurriculumGrade.js";
+// import SubjectCurriculumGrade from "../../../models/SubjectCurriculumGrade.js";
+import SubjectCurriculum from "../../../models/SubjectCurriculum.js";
 import { responseObj } from "../../../util/response.js";
 
 const addSubjectCurriculum = async(req,res,next)=>{
-    const addSubjectCurriculumResponse=await SubjectCurriculumGrade.insertMany({
+    const addSubjectCurriculumResponse=await SubjectCurriculum.insertMany({
 name:req.body.subject_name,
 curriculum:req.body.curriculum
 

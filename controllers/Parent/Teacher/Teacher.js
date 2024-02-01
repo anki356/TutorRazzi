@@ -9,11 +9,11 @@ const getTeacherBySubjectCurriculumGrade=async(req,res,next)=>{
     
     const teacherResponse = await Teacher.aggregate([{
         $match: {
-            subject_curriculum_grade:{
+            subject_curriculum:{
                 $elemMatch:{
 subject:req.query.subject,
 curriculum:req.query.curriculum,
-grade:req.query.grade
+// grade:req.query.grade
                 }
             }
         }
@@ -118,11 +118,15 @@ const getGreatTeachers = async (req, res, next) => {
     })
     let teacherResponse = await Teacher.aggregate([
         {
-            $match:{ $elemMatch:{
-                subject:{$in:subjects},
-                curriculum:studentResponse.curriculum.name,
-                grade:studentResponse.grade.name
-            }}
+            $match:{
+                subject_curriculum:{
+                    $elemMatch:{
+                        subject:{$in:subjects},
+                        curriculum:studentResponse.curriculum.name,
+                        // grade:studentResponse.grade.name
+                    }
+                }
+            }
         },
         
         {

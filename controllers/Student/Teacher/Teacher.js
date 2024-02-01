@@ -124,11 +124,11 @@ const getGreatTeachers = async (req, res, next) => {
     let teacherResponse = await Teacher.aggregate([
         {
             $match:{
-                subject_curriculum_grade:{
+                subject_curriculum:{
                     $elemMatch:{
                         subject:{$in:subjects},
                         curriculum:studentResponse.curriculum.name,
-                        grade:studentResponse.grade.name
+                        // grade:studentResponse.grade.name
                     }
                 }
             }
@@ -158,7 +158,7 @@ const getGreatTeachers = async (req, res, next) => {
                 "users.profile_image":1,
                 subjects: {
                     $filter: {
-                      input: "$subject_curriculum_grade",  
+                      input: "$subject_curriculum",  
                       as: "item",
                       cond: { $in: ["$$item.subject", subjects] }
                     }
@@ -190,7 +190,7 @@ const getTeachersBySubjectAndName=async(req,res)=>{
     let offset=(Number(req.query.page)-1)*Number(req.query.limit)
     let query={}
     if(req.query.subject){
-        query.subject_curriculum_grade={
+        query.subject_curriculum={
             $elemMatch:{
                 subject:{
                     $regex:req.query.subject,
@@ -272,4 +272,4 @@ const getTeachersBySubjectAndName=async(req,res)=>{
    })
 }
 
-export { getTeacherBySubjectCurriculumGrade, getTeacherById, getGreatTeachers, reviewTeacher,getTeachersBySubjectAndName }
+export { getTeacherBySubjectCurriculum, getTeacherById, getGreatTeachers, reviewTeacher,getTeachersBySubjectAndName }

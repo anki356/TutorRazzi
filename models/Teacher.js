@@ -3,7 +3,7 @@ import DegreeDetail from "./DegreeDetail.js";
 import ExpDetail from "./ExpDetail.js";
 import Grade from "./Grade.js";
 import moment from "moment";
-import SubjectCurriculum from "./SubjectCurriculumSchema.js";
+import SubjectCurriculum from "./SubjectCurriculum.js";
 import Testimonial from "./Testimonial.js";
 import mongoosePaginate from "mongoose-paginate-v2";
 import Subject from "./Subject.js";

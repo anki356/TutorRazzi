@@ -5,16 +5,12 @@ const DegreeDetailSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    start_date:{
-        type:mongoose.Schema.Types.Date,
-        required:true
-    },
-    end_date:{
-        type:mongoose.Schema.Types.Date,
-        required:true
-    },
-    stream:{
+    start_year:{
         type:String,
+        required:true
+    },
+    end_year:{
+        type:mongoose.Schema.Types.Date,
         required:true
     },
         college:{

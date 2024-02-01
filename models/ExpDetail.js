@@ -1,23 +1,20 @@
 import mongoose from "mongoose";
 import moment from "moment";
 const ExpDetailSchema=new mongoose.Schema({
-    exp:{
-        type:Number,
-        required:true
-    },
-    start_date:{
-        type:mongoose.Schema.Types.Date,
-        required:true
-    },
-    end_date:{
-        type:mongoose.Schema.Types.Date,
-        
-    },
-    stream:{
+  
+    start_year:{
         type:String,
         required:true
     },
-        organization:{
+    end_date:{
+        type:String
+        
+    },
+    subject_curriculum:{
+        type:String,
+        required:true
+    },
+        description:{
 type:String,
 reuired:true
         }, createdAt: {

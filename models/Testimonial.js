@@ -22,15 +22,5 @@ const TestimonialSchema = new mongoose.Schema({
     
 }//timesatap
 )
-TestimonialSchema.set('toJSON', { virtuals: true });
 
-// Custom Virtuals
-
-TestimonialSchema.virtual('testimonialUrl').get(function () {
-    if (this.video !== undefined) {
-        return process.env.APP_URL+"/" + this.video
-
-    }
-
-})
 export default mongoose.model('Testimonial', TestimonialSchema)

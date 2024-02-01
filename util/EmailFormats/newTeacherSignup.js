@@ -13,7 +13,7 @@ We are excited to welcome you to TutorRazzi! Your new account is now active, and
 - **Access Our Services**: You can now access all the features and benefits of [Your Service/Product Name]. Simply visit our website at [Website URL] and log in using the following details:
 
   - **Username/Email:** ${email}
-  - **Password**${password}
+  - **Password** ${password}
 
 - **Customize Your Profile**: After logging in, you can customize your profile, update your preferences, and set up notifications to tailor your experience.
 

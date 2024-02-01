@@ -59,11 +59,11 @@ const TeacherSchema = new mongoose.Schema({
 
     },
     subject_curriculum:{
-type :[SubjectCurriculum.Schema]
+type :[SubjectCurriculum.schema]
 
     },
     exp_details: {
-        type: [ExpDetail.Schema],
+        type: [ExpDetail.schema],
 
     },
     address: {

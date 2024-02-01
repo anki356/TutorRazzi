@@ -93,18 +93,24 @@ await User.updateOne({
 return res.json(responseObj(true,[],"User Profile Edited"))
 }
 const completeProfile=async(req,res)=>{
+  console.log(req.files)
   await User.updateOne({
     _id:req.user._id
   },{
     $set:{
       ...req.body,
-      profile_image:req.files[0].filename
+      profile_image:req.files?.length>0?req.files[0].filename:null
     }
   })
+  
   req.body.exp_details.forEach((data)=>{
+   
     data.exp=Number(data.end_year)-Number(data.start_year)
+   
   })
-  const teacherResponse= await Teacher.insertMany({
+  
+
+  const teacherResponse= await Teacher.create({
     preferred_name:req.body.name,
    user_id:req.user._id,
    city:req.body.city,

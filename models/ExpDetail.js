@@ -9,7 +9,7 @@ required:true
         type:String,
         required:true
     },
-    end_date:{
+    end_year:{
         type:String
         
     },

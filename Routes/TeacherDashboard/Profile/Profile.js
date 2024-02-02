@@ -1,6 +1,6 @@
 import express from 'express'
 import { authVerify } from '../../../controllers/TeacherDashboard/Auth/Auth.js'
-import { completeProfile, deleteTestimonial, editProfile, getUserProfile, uploadTestimonial } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
+import { addSubjectCurriculum, completeProfile, deleteSubjectCurriculum, deleteTestimonial, editProfile, editSubjectCurriculum, getUserProfile, uploadTestimonial } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
 import { body } from 'express-validator'
 import validationError from '../../../middleware/validationError.js'
 import upload from '../../../util/upload.js'
@@ -34,9 +34,16 @@ const testimonialValidation=[
     body('school').notEmpty().withMessage("Student School is required"),
    
 ]
+const subject_curriculum_validation=[
+    body('subject').notEmpty().withMessage("Subject is required"),
+    body('curriculum').notEmpty().withMessage("Curriculum is required")
+]
 router.get("/profile",authVerify,getUserProfile)
 router.patch("/profile",authVerify,editProfile)
 router.post("/complete-profile",authVerify,teacherValidation,validationError,completeProfile)
 router.post("/testimonial",authVerify,testimonialValidation,validationError,uploadTestimonial)
 router.delete("/testimonial/:_id",authVerify,deleteTestimonial)
+router.post("/subject-curriculum",authVerify,subject_curriculum_validation,validationError,addSubjectCurriculum)
+router.patch("/subject-curriculum/:_id",authVerify,subject_curriculum_validation,validationError,editSubjectCurriculum)
+router.delete("/subject-curriculum/:_id",authVerify,deleteSubjectCurriculum)
 export default router

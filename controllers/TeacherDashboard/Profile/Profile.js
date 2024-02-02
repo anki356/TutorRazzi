@@ -50,28 +50,7 @@ account_number: 1,
 }
 
 const editProfile=async(req,res)=>{
-    if(req.body.delete_testimonials){
-        const fileResponse=await Testimonial.find({
-          _id: {$in: req.body.delete_images},
-        },{
-          name:1
-        })
-    fileResponse.forEach((data)=>{
-      unlinkFile(data.name)
-    })
-        await Testimonial.deleteMany({_id:{$in:req.body.delete_testimonials}})
-      }
-      if (req.files ) {
-        let testimonialsResponse = await Testimonial.insertMany(
-          req.files
-            .map((data) => {
-              return { video: data.filename, teacher_id:req.user._id,student_id:req.body.student_id };
-            })
-        )
-       
-      
-     
-      }
+    
       if(req.body.name){
         req.body.preferred_name=req.body.name
         }
@@ -152,4 +131,46 @@ const deleteTestimonial=async(req,res)=>{
   })
   return res.json(responseObj(true,null,"Testimonial Deleted"))
 }
-export {getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial}
+
+const editSubjectCurriculum=async(req,res)=>{
+ await Teacher.updateOne(
+    { "user_id": req.user._id, "subject_curriculum._id": req.params._id },
+    {
+       $set: {
+          "subject_curriculum.$.subject": req.body.subject,
+          "subject_curriculum.$.curriculum": req.body.curriculum,
+
+          // Add other fields if necessary
+       }
+    }
+ );
+ return res.json(responseObj(true,null,"Subject Curriculum Edited"))
+ 
+}
+const deleteSubjectCurriculum=async(req,res)=>{
+ await Teacher.updateOne(
+    { "user_id": req.user._id },
+    {
+       $pull: {
+          "subject_curriculum": { "_id": req.params._id }
+          // Add other conditions if necessary
+       }
+    }
+ );
+ return res.json(responseObj(true,null,"Subject Curriculum Deleted")) 
+}
+const addSubjectCurriculum=async(req,res)=>{
+ await Teacher.updateOne(
+    { "user_id": req.user._id },
+    {
+       $push: {
+          "subject_curriculum": {
+             "subject": req.body.subject,
+             "curriculum":req.body.curriculum
+          }
+       }
+    }
+ );
+ return res.json(responseObj(true,null,"Subject Curriculum Added")) 
+}
+export {addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum}

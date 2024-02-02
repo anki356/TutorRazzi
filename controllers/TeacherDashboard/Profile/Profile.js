@@ -3,7 +3,7 @@ import Teacher from "../../../models/Teacher.js"
 import Testimonial from "../../../models/Testimonial.js"
 import User from "../../../models/User.js"
 import { responseObj } from "../../../util/response.js"
-import { rectanglesAreEqual } from "pdf-lib"
+import unlinkFile from "../../../util/unlinkFile.js"
 
 const getUserProfile=async(req,res)=>{
   const profile_image_details=await User.findOne({
@@ -263,6 +263,12 @@ const editDegreeDetails=async(req,res)=>{
   return res.json(responseObj(true,null,"Exp Details Added")) 
  }
  const editPhoto=async(req,res)=>{
+  const userDetails=await User.findOne({
+    _id:req.user._id
+  })
+  if(userDetails.profile_image){
+  await  unlinkFile(userDetails.profile_image)
+  }
   await User.updateOne(
     {_id:req.user._id},{
       $set:{profile_image:req.files[0].filename}

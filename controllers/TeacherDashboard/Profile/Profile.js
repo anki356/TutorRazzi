@@ -128,8 +128,9 @@ bio:req.body.bio
 
 const uploadTestimonial=async(req,res)=>{
    const testimonialArray=req.body.testData.map((data)=>{
+      const { id, ...rest } = data
      return{
-...data,
+...rest,
 teacher_id:req.user._id
      }
    })

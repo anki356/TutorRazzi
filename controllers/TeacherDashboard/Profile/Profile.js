@@ -35,11 +35,7 @@ const getUserProfile=async(req,res)=>{
     },{
       subject_curriculum:1
     })
-    const testimonialResponse=await Testimonial.find({teacher_id:req.user._id}).populate({
-      path:"student_id",select:{
-        name:1,_id:0,grade:1,school:1
-      }
-    })
+    const testimonialResponse=await Testimonial.find({teacher_id:req.user._id})
  const bank_details=await Teacher.findOne({
   user_id:req.user._id
  },{

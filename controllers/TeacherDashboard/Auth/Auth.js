@@ -8,6 +8,7 @@ import sendEmail from "../../../util/sendEmail.js";
 import {newUserEmail} from "../../../util/EmailFormats/newUserEmail.js"
 import {  changePasswordEmail } from "../../../util/EmailFormats/changePasswordEmail.js";
 import Teacher from "../../../models/Teacher.js";
+import Testimonial from "../../../models/Testimonial.js";
 const ObjectId=mongoose.Types.ObjectId
 
 const SignUp = async (req, res) => {
@@ -39,6 +40,7 @@ const SignIn=async(req,res,next)=>{
 const teacherDetails=await Teacher.findOne({
     user_id:user._id
 })
+const testimonial=await Testimonial.findOne({teacher_id:user._id})
 let is_complete=teacherDetails!==null
     const verifyPassword = await bcrypt.compare(password, user.password);
 
@@ -49,7 +51,8 @@ let is_complete=teacherDetails!==null
     res.json(responseObj(true,{
         access_token:token,
         user:user,
-        is_complete:is_complete
+        is_complete:is_complete,
+        is_testimonial:testimonial!==null
         
     },"Successful Login",null) )
 }

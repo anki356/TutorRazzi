@@ -167,7 +167,7 @@ const deleteSubjectCurriculum=async(req,res)=>{
     {
        $pull: {
           "subject_curriculum": { "_id": req.params._id }
-          // Add other conditions if necessary
+          
        }
     }
  );

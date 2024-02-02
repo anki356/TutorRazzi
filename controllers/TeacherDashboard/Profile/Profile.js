@@ -132,4 +132,21 @@ bio:req.body.bio
    })
   return  res.json(responseObj(true,teacherResponse,"Teacher Profile Completed Successfully"))
 }
-export {getUserProfile,editProfile,completeProfile}
+
+const uploadTestimonial=async(req,res)=>{
+  const testimonialResponse=await Testimonial.create(
+    {
+      video:req.body.video,
+      student_id:req.body.student_id,
+      teacher_id:req.user._id
+    }
+  )
+  return res.json(responseObj(true,testimonialResponse,"Testimonial Uploaded"))
+}
+const deleteTestimonial=async(req,res)=>{
+  await Testimonial.deleteOne({
+    _id:req.params._id
+  })
+  return res.json(responseObj(true,null,"Testimonial Deleted"))
+}
+export {getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial}

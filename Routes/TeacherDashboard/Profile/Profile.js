@@ -1,6 +1,6 @@
 import express from 'express'
 import { authVerify } from '../../../controllers/TeacherDashboard/Auth/Auth.js'
-import { completeProfile, editProfile, getUserProfile } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
+import { completeProfile, deleteTestimonial, editProfile, getUserProfile, uploadTestimonial } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
 import { body } from 'express-validator'
 import validationError from '../../../middleware/validationError.js'
 import upload from '../../../util/upload.js'
@@ -30,4 +30,6 @@ const teacherValidation=[
 router.get("/profile",authVerify,getUserProfile)
 router.patch("/profile",authVerify,editProfile)
 router.post("/complete-profile",authVerify,teacherValidation,validationError,completeProfile)
+router.post("/testimonial",authVerify,uploadTestimonial)
+router.delete("/testimonial/:_id",authVerify,deleteTestimonial)
 export default router

@@ -79,14 +79,14 @@ const completeProfile=async(req,res)=>{
       profile_image:req.files?.length>0?req.files[0].filename:null
     }
   })
-  req.body.exp_details=req.body.exp_details.toArray()
+  req.body.exp_details=JSON.parse(req.body.exp_details)
   req.body.exp_details.forEach((data)=>{
    
     data.exp=Number(data.end_year)-Number(data.start_year)
    
   })
-  req.body.degree_details=req.body.degree_details.toArray()
-  req.body.subject_curriculum=req.body.subject_curriculum
+  req.body.degree_details=JSON.parse(req.body.degree_details)
+  req.body.subject_curriculum=JSON.parse(req.body.subject_curriculum)
 
   const teacherResponse= await Teacher.create({
     preferred_name:req.body.name,

@@ -10,8 +10,8 @@ const DegreeDetailSchema=new mongoose.Schema({
         required:true
     },
     end_year:{
-        type:mongoose.Schema.Types.Date,
-        required:true
+        type:String,
+        
     },
         college:{
 type:String,

@@ -180,7 +180,7 @@ const editDegreeDetails=async(req,res)=>{
         $set: {
            "degree.$.name": req.body.name,
            "degree.$.start_year": req.body.start_year,
-           "degree.$.end_year": req.body.end_year,
+           "degree.$.end_year": req.body?.end_year,
           
            "degree.$.college": req.body.college,
  
@@ -209,11 +209,7 @@ const editDegreeDetails=async(req,res)=>{
      {
         $push: {
            "degree": {
-            "name": req.body.name,
-            "start_year": req.body.start_year,
-            "end_year": req.body.end_year,
-           
-            "college": req.body.college,
+           ...req.body
            }
         }
      }

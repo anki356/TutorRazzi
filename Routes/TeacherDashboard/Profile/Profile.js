@@ -46,7 +46,12 @@ router.delete("/testimonial/:_id",authVerify,deleteTestimonial)
 router.post("/subject-curriculum",authVerify,subject_curriculum_validation,validationError,addSubjectCurriculum)
 router.patch("/subject-curriculum/:_id",authVerify,subject_curriculum_validation,validationError,editSubjectCurriculum)
 router.delete("/subject-curriculum/:_id",authVerify,deleteSubjectCurriculum)
-router.post("/degree-detail",authVerify,addDegreeDetail)
-router.patch("/degree-detail/:_id",authVerify,editDegreeDetails)
+const degree_detail_validation=[
+    body('name').notEmpty().withMessage("Degree name is required"),
+    body('start_year').notEmpty().withMessage("Start Year is required"),
+    body('college').notEmpty().withMessage("College is required")
+]
+router.post("/degree-detail",authVerify,degree_detail_validation,validationError,addDegreeDetail)
+router.patch("/degree-detail/:_id",authVerify,degree_detail_validation,validationError,editDegreeDetails)
 router.delete("/degree-detail/:_id",authVerify,deleteDegreeDetail)
 export default router

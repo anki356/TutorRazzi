@@ -6,10 +6,17 @@ const TestimonialSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    student_id: {
-        type: mongoose.Types.ObjectId,
-        ref: "User",
-        required: true,
+    student_name: {
+        type: string,
+        required: true
+    },
+    grade:{
+type:string,
+required: true
+    },
+    school:{
+        type:string,
+        required: true
     },
     teacher_id: {
         type: mongoose.Types.ObjectId,

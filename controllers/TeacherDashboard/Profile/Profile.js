@@ -137,7 +137,10 @@ const uploadTestimonial=async(req,res)=>{
   const testimonialResponse=await Testimonial.create(
     {
       video:req.body.video,
-      student_id:req.body.student_id,
+      student_name:req.body.student_name,
+      grade:req.body.grade,
+      school:req.body.school,
+
       teacher_id:req.user._id
     }
   )

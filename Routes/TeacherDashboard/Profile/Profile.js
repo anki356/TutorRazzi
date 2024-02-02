@@ -27,9 +27,16 @@ const teacherValidation=[
     
     body('bio').notEmpty().withMessage("Bio is Required")
 ]
+const testimonialValidation=[
+    body('student_name').notEmpty().withMessage("Student Name is required"),
+    body('video').notEmpty().withMessage("Video is required"),
+    body('grade').notEmpty().withMessage("Student Grade is required"),
+    body('school').notEmpty().withMessage("Student School is required"),
+   
+]
 router.get("/profile",authVerify,getUserProfile)
 router.patch("/profile",authVerify,editProfile)
 router.post("/complete-profile",authVerify,teacherValidation,validationError,completeProfile)
-router.post("/testimonial",authVerify,uploadTestimonial)
+router.post("/testimonial",authVerify,testimonialValidation,validationError,uploadTestimonial)
 router.delete("/testimonial/:_id",authVerify,deleteTestimonial)
 export default router

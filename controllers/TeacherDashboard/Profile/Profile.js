@@ -80,6 +80,21 @@ const completeProfile=async(req,res)=>{
     }
   })
   req.body.exp_details=JSON.parse(req.body.exp_details)
+  req.body.exp_details=req.body.exp_details.map((obj)=>{
+   const { id, ...rest } = obj;
+  return rest;
+
+  })
+  req.body.degree_details=req.body.degree_details.map((obj)=>{
+   const { id, ...rest } = obj;
+  return rest;
+
+  })
+  req.body.subject_curriculum=req.body.subject_curriculum.map((obj)=>{
+   const { id, ...rest } = obj;
+  return rest;
+
+  })
   req.body.exp_details.forEach((data)=>{
    
     data.exp=Number(data.end_year)-Number(data.start_year)

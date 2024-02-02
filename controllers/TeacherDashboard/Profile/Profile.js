@@ -127,7 +127,7 @@ bio:req.body.bio
 }
 
 const uploadTestimonial=async(req,res)=>{
-   const testimonialArray=req.body.testData.map((data)=>{
+   const testimonialArray=req.body.map((data)=>{
       const { id,isEditing, ...rest } = data
      return{
 ...rest,

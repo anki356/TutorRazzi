@@ -265,7 +265,7 @@ const editDegreeDetails=async(req,res)=>{
  const editPhoto=async(req,res)=>{
   await User.updateOne(
     {_id:req.user._id},{
-      $set:req.files[0].filename
+      $set:{profile_image:req.files[0].filename}
     }
   )
   return res.json(responseObj(true,null,"Photo edited")) 

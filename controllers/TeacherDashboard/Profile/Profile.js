@@ -1,7 +1,9 @@
+import moment from "moment"
 import Teacher from "../../../models/Teacher.js"
 import Testimonial from "../../../models/Testimonial.js"
 import User from "../../../models/User.js"
 import { responseObj } from "../../../util/response.js"
+import { rectanglesAreEqual } from "pdf-lib"
 
 const getUserProfile=async(req,res)=>{
   const profile_image_details=await User.findOne({
@@ -188,7 +190,7 @@ const editDegreeDetails=async(req,res)=>{
         }
      }
   );
-  return res.json(responseObj(true,null,"Subject Curriculum Edited"))
+  return res.json(responseObj(true,null,"Degree Detail Edited"))
   
  }
  const deleteDegreeDetail=async(req,res)=>{
@@ -201,7 +203,7 @@ const editDegreeDetails=async(req,res)=>{
         }
      }
   );
-  return res.json(responseObj(true,null,"Subject Curriculum Deleted")) 
+  return res.json(responseObj(true,null,"Degree Detail Deleted")) 
  }
  const addDegreeDetail=async(req,res)=>{
   await Teacher.updateOne(
@@ -214,6 +216,58 @@ const editDegreeDetails=async(req,res)=>{
         }
      }
   );
-  return res.json(responseObj(true,null,"Subject Curriculum Added")) 
+  return res.json(responseObj(true,null,"Degree Detail Added")) 
  }
-export {editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum}
+ const editExpDetails=async(req,res)=>{
+  await Teacher.updateOne(
+     { "user_id": req.user._id, "exp_details._id": req.params._id },
+     {
+        $set: {
+           "exp_details.$.exp":req.body.end_year? Number(req.body.end_year)-Number( req.body.start_year):moment().year()-Number( req.body.start_year),
+           "exp_details.$.start_year": req.body.start_year,
+           "exp_details.$.end_year": req.body?.end_year,
+          
+           "exp_details.$.subject_curriculum": req.body?.subject_curriculum,
+           "exp_details.$.description": req.body?.description,
+ 
+           // Add other fields if necessary
+        }
+     }
+  );
+  return res.json(responseObj(true,null,"Exp Detail Edited"))
+  
+ }
+ const deleteExpDetail=async(req,res)=>{
+  await Teacher.updateOne(
+     { "user_id": req.user._id },
+     {
+        $pull: {
+           "exp_details": { "_id": req.params._id }
+           // Add other conditions if necessary
+        }
+     }
+  );
+  return res.json(responseObj(true,null,"EXp Details Deleted")) 
+ }
+ const addExpDetail=async(req,res)=>{
+  await Teacher.updateOne(
+     { "user_id": req.user._id },
+     {
+        $push: {
+           "exp_details": {
+           ...req.body
+           }
+        }
+     }
+  );
+  return res.json(responseObj(true,null,"Exp Details Added")) 
+ }
+ const editPhoto=async(req,res)=>{
+  await User.updateOne(
+    {_id:req.user._id},{
+      $set:req.files[0].filename
+    }
+  )
+  return res.json(responseObj(true,null,"Photo edited")) 
+ }
+export {editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum}

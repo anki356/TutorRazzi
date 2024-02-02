@@ -1,6 +1,6 @@
 import express from 'express'
 import { authVerify } from '../../../controllers/TeacherDashboard/Auth/Auth.js'
-import { addDegreeDetail, addSubjectCurriculum, completeProfile, deleteDegreeDetail, deleteSubjectCurriculum, deleteTestimonial, editDegreeDetails, editProfile, editSubjectCurriculum, getUserProfile, uploadTestimonial } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
+import { addDegreeDetail, addExpDetail, addSubjectCurriculum, completeProfile, deleteDegreeDetail, deleteExpDetail, deleteSubjectCurriculum, deleteTestimonial, editDegreeDetails, editExpDetails, editPhoto, editProfile, editSubjectCurriculum, getUserProfile, uploadTestimonial } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
 import { body } from 'express-validator'
 import validationError from '../../../middleware/validationError.js'
 import upload from '../../../util/upload.js'
@@ -51,7 +51,16 @@ const degree_detail_validation=[
     body('start_year').notEmpty().withMessage("Start Year is required"),
     body('college').notEmpty().withMessage("College is required")
 ]
+const exp_detail_validation=[
+ 
+    body('start_year').notEmpty().withMessage("Start Year is required"),
+   
+]
 router.post("/degree-detail",authVerify,degree_detail_validation,validationError,addDegreeDetail)
 router.patch("/degree-detail/:_id",authVerify,degree_detail_validation,validationError,editDegreeDetails)
 router.delete("/degree-detail/:_id",authVerify,deleteDegreeDetail)
+router.post("/exp-detail",authVerify,exp_detail_validation,validationError,addExpDetail)
+router.patch("/exp-detail/:_id",authVerify,exp_detail_validation,validationError,editExpDetails)
+router.delete("/exp-detail/:_id",authVerify,deleteExpDetail)
+router.patch("/photo",authVerify,editPhoto)
 export default router

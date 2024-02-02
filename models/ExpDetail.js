@@ -15,11 +15,11 @@ required:true
     },
     subject_curriculum:{
         type:String,
-        required:true
+      
     },
         description:{
 type:String,
-reuired:true
+
         }, createdAt: {
             type: String,
             default:()=> moment().format("YYYY-MM-DDTHH:mm"),

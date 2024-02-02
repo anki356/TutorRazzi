@@ -173,4 +173,51 @@ const addSubjectCurriculum=async(req,res)=>{
  );
  return res.json(responseObj(true,null,"Subject Curriculum Added")) 
 }
-export {addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum}
+const editDegreeDetails=async(req,res)=>{
+  await Teacher.updateOne(
+     { "user_id": req.user._id, "degree._id": req.params._id },
+     {
+        $set: {
+           "degree.$.name": req.body.name,
+           "degree.$.start_year": req.body.start_year,
+           "degree.$.end_year": req.body.end_year,
+          
+           "degree.$.college": req.body.college,
+ 
+           // Add other fields if necessary
+        }
+     }
+  );
+  return res.json(responseObj(true,null,"Subject Curriculum Edited"))
+  
+ }
+ const deleteDegreeDetail=async(req,res)=>{
+  await Teacher.updateOne(
+     { "user_id": req.user._id },
+     {
+        $pull: {
+           "degree": { "_id": req.params._id }
+           // Add other conditions if necessary
+        }
+     }
+  );
+  return res.json(responseObj(true,null,"Subject Curriculum Deleted")) 
+ }
+ const addDegreeDetail=async(req,res)=>{
+  await Teacher.updateOne(
+     { "user_id": req.user._id },
+     {
+        $push: {
+           "degree": {
+            "name": req.body.name,
+            "start_year": req.body.start_year,
+            "end_year": req.body.end_year,
+           
+            "college": req.body.college,
+           }
+        }
+     }
+  );
+  return res.json(responseObj(true,null,"Subject Curriculum Added")) 
+ }
+export {editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum}

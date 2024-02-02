@@ -11,7 +11,8 @@ const getMonthlyReport=async(req,res,next)=>{
         {
             $match:{
                 student_id:new ObjectID(req.query.student_id),
-                teacher_id:new ObjectID(req.user._id)
+                teacher_id:new ObjectID(req.user._id),
+                subject:req.query.subject
             }
         },  {
             $group: {
@@ -20,6 +21,9 @@ const getMonthlyReport=async(req,res,next)=>{
                     month:"$month"
                 },
                 averageRating: { $avg: "$rating" },
+                subject:{
+                    $first:"$subject"
+                }
               // You can use other accumulator operators based on your requirements
                 // Add other fields or calculations as needed
             }
@@ -29,7 +33,8 @@ const getMonthlyReport=async(req,res,next)=>{
                 _id: 0,
                 year: "$_id.year",
                 month: "$_id.month",
-                averageRating: 1,// Include other fields as needed
+                averageRating: 1,// Include other fields as needed,
+                subject:1
             }
         },
         {
@@ -192,15 +197,27 @@ const additionalComment=await AdditionalComment.findOne({student_id:new ObjectID
     res.json(responseObj(true,{ratings:averageGrade[0]?.totalRatings?averageGrade[0]?.totalRatings:0,report:report,additionalComment:additionalComment},null))
 }
 const isStudentReportPending=async(req,res)=>{
-    let isPendingResponse=await Class.findOne({
+    let classResponse=await Class.find({
         student_id:req.query.student_id,
         teacher_id:req.user._id,
         start_time:{
             $gte:moment().startOf('month').format("YYYY-MM-DDTHH:mm:ss"),
             $lte:moment().endOf('month').format("YYYY-MM-DDTHH:mm:ss")
         },
-        status:'Done'
+        status:'Done',
+        
     })
-    return res.json(responseObj(true,isPendingResponse!==null,null))
+    if(classResponse.length===0) {
+        return res.json(responseObj(false,classResponse,"No Class Found"))
+    }
+    let isPendingResponse=await Report.find({
+        student_id:req.query.student_id,
+        teacher_id:req.user._id,
+        month:moment().month(),
+        year:moment().year(),
+        subject:{$in:classResponse.map((data)=>data.subject.name)}
+    })
+
+    return res.json(responseObj(true,isPendingResponse.length===0,null))
 }
 export {getMonthlyReport,addMonthlyReport,getMonthlyReportDetails,isStudentReportPending}

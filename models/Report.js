@@ -39,7 +39,10 @@ const ReportSchema=new mongoose.Schema({
         type:Number,
         required:true
     },
-   
+   subject:{
+type:String,
+required:true
+   }
 },{
 versionKey: false})
 export default mongoose.model("Report",ReportSchema)

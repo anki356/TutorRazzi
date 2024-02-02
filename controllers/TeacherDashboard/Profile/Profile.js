@@ -127,15 +127,14 @@ bio:req.body.bio
 }
 
 const uploadTestimonial=async(req,res)=>{
-  const testimonialResponse=await Testimonial.create(
-    {
-      video:req.body.video,
-      student_name:req.body.student_name,
-      grade:req.body.grade,
-      school:req.body.school,
-
-      teacher_id:req.user._id
-    }
+   const testimonialArray=req.body.testData.map((data)=>{
+     return{
+...data,
+teacher_id:req.user._id
+     }
+   })
+  const testimonialResponse=await Testimonial.insertMany(
+   testimonialArray
   )
   return res.json(responseObj(true,testimonialResponse,"Testimonial Uploaded"))
 }

@@ -85,6 +85,14 @@ const completeProfile=async(req,res)=>{
   return rest;
 
   })
+
+  req.body.exp_details.forEach((data)=>{
+   
+    data.exp=Number(data.end_year)-Number(data.start_year)
+   
+  })
+  req.body.degree_details=JSON.parse(req.body.degree_details)
+  req.body.subject_curriculum=JSON.parse(req.body.subject_curriculum)
   req.body.degree_details=req.body.degree_details.map((obj)=>{
    const { id, ...rest } = obj;
   return rest;
@@ -95,14 +103,6 @@ const completeProfile=async(req,res)=>{
   return rest;
 
   })
-  req.body.exp_details.forEach((data)=>{
-   
-    data.exp=Number(data.end_year)-Number(data.start_year)
-   
-  })
-  req.body.degree_details=JSON.parse(req.body.degree_details)
-  req.body.subject_curriculum=JSON.parse(req.body.subject_curriculum)
-
   const teacherResponse= await Teacher.create({
     preferred_name:req.body.name,
    user_id:req.user._id,

@@ -7,15 +7,15 @@ const TestimonialSchema = new mongoose.Schema({
         required: true
     },
     student_name: {
-        type: string,
+        type: String,
         required: true
     },
     grade:{
-type:string,
+type:String,
 required: true
     },
     school:{
-        type:string,
+        type:String,
         required: true
     },
     teacher_id: {

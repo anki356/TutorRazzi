@@ -28,11 +28,12 @@ const dislikeClass = async (req, res, next) => {
 
 
 
-    const dislikeResponse = await Class.updateOne({_id:req.body.class_id},{$set:{
+    const dislikeResponse = await Class.findOneAndUpdate({_id:req.body.class_id},{$set:{
       
         response: "Disliked",
         reason_disliking: req.body.reason
     }})
+    addNotifications(dislikeResponse.teacher_id,"Class has been disliked"," Class has been disliked by "+req.user.name+" for subject "+dislikeResponse.subject+" on "+ moment(dislikeResponse.start_time).format("DD-MM-YYYY")+ "at "+moment(dislikeResponse.start_time).format("HH:mm" ))
     res.json(responseObj(true, [], " Dislike Response saved Successfully", []))
 
 
@@ -40,10 +41,11 @@ const dislikeClass = async (req, res, next) => {
 }
 
 const likeClass = async (req, res, next) => {
-    const likeResponse = await Class.updateOne({_id:req.body.class_id},{$set:{
+    const likeResponse = await Class.findOneAndUpdate({_id:req.body.class_id},{$set:{
       
         response: "Liked",
     }})
+    addNotifications(likeResponse.teacher_id,"Class has been Liked"," Class has been Liked by "+req.user.name+" for subject "+likeResponse.subject+" on "+ moment(likeResponse.start_time).format("DD-MM-YYYY")+ "at "+moment(likeResponse.start_time).format("HH:mm" ))
     res.json(responseObj(true, [], "Like Response Saved Successful"))
 }
 
@@ -178,6 +180,7 @@ const scheduleClass = async (req, res, next) => {
             }
         })
     }
+    addNotifications(req.body.teacher_id,"Class Scheduled Successfully","Class has been scheduled for student "+req.user.name+" on "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm" ))
     res.json(responseObj(true, scheduleClassResponse, "Class Scheduled Successfully"))
 
 
@@ -213,18 +216,46 @@ const rescheduleClass = async (req, res, next) => {
             status: 'Pending'
         }
     })
+    addNotifications(req.body.teacher_id,"Class ReScheduled","Class has been re-scheduled for student "+req.user.name+" on "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm" ))
     res.json(responseObj(true, [], "Class ReScheduled Successfully"))
 
 }
 
 const reviewClass = async (req, res, next) => {
-   
-    const reviewResponse = await Review.insertMany({
-        class_id: req.body.class_id,
-        message: req.body?.message,
-        rating: req.body.ratings,
+    let classDetails=await Class.findOne({
+        _id : req.body.class_id
+      })
+      if(classDetails===null){
+        throw new Error("Incorrect Class ID")
+      }
+      let reviewResponse=await Review.findOne({
+        class_id:req.body.class_id,
         given_by:req.user._id
+      })
+      console.log(reviewResponse)
+      if(reviewResponse===null){
+         reviewResponse=await Review.insertMany({
+          class_id:req.body.class_id,
+          message:req.body?.message,
+          rating:req.body.rating,
+          given_by:req.user._id
+      })
+      }
+      else{
+    reviewResponse=await Review.updateOne({
+      _id:reviewResponse._id
+    },{
+      $set:{
+        message:req.body?.message,
+        rating:req.body.rating,
+      }
     })
+      }
+ 
+    const teacherDetails=await Class.findOne({
+        _id:req.body.class_id
+    })
+    addNotifications(teacherDetails.teacher_id,"Class Reviewed","Class  for student "+req.user.name+" for subject "+classDetails.subject+" on "+moment(classDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(classDetails.start_time).format("HH:mm" )+" has been reviewed as rating "+req.body.rating)
 
     res.json(responseObj(true, reviewResponse, "Review Created Successfully"))
 }
@@ -363,19 +394,24 @@ let classDetails=await Class.findOne({
             status: 'Scheduled'
         }
     });
+    addNotifications(req.body.teacher_id,"Class rescheduled by You for student "+req.user.name+" for subject "+rescheduleacceptResponse.subject+" on "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+ " at "+moment(rescheduleacceptResponse.start_time).format("HH:mm" )+" has been accepted")
     res.json(responseObj(true, rescheduleacceptResponse, "Rescheduled Class Accepted Successfully"))
 }
 
 const markTaskDone = async (req, res, next) => {
-   let taskResponse=await Task.updateOne({
+   let taskResponse=await Task.findOneAndUpdate({
     _id:req.params._id
    },{
     $set:{
         status:"Done"
     }
    })
+   const teacherDetails=await Class.findOne({
+    _id:taskResponse.class_id
+})
+addNotifications(teacherDetails.teacher_id,"Task marked Done"," Task has been marked as done given to "+req.user.name+ " in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" ))
     res.json(responseObj(true, [], "Task Marked Done"))
-
+   
 }
 const uploadHomework = async (req, res, next) => {
     let documentResponse = await Document.create({
@@ -390,7 +426,7 @@ if(homeworkResponse.answer_document_id!==null&&homeworkResponse.answer_document_
     )
   unlinkFile(documentTobeDeleted.name)  
 }
-   homeworkResponse=await HomeWork.updateOne({
+   homeworkResponse=await HomeWork.findOneAndUpdate({
     _id:req.params._id
   },{
     $set:{
@@ -398,7 +434,10 @@ if(homeworkResponse.answer_document_id!==null&&homeworkResponse.answer_document_
         answer_document_id:documentResponse._id
     }
   })
-
+  const teacherDetails=await Class.findOne({
+    _id:homeworkResponse.class_id
+})
+addNotifications(teacherDetails.teacher_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" ))
     res.json(responseObj(true, [], "Home work uploaded"))
 }
 

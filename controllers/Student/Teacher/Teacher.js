@@ -5,6 +5,7 @@ import Student from "../../../models/Student.js"
 import { responseObj } from "../../../util/response.js"
 import mongoose from 'mongoose'
 import Testimonial from "../../../models/Testimonial.js"
+import { addNotifications } from "../../../util/addNotification.js"
 const ObjectID = mongoose.Types.ObjectId
 const getTeacherBySubjectCurriculum = async (req, res, next) => {
     const teacherResponse = await Teacher.aggregate([{
@@ -109,7 +110,10 @@ const reviewTeacher = async (req, res, next) => {
         class_id: req.body.class_id,
         given_by:req.user._id
     })
-
+    const classDetails=await Class.findOne({
+        _id:req.body.class_id
+    })
+addNotifications(req.body.teacher_id,"Review Added ", "You have been reviewed by "+ req.user.name+"for subject "+classDetails.subject+" on "+moment(classDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(classDetails.start_time).format("HH:mm" )+"  as rating "+req.body.rating)
    return res.json(responseObj(true, { reviewResponse }, 'Teacher Review Recorded'))
 
 }

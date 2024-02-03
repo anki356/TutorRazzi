@@ -12,6 +12,8 @@ import Teacher from "../../../models/Teacher.js"
 const objectId = mongoose.Types.ObjectId
 import Wallet from "../../../models/Wallet.js"
 import User from "../../../models/User.js"
+import { addNotifications } from "../../../util/addNotification.js"
+
 import { paymentAcknowledgement } from "../../../util/EmailFormats/paymentAcknowledgement.js"
 import { paymentReceiptAcknowlegement } from "../../../util/EmailFormats/paymentReceiptAcknowlegement.js"
 const payQuote = async (req, res, next) => {
@@ -100,7 +102,7 @@ else{
             let markdownContent =paymentReceiptAcknowlegement(teacherResponse.user_id.name,req.body.net_amount)
      count=await Payment.countDocuments()
    console.log(teacherResponse)
-         
+      addNotifications(teacherResponse.user_id,'Payment Received',markdownContent)   
             sendEmail(teacherResponse.user_id.email,'Payment Received',markdownContent)
       
          

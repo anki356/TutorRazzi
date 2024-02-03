@@ -45,7 +45,7 @@ app.use("/api/",WebsiteRouter)
 app.use(errorHandlerMiddleware);
 
 app.set('view engine', 'ejs');
-app.set('views', __dirname + '/views');
+app.set('views', "./util" + '/views');
 app.get('/reset-password/:token', (req, res) => {
   const token = req.params.token;
   return res.render('reset-password', { token, errorMessage: null });

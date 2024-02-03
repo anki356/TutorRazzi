@@ -1,6 +1,6 @@
 import express from 'express'
 import { authVerify } from '../../../controllers/TeacherDashboard/Auth/Auth.js'
-import { addDegreeDetail, addExpDetail, addSubjectCurriculum, completeProfile, deleteDegreeDetail, deleteExpDetail, deleteSubjectCurriculum, deleteTestimonial, editDegreeDetails, editExpDetails, editPhoto, editProfile, editSubjectCurriculum, getUserProfile, uploadTestimonial } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
+import { addDegreeDetail, addExpDetail, addSubjectCurriculum, completeProfile, deleteDegreeDetail, deleteExpDetail, deleteSubjectCurriculum, deleteTestimonial, ediTestimonial, editDegreeDetails, editExpDetails, editPhoto, editProfile, editSubjectCurriculum, getUserProfile, uploadTestimonial } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
 import { body } from 'express-validator'
 import validationError from '../../../middleware/validationError.js'
 import upload from '../../../util/upload.js'
@@ -66,4 +66,6 @@ router.post("/exp-detail",authVerify,exp_detail_validation,validationError,addEx
 router.patch("/exp-detail/:_id",authVerify,exp_detail_validation,validationError,editExpDetails)
 router.delete("/exp-detail/:_id",authVerify,deleteExpDetail)
 router.patch("/photo",authVerify,editPhoto)
+router.patch("/testimonial/:_id",authVerify,ediTestimonial)
+
 export default router

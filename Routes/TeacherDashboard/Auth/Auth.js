@@ -3,7 +3,7 @@ import { SignUp,SignIn, changePassword, verifyEmail, verifyOTP } from "../../../
 const router=express.Router()
 router.post("/SignUp",SignUp)
 router.post("/SignIn",SignIn)
-router.patch("/change-Password",changePassword)
+router.post("/change-password/:token",changePassword)
 router.post("/verify-Email",verifyEmail)
-router.post("/verify-OTP",verifyOTP)
+// router.post("/verify-OTP",verifyOTP)
 export default router

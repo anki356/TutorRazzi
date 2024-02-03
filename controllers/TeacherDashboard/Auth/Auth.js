@@ -9,6 +9,8 @@ import {newUserEmail} from "../../../util/EmailFormats/newUserEmail.js"
 import {  changePasswordEmail } from "../../../util/EmailFormats/changePasswordEmail.js";
 import Teacher from "../../../models/Teacher.js";
 import Testimonial from "../../../models/Testimonial.js";
+import crypto from 'crypto'
+import { sendMailAsync } from "../../../util/emailTransport.js";
 const ObjectId=mongoose.Types.ObjectId
 
 const SignUp = async (req, res) => {
@@ -96,19 +98,25 @@ res.json(responseObj(true,{
 },"Otp Verified",null) )
 }
 const verifyEmail=async(req,res,next)=>{
-    let userResponse=await User.findOne({email:req.body.email})
+    let userResponse=await User.findOne({email:req.body.email,role:'teacher'})
    
-    if(userResponse.length===null){
+    if(userResponse===null){
 
 throw new Error("User Email not found")
 
     }
 
 
-        const verificationCode = Math.floor(Math.random() * 1000000);
-    userResponse=await User.updateOne({email:req.body.email},{resetToken:verificationCode})
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    const mailOptions = {
+        to: req.body.email,
+        subject: 'Password Reset',
+        html: "./util/reset-link.ejs",
+    };
+    const options = { resetToken }
+    userResponse=await User.updateOne({email:req.body.email},{resetToken:resetToken})
    // Create a transporter using the Ethereal account
-  sendEmail(req.body.email,"Verification Email", "Verificaion code is "+verificationCode)
+  sendMailAsync(mailOptions, options)
   res.json(responseObj(true,null,"Email Sent"))
       
           

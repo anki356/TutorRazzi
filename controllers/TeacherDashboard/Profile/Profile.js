@@ -174,12 +174,19 @@ const deleteSubjectCurriculum=async(req,res)=>{
  return res.json(responseObj(true,null,"Subject Curriculum Deleted")) 
 }
 const addSubjectCurriculum=async(req,res)=>{
+   const subject_curriculum_array=req.body.map((data)=>{
+      const { id,isEditing, ...rest } = data
+     return{
+...rest,
+
+     }
+   })
  await Teacher.updateOne(
     { "user_id": req.user._id },
     {
        $push: {
           "subject_curriculum": {
-            ...req.body
+            ...subject_curriculum_array
           }
        }
     }
@@ -217,12 +224,19 @@ const editDegreeDetails=async(req,res)=>{
   return res.json(responseObj(true,null,"Degree Detail Deleted")) 
  }
  const addDegreeDetail=async(req,res)=>{
+   const degree_detail_array=req.body.map((data)=>{
+      const { id,isEditing, ...rest } = data
+     return{
+...rest,
+
+     }
+   })
   await Teacher.updateOne(
      { "user_id": req.user._id },
      {
         $push: {
            "degree": {
-           ...req.body
+           ...degree_detail_array
            }
         }
      }
@@ -261,12 +275,19 @@ const editDegreeDetails=async(req,res)=>{
   return res.json(responseObj(true,null,"EXp Details Deleted")) 
  }
  const addExpDetail=async(req,res)=>{
+const exp_detail_array=req.body.map((data)=>{
+   const { id,isEditing, ...rest } = data
+  return{
+...rest,
+
+  }
+})
   await Teacher.updateOne(
      { "user_id": req.user._id },
      {
         $push: {
            "exp_details": {
-           ...req.body
+           ...exp_detail_array
            }
         }
      }

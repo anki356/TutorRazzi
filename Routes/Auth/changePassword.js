@@ -24,3 +24,4 @@ router.post("/auth/Change-password/:token",async(req,res)=>{
 
     
 })
+export default router

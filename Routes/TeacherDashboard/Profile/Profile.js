@@ -51,6 +51,8 @@ const degree_detail_validation=[
     body('*.start_year').notEmpty().withMessage("Start Year is required"),
     body('*.college').notEmpty().withMessage("College is required")
 ]
+
+
 const exp_detail_validation=[
  
     body('*.start_year').notEmpty().withMessage("Start Year is required"),

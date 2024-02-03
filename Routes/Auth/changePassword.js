@@ -1,8 +1,13 @@
 import express from 'express'
 import User from '../../models/User.js';
 import bcrypt from 'bcrypt'
+import { body } from 'express-validator';
+import validationError from '../../middleware/validationError.js';
 const router=express.Router()
-router.post("/auth/Change-password/:token",async(req,res)=>{
+const passwordValidation=[
+    body('password').notEmpty().withMessage("Password is required")
+]
+router.post("/auth/Change-password/:token",passwordValidation,validationError,async(req,res)=>{
     const { token } = req.params;
     const { password } = req.body;
 

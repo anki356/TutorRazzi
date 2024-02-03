@@ -179,8 +179,7 @@ const addSubjectCurriculum=async(req,res)=>{
     {
        $push: {
           "subject_curriculum": {
-             "subject": req.body.subject,
-             "curriculum":req.body.curriculum
+            ...req.body
           }
        }
     }

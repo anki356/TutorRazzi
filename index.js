@@ -35,6 +35,7 @@ import TeacherDashboardRouter from "./Routes/TeacherDashboard/index.js"
 import WebsiteRouter from "./Routes/Website/index.js"
 import HomeWork from "./models/HomeWork.js";
 import upload from "./util/upload.js";
+import AuthRouter from "./Routes/Auth/changePassword.js"
 app.use("/api/",StudentRouter)
 app.use("/api/",AdminRouter)
 app.use("/api/",ParentRouter)
@@ -42,6 +43,7 @@ app.use("/api/",TeacherAppRouter)
 app.use("/api/",AcademicManagerRouter)
 app.use("/api/",TeacherDashboardRouter)
 app.use("/api/",WebsiteRouter)
+app.use("/api/",AuthRouter)
 app.use(errorHandlerMiddleware);
 
 app.set('view engine', 'ejs');

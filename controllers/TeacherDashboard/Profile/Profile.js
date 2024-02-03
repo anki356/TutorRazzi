@@ -292,6 +292,7 @@ const exp_detail_array=req.body.map((data)=>{
         }
      }
   );
+  
   return res.json(responseObj(true,null,"Exp Details Added")) 
  }
  const editPhoto=async(req,res)=>{
@@ -306,6 +307,11 @@ const exp_detail_array=req.body.map((data)=>{
       $set:{profile_image:req.files[0].filename}
     }
   )
-  return res.json(responseObj(true,null,"Photo edited")) 
+  const teacherResponse=await Teacher.findOne({
+   user_id:req.user._id
+ }).populate({
+  path:"user_id"
+ })
+  return res.json(responseObj(true,teacherResponse,"Photo edited")) 
  }
 export {editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum}

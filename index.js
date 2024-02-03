@@ -43,13 +43,14 @@ app.use("/api/",AcademicManagerRouter)
 app.use("/api/",TeacherDashboardRouter)
 app.use("/api/",WebsiteRouter)
 app.use(errorHandlerMiddleware);
-app.use(notFound);
+
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 app.get('/reset-password/:token', (req, res) => {
   const token = req.params.token;
   return res.render('reset-password', { token, errorMessage: null });
 });
+app.use(notFound);
  const start = async () => {
 
     try {

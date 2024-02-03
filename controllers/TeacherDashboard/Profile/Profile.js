@@ -181,13 +181,14 @@ const addSubjectCurriculum=async(req,res)=>{
 
      }
    })
+
  await Teacher.updateOne(
     { "user_id": req.user._id },
     {
        $push: {
-          "subject_curriculum": {
-            ...subject_curriculum_array
-          }
+          "subject_curriculum": 
+            subject_curriculum_array
+          
        }
     }
  );
@@ -235,9 +236,9 @@ const editDegreeDetails=async(req,res)=>{
      { "user_id": req.user._id },
      {
         $push: {
-           "degree": {
-           ...degree_detail_array
-           }
+           "degree": 
+           degree_detail_array
+           
         }
      }
   );
@@ -286,9 +287,8 @@ const exp_detail_array=req.body.map((data)=>{
      { "user_id": req.user._id },
      {
         $push: {
-           "exp_details": {
-           ...exp_detail_array
-           }
+           "exp_details": exp_detail_array
+           
         }
      }
   );

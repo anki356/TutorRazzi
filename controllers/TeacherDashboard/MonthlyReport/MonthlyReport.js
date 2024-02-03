@@ -205,6 +205,7 @@ const isStudentReportPending=async(req,res)=>{
             $lte:moment().endOf('month').format("YYYY-MM-DDTHH:mm:ss")
         },
         status:'Done',
+        subject:req.query.subject
         
     })
     if(classResponse.length===0) {
@@ -220,4 +221,19 @@ const isStudentReportPending=async(req,res)=>{
 
     return res.json(responseObj(true,isPendingResponse.length===0,null))
 }
-export {getMonthlyReport,addMonthlyReport,getMonthlyReportDetails,isStudentReportPending}
+const getAllSubjects=async(req,res)=>{
+    let subjects=await Class.find({
+        teacher_id:req.user._id,
+        student_id:req.query.student_id
+    },{
+        subject:1
+    })
+subjects =subjects.map((data)=>{
+    return data.subject.name
+}).filter((data,index,self)=>{
+    return self.indexOf(data)===index
+})
+return res.json(responseObj(true,subjects,"subjects"))
+
+}
+export {getMonthlyReport,addMonthlyReport,getMonthlyReportDetails,isStudentReportPending,getAllSubjects}

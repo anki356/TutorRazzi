@@ -140,12 +140,15 @@ teacher_id:req.user._id
   return res.json(responseObj(true,testimonialResponse,"Testimonial Uploaded"))
 }
 const editTestimonial=async(req,res)=>{
-  
+   const { id,isEditing, student_name,createdAt,_id,grade,school,video } = req.body 
   const testimonialResponse=await Testimonial.updateOne({
-   $_id:req.params._id
+   _id:req.params._id
   },{
    $set:{
-      ...req.body
+      student_name,
+      school,
+      grade,
+      video
    }
   }
    

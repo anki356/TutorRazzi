@@ -286,7 +286,7 @@ const teacherResponse=await User.findOne({
 
     const adminHtmlContent = adminNewResourceRequest(req.user.name, req.body.message, classResponse)
     sendEmail(teacherResponse.email, "Resource Reqested", adminHtmlContent, null)
-    let class_name=classResponse.name!==null&&classResponse.name!==undefined?classResponse.name:classResponse.subject.name+" of " +classResponse.grade.name+" By "+classResponse.teacher_id.name
+    let class_name=classResponse.name!==null&&classResponse.name!==undefined?classResponse.name:classResponse.subject.name+" of " +classResponse.grade.name
 
 
     addNotifications({

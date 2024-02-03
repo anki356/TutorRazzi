@@ -128,7 +128,7 @@ bio:req.body.bio
 
 const uploadTestimonial=async(req,res)=>{
    if(req.body.length===0){
-      return res.json(responseObj(true,null,"Testimonial Not There"))
+      return res.json(responseObj(false,null,"Testimonial Not There"))
      }
    const testimonialArray=req.body.map((data)=>{
       const { id,isEditing, ...rest } = data
@@ -302,7 +302,7 @@ const editDegreeDetails=async(req,res)=>{
  }
  const addExpDetail=async(req,res)=>{
    if(req.body.length===0){
-      return res.json(responseObj(true,null,"EXp Detail Not There"))
+      return res.json(responseObj(false,null,"EXp Detail Not There"))
      }
 const exp_detail_array=req.body.map((data)=>{
    const { id,isEditing, ...rest } = data

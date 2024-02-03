@@ -139,7 +139,7 @@ teacher_id:req.user._id
   )
   return res.json(responseObj(true,testimonialResponse,"Testimonial Uploaded"))
 }
-const ediTestimonial=async(req,res)=>{
+const editTestimonial=async(req,res)=>{
   
   const testimonialResponse=await Testimonial.updateOne({
    $_id:req.params._id
@@ -327,4 +327,4 @@ const exp_detail_array=req.body.map((data)=>{
  })
   return res.json(responseObj(true,teacherResponse,"Photo edited")) 
  }
-export {ediTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum}
+export {editTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum}

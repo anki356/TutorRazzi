@@ -29,6 +29,7 @@ const teacherValidation=[
 ]
 
 const subject_curriculum_validation=[
+   
     body('*.subject').notEmpty().withMessage("Subject is required"),
     body('*.curriculum').notEmpty().withMessage("Curriculum is required")
 ]

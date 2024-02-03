@@ -127,6 +127,9 @@ bio:req.body.bio
 }
 
 const uploadTestimonial=async(req,res)=>{
+   if(req.body.length===0){
+      return res.json(responseObj(true,null,"Testimonial Not There"))
+     }
    const testimonialArray=req.body.map((data)=>{
       const { id,isEditing, ...rest } = data
      return{
@@ -190,6 +193,9 @@ const deleteSubjectCurriculum=async(req,res)=>{
  return res.json(responseObj(true,null,"Subject Curriculum Deleted")) 
 }
 const addSubjectCurriculum=async(req,res)=>{
+   if(req.body.length===0){
+    return res.json(responseObj(false,null,"Subject Curriculum Not There"))
+   }
    const subject_curriculum_array=req.body.map((data)=>{
       const { id,isEditing, ...rest } = data
      return{
@@ -241,6 +247,9 @@ const editDegreeDetails=async(req,res)=>{
   return res.json(responseObj(true,null,"Degree Detail Deleted")) 
  }
  const addDegreeDetail=async(req,res)=>{
+   if(req.body.length===0){
+      return res.json(responseObj(false,null,"Degree Detail Not There"))
+     }
    const degree_detail_array=req.body.map((data)=>{
       const { id,isEditing, ...rest } = data
      return{
@@ -292,6 +301,9 @@ const editDegreeDetails=async(req,res)=>{
   return res.json(responseObj(true,null,"EXp Details Deleted")) 
  }
  const addExpDetail=async(req,res)=>{
+   if(req.body.length===0){
+      return res.json(responseObj(true,null,"EXp Detail Not There"))
+     }
 const exp_detail_array=req.body.map((data)=>{
    const { id,isEditing, ...rest } = data
   return{

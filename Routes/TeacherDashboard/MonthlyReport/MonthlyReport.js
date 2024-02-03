@@ -1,11 +1,12 @@
 import express  from "express";
 import { authVerify } from "../../../controllers/TeacherDashboard/Auth/Auth.js";
-import { addMonthlyReport, getMonthlyReport, getMonthlyReportDetails, isStudentReportPending } from "../../../controllers/TeacherDashboard/MonthlyReport/MonthlyReport.js";
+import { addMonthlyReport, getAllSubjects, getMonthlyReport, getMonthlyReportDetails, isStudentReportPending } from "../../../controllers/TeacherDashboard/MonthlyReport/MonthlyReport.js";
 import { body } from "express-validator";
 import validationError from "../../../middleware/validationError.js";
 const router=express.Router()
 router.get("/get-monthly-report",authVerify,getMonthlyReport)
 const ReportValidation=[
+    body('subject').notEmpty().withMessage("Subject is required"),
     body('subject_knowledge_and_understanding').notEmpty().withMessage("Subject knowledge rating cannot be empty"),
     body('class_participation_and_engagement').notEmpty().withMessage("Class participation and engagement  rating cannot be empty"),
     body('homeworks_and_assignment_completion').notEmpty().withMessage("Homework and assignment completion rating cannot be empty"),
@@ -32,6 +33,7 @@ const ReportValidation=[
     
 ]
 router.post("/add-monthly-report",authVerify,ReportValidation,validationError,addMonthlyReport)
+router.get("/all-subjects",authVerify,getAllSubjects)
 router.get("/get-monthly-report-details",authVerify,getMonthlyReportDetails)
 router.get("/is-student-report-pending",authVerify,isStudentReportPending)
 export default router

@@ -59,8 +59,8 @@ student_id:new ObjectID(req.body.student_id),
 message:req.body.subject_knowledge_and_understanding_message,
 teacher_id:req.user._id,
 month:moment().month(),
-year:moment().year()
-    
+year:moment().year(),
+  subject:  req.body.subject
 
 
 
@@ -72,7 +72,8 @@ year:moment().year()
         message:req.body.class_participation_and_engagement_message,
         teacher_id:req.user._id,
         month:moment().month(),
-        year:moment().year()  
+        year:moment().year()  ,
+        subject:  req.body.subject
     },{
         title:"Academic Performance",
         sub_title:"Homework and Assignments Completion",
@@ -81,7 +82,8 @@ year:moment().year()
         message:req.body.homeworks_and_assignment_completion_message,
         teacher_id:req.user._id,
         month:moment().month(),
-        year:moment().year()  
+        year:moment().year()  ,
+        subject:  req.body.subject
     },{
         title:"Academic Performance",
         sub_title:"Problem-Solving and Critical Thinking Skills",
@@ -90,7 +92,8 @@ year:moment().year()
         message:req.body.problem_solving_and_critical_thinking_skills_message,
         teacher_id:req.user._id,
         month:moment().month(),
-        year:moment().year()  
+        year:moment().year()  ,
+        subject:  req.body.subject
     },{
         title:"Learning Attitude",
         sub_title:"Motivation and Enthusiasm",
@@ -99,7 +102,8 @@ year:moment().year()
         message:req.body.motivation_and_enthusiasm_message,
         teacher_id:req.user._id,
         month:moment().month(),
-        year:moment().year() 
+        year:moment().year() ,
+        subject:  req.body.subject
     },{
         title:"Learning Attitude",
         sub_title:"Collaboration and Teamwork",
@@ -108,7 +112,8 @@ year:moment().year()
         message:req.body.collaboration_and_teamwork_message,
         teacher_id:req.user._id,
         month:moment().month(),
-        year:moment().year() 
+        year:moment().year() ,
+        subject:  req.body.subject
     },{
         title:"Communication Skills",
         sub_title:"Verbal Communication",
@@ -117,7 +122,8 @@ year:moment().year()
         message:req.body.verbal_communication_message,
         teacher_id:req.user._id,
         month:moment().month(),
-        year:moment().year() 
+        year:moment().year() ,
+        subject:  req.body.subject
     },{
         title:"Communication Skills",
         sub_title:"Written Communication",
@@ -126,7 +132,8 @@ year:moment().year()
         message:req.body.written_communication_message,
         teacher_id:req.user._id,
         month:moment().month(),
-        year:moment().year()
+        year:moment().year(),
+        subject:  req.body.subject
     },{
         title:"Personal Growth",
         sub_title:"Time Management",
@@ -135,7 +142,8 @@ year:moment().year()
         message:req.body.time_management_message,
         teacher_id:req.user._id,
         month:moment().month(),
-        year:moment().year()
+        year:moment().year(),
+        subject:  req.body.subject
     },{
         title:"Personal Growth",
         sub_title:"Organization and Preparedness",
@@ -144,7 +152,8 @@ year:moment().year()
         message:req.body.organization_and_preparedness_message,
         teacher_id:req.user._id,
         month:moment().month(),
-        year:moment().year()
+        year:moment().year(),
+        subject:  req.body.subject
     },{
         title:"Personal Growth",
         sub_title:"Responsibility and Accountability",
@@ -153,7 +162,8 @@ year:moment().year()
         message:req.body.responsibility_and_accountability_message,
         teacher_id:req.user._id,
         month:moment().month(),
-        year:moment().year() 
+        year:moment().year() ,
+        subject:  req.body.subject
     }])
     const additionalComment=await AdditionalComment.create({
         student_id:new ObjectID(req.body.student_id),

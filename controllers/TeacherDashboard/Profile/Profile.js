@@ -141,7 +141,7 @@ const uploadTestimonial=async(req,res)=>{
    //    return res.json(responseObj(false,null,"Testimonial Not There"))
    //   }
    // const testimonialArray=req.body.map((data)=>{
-      const { id,isEditing, ...rest } = data
+      const { id,isEditing, ...rest } = req.body
 //      return{
 // ...rest,
 // teacher_id:req.user._id
@@ -265,7 +265,7 @@ const editDegreeDetails=async(req,res)=>{
    //    return res.json(responseObj(false,null,"Degree Detail Not There"))
    //   }
    // const degree_detail_array=req.body.map((data)=>{
-      const { id,isEditing, ...rest } = data
+      const { id,isEditing, ...rest } = req.body
 //      return{
 // ...rest,
 

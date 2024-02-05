@@ -301,21 +301,21 @@ const editDegreeDetails=async(req,res)=>{
   return res.json(responseObj(true,null,"EXp Details Deleted")) 
  }
  const addExpDetail=async(req,res)=>{
-   if(req.body.length===0){
-      return res.json(responseObj(false,null,"EXp Detail Not There"))
-     }
-const exp_detail_array=req.body.map((data)=>{
-   const { id,isEditing, ...rest } = data
-  return{
-...rest,
+   // if(req.body.length===0){
+   //    return res.json(responseObj(false,null,"EXp Detail Not There"))
+   //   }
+// const exp_detail_array=req.body.map((data)=>{
+   const { id,isEditing, ...rest } = req.body
+//   return{
+// ...rest,
 
-  }
-})
+//   }
+// })
   await Teacher.updateOne(
      { "user_id": req.user._id },
      {
         $push: {
-           "exp_details": exp_detail_array
+           "exp_details": {...rest}
            
         }
      }

@@ -4,6 +4,8 @@ import Testimonial from "../../../models/Testimonial.js"
 import User from "../../../models/User.js"
 import { responseObj } from "../../../util/response.js"
 import unlinkFile from "../../../util/unlinkFile.js"
+import Curriculum from "../../../models/Curriculum.js"
+import SubjectCurriculum from "../../../models/SubjectCurriculum.js"
 
 const getUserProfile=async(req,res)=>{
   const profile_image_details=await User.findOne({
@@ -363,4 +365,15 @@ rest.exp=rest.end_year!==undefined&&rest.end_year!==null&& rest.end_year!==''?Nu
  })
   return res.json(responseObj(true,teacherResponse,"Photo edited")) 
  }
-export {editTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum}
+ const getAllCurriculums=async (req,res)=>{
+  const curriculums=await Curriculum.find({})
+  return res.json(responseObj(true,curriculums,"All Curriculums"))
+ }
+ const getSubjectCurriculum=async(req,res)=>{
+  const subject_curriculum=await SubjectCurriculum.find({
+     curriculum:req.query.curriculum
+  })
+  let subjects=subject_curriculum.map((data)=>data.subject)
+  return res.json(responseObj(true,subjects,"Subject Curriculum"))
+ }
+export {getSubjectCurriculum,editTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum,getAllCurriculums}

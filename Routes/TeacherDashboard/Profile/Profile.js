@@ -1,6 +1,6 @@
 import express from 'express'
 import { authVerify } from '../../../controllers/TeacherDashboard/Auth/Auth.js'
-import { addDegreeDetail, addExpDetail, addSubjectCurriculum, completeProfile, deleteDegreeDetail, deleteExpDetail, deleteSubjectCurriculum, deleteTestimonial, editTestimonial, editDegreeDetails, editExpDetails, editPhoto, editProfile, editSubjectCurriculum, getUserProfile, uploadTestimonial } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
+import { addDegreeDetail, addExpDetail, addSubjectCurriculum, completeProfile, deleteDegreeDetail, deleteExpDetail, deleteSubjectCurriculum, deleteTestimonial, editTestimonial, editDegreeDetails, editExpDetails, editPhoto, editProfile, editSubjectCurriculum, getUserProfile, uploadTestimonial, getSubjectCurriculum, getAllCurriculums } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
 import { body } from 'express-validator'
 import validationError from '../../../middleware/validationError.js'
 import upload from '../../../util/upload.js'
@@ -68,5 +68,7 @@ router.patch("/exp-detail/:_id",authVerify,exp_detail_validation,validationError
 router.delete("/exp-detail/:_id",authVerify,deleteExpDetail)
 router.patch("/photo",authVerify,editPhoto)
 router.patch("/testimonial/:_id",authVerify,editTestimonial)
+router.get("/subject-by-curriculum",authVerify,getSubjectCurriculum)
+router.get("/curriculums",authVerify,getAllCurriculums)
 
 export default router

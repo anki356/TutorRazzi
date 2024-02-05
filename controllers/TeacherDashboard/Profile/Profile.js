@@ -87,8 +87,16 @@ const completeProfile=async(req,res)=>{
   })
 
   req.body.exp_details.forEach((data)=>{
+   if(data.end_year===undefined||data.end_year===null||data.end_year===''){
+      data.exp=moment().year()-Number(data.start_year)
+   }
+   else if(Number(data.end_year)>Number(data.start_year)){
+      data.exp=Number(data.end_year)-Number(data.start_year)
+   }
+   else{
+      return res.json(responseObj(false ,null,"end_year should be greater than start_year"))
+   }
    
-    data.exp=Number(data.end_year)-Number(data.start_year)
    
   })
   req.body.degree_details=JSON.parse(req.body.degree_details)
@@ -127,18 +135,20 @@ bio:req.body.bio
 }
 
 const uploadTestimonial=async(req,res)=>{
-   if(req.body.length===0){
-      return res.json(responseObj(false,null,"Testimonial Not There"))
-     }
-   const testimonialArray=req.body.map((data)=>{
+   // if(req.body.length===0){
+   //    return res.json(responseObj(false,null,"Testimonial Not There"))
+   //   }
+   // const testimonialArray=req.body.map((data)=>{
       const { id,isEditing, ...rest } = data
-     return{
-...rest,
-teacher_id:req.user._id
-     }
-   })
-  const testimonialResponse=await Testimonial.insertMany(
-   testimonialArray
+//      return{
+// ...rest,
+// teacher_id:req.user._id
+//      }
+//    })
+  const testimonialResponse=await Testimonial.create(
+   {
+      ...rest
+   }
   )
   return res.json(responseObj(true,testimonialResponse,"Testimonial Uploaded"))
 }
@@ -193,23 +203,25 @@ const deleteSubjectCurriculum=async(req,res)=>{
  return res.json(responseObj(true,null,"Subject Curriculum Deleted")) 
 }
 const addSubjectCurriculum=async(req,res)=>{
-   if(req.body.length===0){
-    return res.json(responseObj(false,null,"Subject Curriculum Not There"))
-   }
-   const subject_curriculum_array=req.body.map((data)=>{
-      const { id,isEditing, ...rest } = data
-     return{
-...rest,
+   // if(req.body.length===0){
+   //  return res.json(responseObj(false,null,"Subject Curriculum Not There"))
+   // }
+   // const subject_curriculum_array=req.body.map((data)=>{
+      const { id,isEditing, ...rest } = req.body
+//      return{
+// ...rest,
 
-     }
-   })
+//      }
+//    })
 
  await Teacher.updateOne(
     { "user_id": req.user._id },
     {
        $push: {
           "subject_curriculum": 
-            subject_curriculum_array
+            {
+               ...req.body
+            }
           
        }
     }
@@ -247,22 +259,24 @@ const editDegreeDetails=async(req,res)=>{
   return res.json(responseObj(true,null,"Degree Detail Deleted")) 
  }
  const addDegreeDetail=async(req,res)=>{
-   if(req.body.length===0){
-      return res.json(responseObj(false,null,"Degree Detail Not There"))
-     }
-   const degree_detail_array=req.body.map((data)=>{
+   // if(req.body.length===0){
+   //    return res.json(responseObj(false,null,"Degree Detail Not There"))
+   //   }
+   // const degree_detail_array=req.body.map((data)=>{
       const { id,isEditing, ...rest } = data
-     return{
-...rest,
+//      return{
+// ...rest,
 
-     }
-   })
+//      }
+//    })
   await Teacher.updateOne(
      { "user_id": req.user._id },
      {
         $push: {
            "degree": 
-           degree_detail_array
+           {
+            ...rest
+           }
            
         }
      }
@@ -270,6 +284,9 @@ const editDegreeDetails=async(req,res)=>{
   return res.json(responseObj(true,null,"Degree Detail Added")) 
  }
  const editExpDetails=async(req,res)=>{
+   if(req.body.end_year!==undefined&&req.body.end_year!==null&& req.body.end_year!==''&&Number(req.body.end_year)-Number(req.body.start_year)<0){
+      return res.json(responseObj(false,null,"End year should be greater than start year"))
+    }
   await Teacher.updateOne(
      { "user_id": req.user._id, "exp_details._id": req.params._id },
      {
@@ -311,6 +328,10 @@ const editDegreeDetails=async(req,res)=>{
 
 //   }
 // })
+if(rest.end_year!==undefined&&rest.end_year!==null&& rest.end_year!==''&&Number(rest.end_year)-Number(rest.start_year)<0){
+  return res.json(responseObj(false,null,"End year should be greater than start year"))
+}
+rest.exp=rest.end_year!==undefined&&rest.end_year!==null&& rest.end_year!==''?Number(rest.end_year)-Number(rest.start_year):moment().year-Number(rest.start_year)
   await Teacher.updateOne(
      { "user_id": req.user._id },
      {

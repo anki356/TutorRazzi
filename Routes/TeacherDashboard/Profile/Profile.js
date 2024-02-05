@@ -30,14 +30,14 @@ const teacherValidation=[
 
 const subject_curriculum_validation=[
    
-    body('*.subject').notEmpty().withMessage("Subject is required"),
-    body('*.curriculum').notEmpty().withMessage("Curriculum is required")
+    body('subject').notEmpty().withMessage("Subject is required"),
+    body('curriculum').notEmpty().withMessage("Curriculum is required")
 ]
 const testimonial_validation=[
-    body('*.video').notEmpty().withMessage("Video is required"),
-    body('*.student_name').notEmpty().withMessage("Student Name is required"),
-    body('*.grade').notEmpty().withMessage("Grdae is required"),
-    body('*.school').notEmpty().withMessage("school is required")
+    body('video').notEmpty().withMessage("Video is required"),
+    body('student_name').notEmpty().withMessage("Student Name is required"),
+    body('grade').notEmpty().withMessage("Grade is required"),
+    body('school').notEmpty().withMessage("school is required")
 ]
 router.get("/profile",authVerify,getUserProfile)
 router.patch("/profile",authVerify,editProfile)
@@ -48,15 +48,15 @@ router.post("/subject-curriculum",authVerify,subject_curriculum_validation,valid
 router.patch("/subject-curriculum/:_id",authVerify,subject_curriculum_validation,validationError,editSubjectCurriculum)
 router.delete("/subject-curriculum/:_id",authVerify,deleteSubjectCurriculum)
 const degree_detail_validation=[
-    body('*.name').notEmpty().withMessage("Degree name is required"),
-    body('*.start_year').notEmpty().withMessage("Start Year is required"),
-    body('*.college').notEmpty().withMessage("College is required")
+    body('name').notEmpty().withMessage("Degree name is required"),
+    body('start_year').notEmpty().withMessage("Start Year is required"),
+    body('college').notEmpty().withMessage("College is required")
 ]
 
 
 const exp_detail_validation=[
  
-    body('*.start_year').notEmpty().withMessage("Start Year is required"),
+    body('start_year').notEmpty().withMessage("Start Year is required"),
    
 ]
 

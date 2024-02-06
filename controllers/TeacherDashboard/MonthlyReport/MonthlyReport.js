@@ -7,7 +7,7 @@ import Report from "../../../models/Report.js"
 import Class from "../../../models/Class.js"
 const ObjectID=mongoose.Types.ObjectId
 const getMonthlyReport=async(req,res,next)=>{
-    const monthlyReport=await Report.aggregatePaginate([
+    const monthlyReport=await Report.aggregate([
         {
             $match:{
                 student_id:new ObjectID(req.query.student_id),
@@ -43,14 +43,14 @@ const getMonthlyReport=async(req,res,next)=>{
                 month: 1
             }
         }
-    ],{
-        limit:req.query.limit,
-        page:req.query.page
-    })
+    ],)
     
+  let  monthlyReportDetails=awaitReport.aggregatePaginate(monthlyReport,{
+    limit:req.query.limit,
+    page:req.query.page
+})
 
-
-  return  res.json(responseObj(true,monthlyReport,null))
+  return  res.json(responseObj(true,monthlyReportDetails,null))
 }
 
 const addMonthlyReport=async(req,res)=>{

@@ -30,7 +30,8 @@ const ReportValidation=[
     body('organization_and_preparedness_message').notEmpty().withMessage("Organization and Preparedness message cannot be empty"),
     body('responsibility_and_accountability_message').notEmpty().withMessage("Responsiblity and Accountability message cannot be empty"),
     body('comments').notEmpty().withMessage(" Additional Comments cannot be empty"),
-    
+    body('initiative_and_self_direction').notEmpty().withMessage(" Initiative rating  cannot be empty"),
+    body('initiative_and_self_direction_message').notEmpty().withMessage(" Initiative Message  cannot be empty")
 ]
 router.post("/add-monthly-report",authVerify,ReportValidation,validationError,addMonthlyReport)
 router.get("/all-subjects",authVerify,getAllSubjects)

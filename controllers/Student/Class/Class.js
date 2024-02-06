@@ -22,6 +22,7 @@ import Task from "../../../models/Task.js"
 import Reminder from "../../../models/Reminder.js"
 import { addNotifications } from "../../../util/addNotification.js"
 import User from "../../../models/User.js"
+import Report from "../../../models/Report.js"
 
 const dislikeClass = async (req, res, next) => {
 
@@ -310,7 +311,20 @@ const joinClass = async (req, res, next) => {
     if (!moment().isBetween(moment(classResponse.start_time), moment(classResponse.end_time))) {
         throw new Error('You cannot Join Class at this time')
     }
-    classResponse = await Class.updateOne({
+    
+   let reportResponse=await Report.findOne({
+        student_id:req.user._id,
+        teacher_id:classResponse.teacher_id,
+        month:moment().month(),
+        year:moment().year(),
+        subject:classResponse.subject_id
+   })
+   attendanceResponse=await Attendance.findOne({
+    teacher_id:classResponse.teacher_id,
+    class_id:req.body.class_id
+   })
+   if(attendanceResponse!==null){
+    classResponse = await Class.findOneAndUpdate({
         _id: req.body.class_id
     }, {
 
@@ -318,8 +332,133 @@ const joinClass = async (req, res, next) => {
             status: 'Done'
         }
     })
+   }
+   if(reportResponse===null&&attendanceResponse!==null){
+
+      reportResponse=await Report.insertMany([{
+title:"Academic Performance",
+sub_title:"Subject Knowledge and Understanding",
+
+student_id:req.user._id,
+        
+teacher_id:classResponse.teacher_id,
+month:moment().month(),
+year:moment().year(),
+subject:  req.body.subject
+
+
+
+    },{
+        title:"Academic Performance",
+        sub_title:"Class Participation and Engagement",
+        
+        student_id:req.user._id,
+        
+        teacher_id:classResponse.teacher_id,
+        month:moment().month(),
+        year:moment().year()  ,
+        subject:  req.body.subject
+    },{
+        title:"Academic Performance",
+        sub_title:"Homework and Assignments Completion",
+       
+        student_id:req.user._id,
+        
+        teacher_id:classResponse.teacher_id,
+        month:moment().month(),
+        year:moment().year()  ,
+        subject:  req.body.subject
+    },{
+        title:"Academic Performance",
+        sub_title:"Problem-Solving and Critical Thinking Skills",
+       
+        student_id:req.user._id,
+        
+        teacher_id:classResponse.teacher_id,
+        month:moment().month(),
+        year:moment().year()  ,
+        subject:  req.body.subject
+    },{
+        title:"Learning Attitude",
+        sub_title:"Motivation and Enthusiasm",
+       
+        student_id:req.user._id,
+        
+        teacher_id:classResponse.teacher_id,
+        month:moment().month(),
+        year:moment().year() ,
+        subject:  req.body.subject
+    },{  title:"Learning Attitude",
+    sub_title:"Initiative and Self Direction",
    
-    let attendanceResponse = await Attendance.insertMany({
+    student_id:req.user._id,
+    
+    teacher_id:classResponse.teacher_id,
+    month:moment().month(),
+    year:moment().year() ,
+    subject:  req.body.subject},{
+        title:"Learning Attitude",
+        sub_title:"Collaboration and Teamwork",
+      
+        student_id:req.user._id,
+        
+        teacher_id:classResponse.teacher_id,
+        month:moment().month(),
+        year:moment().year() ,
+        subject:  req.body.subject
+    },{
+        title:"Communication Skills",
+        sub_title:"Verbal Communication",
+        
+        student_id:req.user._id,
+        
+        teacher_id:classResponse.teacher_id,
+        month:moment().month(),
+        year:moment().year() ,
+        subject:  req.body.subject
+    },{
+        title:"Communication Skills",
+        sub_title:"Written Communication",
+        
+        student_id:req.user._id,
+        
+        teacher_id:classResponse.teacher_id,
+        month:moment().month(),
+        year:moment().year(),
+        subject:  req.body.subject
+    },{
+        title:"Personal Growth",
+        sub_title:"Time Management",
+       
+        student_id:req.user._id,
+        
+        teacher_id:classResponse.teacher_id,
+        month:moment().month(),
+        year:moment().year(),
+        subject:  req.body.subject
+    },{
+        title:"Personal Growth",
+        sub_title:"Organization and Preparedness",
+        
+        student_id:req.user._id,
+        
+        teacher_id:classResponse.teacher_id,
+        month:moment().month(),
+        year:moment().year(),
+        subject:  req.body.subject
+    },{
+        title:"Personal Growth",
+        sub_title:"Responsibility and Accountability",
+       
+        student_id:req.user._id,
+        
+        teacher_id:classResponse.teacher_id,
+        month:moment().month(),
+        year:moment().year() ,
+        subject:  req.body.subject
+    }])
+   }
+    attendanceResponse = await Attendance.insertMany({
         check_in_datetime: moment().format("YYYY-MM-DDTHH:mm:ss"),
         student_id: req.user._id,
         class_id: req.body.class_id,

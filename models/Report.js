@@ -12,11 +12,11 @@ const ReportSchema=new mongoose.Schema({
     },
     message:{
         type:String,
-        required:true
+       
     },
     rating:{
         type:mongoose.Schema.Types.Decimal128,
-        required:true
+        
     },
     student_id:{
         type:mongoose.Schema.Types.ObjectId,
@@ -43,6 +43,10 @@ const ReportSchema=new mongoose.Schema({
    subject:{
 type:String,
 required:true
+   },
+   status:{
+    type:Boolean,
+    default:false
    }
 },{
 versionKey: false})

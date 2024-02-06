@@ -429,22 +429,29 @@ const joinClass = async (req, res, next) => {
     _id: req.body.class_id
   }, {
     start_time: 1,
-    end_time: 1
+    end_time: 1,
+    student_id:1
   })
 
   if (!moment(req.body.check_in_datetime).isBetween(moment(classResponse.start_time), moment(classResponse.end_time))) {
    throw new Error("You cannot Join Class at this time")
   }
   
-  classResponse = await Class.updateOne({
-    _id: req.body.class_id
-  }, {
+  attendanceResponse=await Attendance.findOne({
+    student_id:classResponse.student_id,
+    class_id:req.body.class_id
+   })
+   if(attendanceResponse!==null){
+    classResponse = await Class.findOneAndUpdate({
+        _id: req.body.class_id
+    }, {
 
-    $set: {
-      status: 'Done'
-    }
-  })
-  let attendanceResponse = await Attendance.insertMany({
+        $set: {
+            status: 'Done'
+        }
+    })
+   }
+  attendanceResponse = await Attendance.insertMany({
     check_in_datetime: moment(req.body.check_in_datetime).format("YYYY-MM-DDTHH:mm:ss"),
     teacher_id: req.user._id,
     class_id: req.body.class_id,

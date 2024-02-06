@@ -54,120 +54,202 @@ const getMonthlyReport=async(req,res,next)=>{
 }
 
 const addMonthlyReport=async(req,res)=>{
-    const report=await Report.insertMany([{
+    const report=await Report.updateOne({
 title:"Academic Performance",
 sub_title:"Subject Knowledge and Understanding",
-rating:req.body.subject_knowledge_and_understanding,
 student_id:new ObjectID(req.body.student_id),
-message:req.body.subject_knowledge_and_understanding_message,
 teacher_id:req.user._id,
 month:moment().month(),
 year:moment().year(),
   subject:  req.body.subject
 
-
-
     },{
+        $set:{
+            rating:req.body.subject_knowledge_and_understanding,
+            message:req.body.subject_knowledge_and_understanding_message
+        }
+    })
+    await Report.updateOne({
         title:"Academic Performance",
         sub_title:"Class Participation and Engagement",
-        rating:req.body.class_participation_and_engagement,
         student_id:new ObjectID(req.body.student_id),
-        message:req.body.class_participation_and_engagement_message,
         teacher_id:req.user._id,
         month:moment().month(),
-        year:moment().year()  ,
-        subject:  req.body.subject
-    },{
-        title:"Academic Performance",
+        year:moment().year(),
+          subject:  req.body.subject
+        
+            },{
+                $set:{
+                    rating:req.body.class_participation_and_engagement,
+                    message:req.body.class_participation_and_engagement_message
+                }
+            })
+            await Report.updateOne({
+                title:"Academic Performance",
         sub_title:"Homework and Assignments Completion",
-        rating:req.body.homeworks_and_assignment_completion,
-        student_id:new ObjectID(req.body.student_id),
-        message:req.body.homeworks_and_assignment_completion_message,
-        teacher_id:req.user._id,
-        month:moment().month(),
-        year:moment().year()  ,
-        subject:  req.body.subject
-    },{
-        title:"Academic Performance",
-        sub_title:"Problem-Solving and Critical Thinking Skills",
-        rating:req.body.problem_solving_and_critical_thinking_skills,
-        student_id:new ObjectID(req.body.student_id),
-        message:req.body.problem_solving_and_critical_thinking_skills_message,
-        teacher_id:req.user._id,
-        month:moment().month(),
-        year:moment().year()  ,
-        subject:  req.body.subject
-    },{
-        title:"Learning Attitude",
+                student_id:new ObjectID(req.body.student_id),
+                teacher_id:req.user._id,
+                month:moment().month(),
+                year:moment().year(),
+                  subject:  req.body.subject
+                
+                    },{
+                        $set:{
+                            rating:req.body.homeworks_and_assignment_completion,
+        
+                            message:req.body.homeworks_and_assignment_completion_message,
+                        }
+                    })
+                    await Report.updateOne({
+                        title:"Academic Performance",
+                        sub_title:"Problem-Solving and Critical Thinking Skills",
+                        student_id:new ObjectID(req.body.student_id),
+                        teacher_id:req.user._id,
+                        month:moment().month(),
+                        year:moment().year(),
+                          subject:  req.body.subject
+                        
+                            },{
+                                $set:{
+                                    rating:req.body.problem_solving_and_critical_thinking_skills,
+      
+                                    message:req.body.problem_solving_and_critical_thinking_skills_message,
+                                }
+                            })
+                            await Report.updateOne({
+                                title:"Learning Attitude",
         sub_title:"Motivation and Enthusiasm",
-        rating:req.body.motivation_and_enthusiasm,
-        student_id:new ObjectID(req.body.student_id),
-        message:req.body.motivation_and_enthusiasm_message,
-        teacher_id:req.user._id,
-        month:moment().month(),
-        year:moment().year() ,
-        subject:  req.body.subject
-    },{
-        title:"Learning Attitude",
-        sub_title:"Collaboration and Teamwork",
-        rating:req.body.collaboration_and_teamwork,
-        student_id:new ObjectID(req.body.student_id),
-        message:req.body.collaboration_and_teamwork_message,
-        teacher_id:req.user._id,
-        month:moment().month(),
-        year:moment().year() ,
-        subject:  req.body.subject
-    },{
-        title:"Communication Skills",
-        sub_title:"Verbal Communication",
-        rating:req.body.verbal_communication,
-        student_id:new ObjectID(req.body.student_id),
+                                student_id:new ObjectID(req.body.student_id),
+                                teacher_id:req.user._id,
+                                month:moment().month(),
+                                year:moment().year(),
+                                  subject:  req.body.subject
+                                
+                                    },{
+                                        $set:{
+                                            rating:req.body.motivation_and_enthusiasm,
+      
+                                            message:req.body.motivation_and_enthusiasm_message,
+                                        }
+                                    })
+                                    await Report.updateOne({
+                                        title:"Learning Attitude",
+                sub_title:"Initiative and Self Direction",
+                                        student_id:new ObjectID(req.body.student_id),
+                                        teacher_id:req.user._id,
+                                        month:moment().month(),
+                                        year:moment().year(),
+                                          subject:  req.body.subject
+                                        
+                                            },{
+                                                $set:{
+                                                    rating:req.body.initiative_and_self_direction,
+              
+                                                    message:req.body.initiative_and_self_direction_message,
+                                                }
+                                            })
+                                    await Report.updateOne({
+                                        title:"Learning Attitude",
+                                        sub_title:"Collaboration and Teamwork",
+                                        student_id:new ObjectID(req.body.student_id),
+                                        teacher_id:req.user._id,
+                                        month:moment().month(),
+                                        year:moment().year(),
+                                          subject:  req.body.subject
+                                        
+                                            },{
+                                                $set:{
+                                                    rating:req.body.collaboration_and_teamwork,
+      
+                                                    message:req.body.collaboration_and_teamwork_message,
+                                                }
+                                            })
+                                            await Report.updateOne({
+                                                title:"Communication Skills",
+                                                sub_title:"Verbal Communication",
+                                                student_id:new ObjectID(req.body.student_id),
+                                                teacher_id:req.user._id,
+                                                month:moment().month(),
+                                                year:moment().year(),
+                                                  subject:  req.body.subject
+                                                
+                                                    },{
+                                                        $set:{
+                                                            rating:req.body.verbal_communication,
+      
         message:req.body.verbal_communication_message,
-        teacher_id:req.user._id,
-        month:moment().month(),
-        year:moment().year() ,
-        subject:  req.body.subject
-    },{
-        title:"Communication Skills",
+                                                        }
+                                                    })
+                                                    await Report.updateOne({
+                                                        title:"Communication Skills",
         sub_title:"Written Communication",
-        rating:req.body.written_communication,
-        student_id:new ObjectID(req.body.student_id),
-        message:req.body.written_communication_message,
-        teacher_id:req.user._id,
-        month:moment().month(),
-        year:moment().year(),
-        subject:  req.body.subject
-    },{
-        title:"Personal Growth",
-        sub_title:"Time Management",
-        rating:req.body.time_management,
-        student_id:new ObjectID(req.body.student_id),
-        message:req.body.time_management_message,
-        teacher_id:req.user._id,
-        month:moment().month(),
-        year:moment().year(),
-        subject:  req.body.subject
-    },{
-        title:"Personal Growth",
-        sub_title:"Organization and Preparedness",
-        rating:req.body.organization_and_preparedness,
-        student_id:new ObjectID(req.body.student_id),
-        message:req.body.organization_and_preparedness_message,
-        teacher_id:req.user._id,
-        month:moment().month(),
-        year:moment().year(),
-        subject:  req.body.subject
-    },{
-        title:"Personal Growth",
+                                                        student_id:new ObjectID(req.body.student_id),
+                                                        teacher_id:req.user._id,
+                                                        month:moment().month(),
+                                                        year:moment().year(),
+                                                          subject:  req.body.subject
+                                                        
+                                                            },{
+                                                                $set:{
+                                                                    rating:req.body.written_communication,
+      
+                                                                    message:req.body.written_communication_message,
+                                                                }
+                                                            })
+                                                            await Report.updateOne({
+                                                                title:"Personal Growth",
+                                                                sub_title:"Time Management",
+                                                                student_id:new ObjectID(req.body.student_id),
+                                                                teacher_id:req.user._id,
+                                                                month:moment().month(),
+                                                                year:moment().year(),
+                                                                  subject:  req.body.subject
+                                                                
+                                                                    },{
+                                                                        $set:{
+                                                                            rating:req.body.time_management,
+      
+                                                                            message:req.body.time_management_message,
+                                                                        }
+                                                                    })
+                                                                    await Report.updateOne({
+                                                                        title:"Personal Growth",
+                                                                        sub_title:"Organization and Preparedness",
+                                                                        student_id:new ObjectID(req.body.student_id),
+                                                                        teacher_id:req.user._id,
+                                                                        month:moment().month(),
+                                                                        year:moment().year(),
+                                                                          subject:  req.body.subject
+                                                                        
+                                                                            },{
+                                                                                $set:{
+                                                                                    rating:req.body.organization_and_preparedness,
+      
+                                                                                    message:req.body.organization_and_preparedness_message,
+                                                                                }
+                                                                            })
+                                                                            await Report.updateOne({
+                                                                                title:"Personal Growth",
         sub_title:"Responsibility and Accountability",
-        rating:req.body.responsibility_and_accountability,
-        student_id:new ObjectID(req.body.student_id),
-        message:req.body.responsibility_and_accountability_message,
-        teacher_id:req.user._id,
-        month:moment().month(),
-        year:moment().year() ,
-        subject:  req.body.subject
-    }])
+                                                                                student_id:new ObjectID(req.body.student_id),
+                                                                                teacher_id:req.user._id,
+                                                                                month:moment().month(),
+                                                                                year:moment().year(),
+                                                                                  subject:  req.body.subject
+                                                                                
+                                                                                    },{
+                                                                                        $set:{
+                                                                                            rating:req.body.responsibility_and_accountability,
+       
+                                                                                            message:req.body.responsibility_and_accountability_message
+                                                                                        }
+                                                                                    })
+
+
+ 
+       
+      
+ 
     const additionalComment=await AdditionalComment.create({
         student_id:new ObjectID(req.body.student_id),
         comments:req.body.comments,
@@ -175,7 +257,7 @@ year:moment().year(),
         year:moment().year(),
         teacher_id:req.user._id
     })
-    return res.json(responseObj(true,{report:report,additionalComment:additionalComment} ,"Student Report Inserted"))
+    return res.json(responseObj(true,null ,"Student Report Added"))
 }
 const getMonthlyReportDetails=async(req,res)=>{
     const averageGrade=await Report.aggregate([

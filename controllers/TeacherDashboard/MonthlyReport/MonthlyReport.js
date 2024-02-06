@@ -7,6 +7,20 @@ import Report from "../../../models/Report.js"
 import Class from "../../../models/Class.js"
 const ObjectID=mongoose.Types.ObjectId
 const getMonthlyReport=async(req,res,next)=>{
+    const months = [
+        "January", 
+        "February", 
+        "March", 
+        "April", 
+        "May", 
+        "June", 
+        "July", 
+        "August", 
+        "September", 
+        "October", 
+        "November", 
+        "December"
+      ];
     const monthlyReport=await Report.aggregate([
         {
             $match:{
@@ -28,19 +42,32 @@ const getMonthlyReport=async(req,res,next)=>{
                 // Add other fields or calculations as needed
             }
         },
+        
         {
             $project: {
                 _id: 0,
                 year: "$_id.year",
                 month: "$_id.month",
                 averageRating: 1,// Include other fields as needed,
-                subject:1
+                subject:1,
+                month_name: {
+                    $let: {
+                      vars: {
+                        monthsInString: [
+                    
+                          'January', 'February', 'March', 'April', 'May', 'June',
+                          'July', 'August', 'September', 'October', 'November', 'December'
+                        ]
+                      },
+                      in: { $arrayElemAt: ['$$monthsInString', '$_id.month'] }
+                    }
+                  },
             }
         },
         {
             $sort: {
-                year: 1,
-                month: 1
+                year: -1,
+                month: -1
             }
         }
     ])

@@ -7,7 +7,7 @@ import Report from "../../../models/Report.js"
 import Class from "../../../models/Class.js"
 const ObjectID=mongoose.Types.ObjectId
 const getMonthlyReport=async(req,res,next)=>{
-    const monthlyReport=await Report.aggregate([
+    const monthlyReport=await Report.aggregatePaginate([
         {
             $match:{
                 student_id:new ObjectID(req.query.student_id),
@@ -43,7 +43,10 @@ const getMonthlyReport=async(req,res,next)=>{
                 month: 1
             }
         }
-    ])
+    ],{
+        limit:req.query.limit,
+        page:req.query.page
+    })
     
 
 
@@ -207,6 +210,7 @@ const additionalComment=await AdditionalComment.findOne({student_id:new ObjectID
     res.json(responseObj(true,{ratings:averageGrade[0]?.totalRatings?averageGrade[0]?.totalRatings:0,report:report,additionalComment:additionalComment},null))
 }
 const isStudentReportPending=async(req,res)=>{
+   
     let classResponse=await Class.find({
         student_id:req.query.student_id,
         teacher_id:req.user._id,
@@ -215,11 +219,12 @@ const isStudentReportPending=async(req,res)=>{
             $lte:moment().endOf('month').format("YYYY-MM-DDTHH:mm:ss")
         },
         status:'Done',
-        subject:req.query.subject
+        "subject.name":req.query.subject
         
     })
+    
     if(classResponse.length===0) {
-        return res.json(responseObj(false,classResponse,"No Class Found"))
+        return res.json(responseObj(true,classResponse,"No Class Found"))
     }
     let isPendingResponse=await Report.find({
         student_id:req.query.student_id,

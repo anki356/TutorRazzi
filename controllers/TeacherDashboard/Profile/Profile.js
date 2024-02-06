@@ -149,7 +149,8 @@ const uploadTestimonial=async(req,res)=>{
 //    })
   const testimonialResponse=await Testimonial.create(
    {
-      ...rest
+      ...rest,
+      teacher_id:req.user._id
    }
   )
   return res.json(responseObj(true,testimonialResponse,"Testimonial Uploaded"))

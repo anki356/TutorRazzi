@@ -1,6 +1,6 @@
 import express from 'express'
 import { authVerify } from '../../../controllers/TeacherDashboard/Auth/Auth.js'
-import { addDegreeDetail, addExpDetail, addSubjectCurriculum, completeProfile, deleteDegreeDetail, deleteExpDetail, deleteSubjectCurriculum, deleteTestimonial, editTestimonial, editDegreeDetails, editExpDetails, editPhoto, editProfile, editSubjectCurriculum, getUserProfile, uploadTestimonial, getSubjectCurriculum, getAllCurriculums } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
+import { addDegreeDetail, addExpDetail, addSubjectCurriculum, completeProfile, deleteDegreeDetail, deleteExpDetail, deleteSubjectCurriculum, deleteTestimonial, editTestimonial, editDegreeDetails, editExpDetails, editPhoto, editProfile, editSubjectCurriculum, getUserProfile, uploadTestimonial, getSubjectCurriculum, getAllCurriculums, uploadTestimonialComplete } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
 import { body } from 'express-validator'
 import validationError from '../../../middleware/validationError.js'
 import upload from '../../../util/upload.js'
@@ -59,7 +59,12 @@ const exp_detail_validation=[
     body('start_year').notEmpty().withMessage("Start Year is required"),
    
 ]
-
+const uploadTestimonialCompleteValidation=[
+    body('*.video').notEmpty().withMessage("Video is required"),
+    body('*.student_name').notEmpty().withMessage("Student Name is required"),
+    body('*.grade').notEmpty().withMessage("Grade is required"),
+    body('*.school').notEmpty().withMessage("school is required")  
+]
 router.post("/degree-detail",authVerify,degree_detail_validation,validationError,addDegreeDetail)
 router.patch("/degree-detail/:_id",authVerify,degree_detail_validation,validationError,editDegreeDetails)
 router.delete("/degree-detail/:_id",authVerify,deleteDegreeDetail)
@@ -70,5 +75,6 @@ router.patch("/photo",authVerify,editPhoto)
 router.patch("/testimonial/:_id",authVerify,editTestimonial)
 router.get("/subject-by-curriculum",authVerify,getSubjectCurriculum)
 router.get("/curriculums",authVerify,getAllCurriculums)
+router.post("/upload-testimonial-complete",authVerify,uploadTestimonialCompleteValidation,validationError,uploadTestimonialComplete)
 
 export default router

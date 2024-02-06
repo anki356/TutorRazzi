@@ -377,4 +377,22 @@ rest.exp=rest.end_year!==undefined&&rest.end_year!==null&& rest.end_year!==''?Nu
   let subjects=subject_curriculum.map((data)=>data.subject)
   return res.json(responseObj(true,subjects,"Subject Curriculum"))
  }
-export {getSubjectCurriculum,editTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum,getAllCurriculums}
+ const uploadTestimonialComplete=async(req,res)=>{
+     if(req.body.length===0){
+      return res.json(responseObj(false,null,"Testimonial Not There"))
+     }
+   const testimonialArray=req.body.map((data)=>{
+      const { id,isEditing, ...rest } = data
+     return{
+...rest,
+teacher_id:req.user._id
+     }
+   })
+  const testimonialResponse=await Testimonial.insertMany(
+   {
+     ...testimonialArray
+   }
+  )
+  return res.json(responseObj(true,testimonialResponse,"Testimonial Uploaded"))
+ }
+export {uploadTestimonialComplete,getSubjectCurriculum,editTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum,getAllCurriculums}

@@ -389,9 +389,9 @@ teacher_id:req.user._id
      }
    })
   const testimonialResponse=await Testimonial.insertMany(
-   {
+   
      ...testimonialArray
-   }
+   
   )
   return res.json(responseObj(true,testimonialResponse,"Testimonial Uploaded"))
  }

@@ -66,7 +66,8 @@ year:moment().year(),
     },{
         $set:{
             rating:req.body.subject_knowledge_and_understanding,
-            message:req.body.subject_knowledge_and_understanding_message
+            message:req.body.subject_knowledge_and_understanding_message,
+            status:true
         }
     })
     await Report.updateOne({
@@ -81,7 +82,8 @@ year:moment().year(),
             },{
                 $set:{
                     rating:req.body.class_participation_and_engagement,
-                    message:req.body.class_participation_and_engagement_message
+                    message:req.body.class_participation_and_engagement_message,
+                    status:true
                 }
             })
             await Report.updateOne({
@@ -98,6 +100,7 @@ year:moment().year(),
                             rating:req.body.homeworks_and_assignment_completion,
         
                             message:req.body.homeworks_and_assignment_completion_message,
+                            status:true
                         }
                     })
                     await Report.updateOne({
@@ -112,6 +115,7 @@ year:moment().year(),
                             },{
                                 $set:{
                                     rating:req.body.problem_solving_and_critical_thinking_skills,
+                                    status:true,
       
                                     message:req.body.problem_solving_and_critical_thinking_skills_message,
                                 }
@@ -128,7 +132,7 @@ year:moment().year(),
                                     },{
                                         $set:{
                                             rating:req.body.motivation_and_enthusiasm,
-      
+                                            status:true,
                                             message:req.body.motivation_and_enthusiasm_message,
                                         }
                                     })
@@ -144,7 +148,7 @@ year:moment().year(),
                                             },{
                                                 $set:{
                                                     rating:req.body.initiative_and_self_direction,
-              
+                                                    status:true,
                                                     message:req.body.initiative_and_self_direction_message,
                                                 }
                                             })
@@ -160,7 +164,7 @@ year:moment().year(),
                                             },{
                                                 $set:{
                                                     rating:req.body.collaboration_and_teamwork,
-      
+                                                    status:true,
                                                     message:req.body.collaboration_and_teamwork_message,
                                                 }
                                             })
@@ -176,7 +180,7 @@ year:moment().year(),
                                                     },{
                                                         $set:{
                                                             rating:req.body.verbal_communication,
-      
+                                                            status:true,
         message:req.body.verbal_communication_message,
                                                         }
                                                     })
@@ -192,7 +196,7 @@ year:moment().year(),
                                                             },{
                                                                 $set:{
                                                                     rating:req.body.written_communication,
-      
+                                                                    status:true,
                                                                     message:req.body.written_communication_message,
                                                                 }
                                                             })
@@ -208,7 +212,7 @@ year:moment().year(),
                                                                     },{
                                                                         $set:{
                                                                             rating:req.body.time_management,
-      
+                                                                            status:true,
                                                                             message:req.body.time_management_message,
                                                                         }
                                                                     })
@@ -224,7 +228,7 @@ year:moment().year(),
                                                                             },{
                                                                                 $set:{
                                                                                     rating:req.body.organization_and_preparedness,
-      
+                                                                                    status:true,
                                                                                     message:req.body.organization_and_preparedness_message,
                                                                                 }
                                                                             })
@@ -240,7 +244,7 @@ year:moment().year(),
                                                                                     },{
                                                                                         $set:{
                                                                                             rating:req.body.responsibility_and_accountability,
-       
+                                                                                            status:true,
                                                                                             message:req.body.responsibility_and_accountability_message
                                                                                         }
                                                                                     })

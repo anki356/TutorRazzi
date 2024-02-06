@@ -133,7 +133,12 @@ account_number:req.body.account_number,
 bio:req.body.bio
 
    })
-  return  res.json(responseObj(true,teacherResponse,"Teacher Profile Completed Successfully"))
+   const teacherDetails=await Teacher.findOne({
+      user_id:req.user._id
+  })
+  const testimonial=await Testimonial.findOne({teacher_id:req.user._id})
+  let is_complete=teacherDetails!==null
+  return  res.json(responseObj(true,{teacherResponse:teacherResponse,is_complete:is_complete,testimonial:testimonial},"Teacher Profile Completed Successfully"))
 }
 
 const uploadTestimonial=async(req,res)=>{
@@ -393,6 +398,12 @@ teacher_id:req.user._id
      ...testimonialArray
    
   )
-  return res.json(responseObj(true,testimonialResponse,"Testimonial Uploaded"))
+  const teacherDetails=await Teacher.findOne({
+   user_id:req.user._id
+})
+const testimonial=await Testimonial.findOne({teacher_id:req.user._id})
+let is_complete=teacherDetails!==null
+return  res.json(responseObj(true,{teacherResponse:teacherResponse,is_complete:is_complete,testimonial:testimonial,testimonialResponse:testimonialResponse},"Teacher Profile Completed Successfully"))
+  
  }
 export {uploadTestimonialComplete,getSubjectCurriculum,editTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum,getAllCurriculums}

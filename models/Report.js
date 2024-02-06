@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import moment from "moment";
-import aggregatePaginate from "mongoose-aggregate-paginate-v2";
+import paginate from "mongoose-aggregate-paginate-v2";
 const ReportSchema=new mongoose.Schema({
     title:{
         type:String,
@@ -50,7 +50,8 @@ required:true
    }
 },{
 versionKey: false})
-ReportSchema.plugin(aggregatePaginate)
+ReportSchema.plugin(paginate)
+ReportSchema.set('toJSON', { virtuals: true });
 ReportSchema.virtual('month_name').get(function(){
     if(this.month){
         const months = [

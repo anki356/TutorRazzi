@@ -43,14 +43,16 @@ const getMonthlyReport=async(req,res,next)=>{
                 month: 1
             }
         }
-    ],)
-    
-  let  monthlyReportDetails=awaitReport.aggregatePaginate(monthlyReport,{
-    limit:req.query.limit,
-    page:req.query.page
-})
+    ])
+    let totalDocs=monthlyReport.length
+   let totalPages=Math.ceil(totalDocs/Number(req.query.limit))
+   let hasPrevPage=req.query.page>1
+   let hasNextPage=req.query.page<totalPages
+   let prevPage=hasPrevPage?Number(req.query.page)-1:null
+   let nextPage=hasNextPage?Number(req.query.page)+1:null 
+ 
 
-  return  res.json(responseObj(true,monthlyReportDetails,null))
+  return  res.json(responseObj(true,{docs:monthlyReport,totalDocs:totalDocs,limit:req.query.limit,page:req.query.page,pagingCounter:req.query.page,totalPages:totalPages,hasNextPage:hasNextPage,hasPrevPage:hasPrevPage,prevPage:prevPage,nextPage:nextPage},null))
 }
 
 const addMonthlyReport=async(req,res)=>{

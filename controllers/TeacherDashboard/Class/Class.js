@@ -12,6 +12,7 @@ import Quote from "../../../models/Quote.js"
 import ResourceRequest from "../../../models/ResourceRequest.js"
 import Teacher from "../../../models/Teacher.js"
 import mongoose from "mongoose"
+import Attendance from "../../../models/Attendance.js"
 const ObjectId=mongoose.Schema.Types.ObjectId
 const getUpcomingClasses = async (req, res, next) => {
   
@@ -529,7 +530,7 @@ let taskResponse=await Task.find({
      throw new Error("You cannot Join Class at this time")
     }
     
-    attendanceResponse=await Attendance.findOne({
+   let attendanceResponse=await Attendance.findOne({
       student_id:classResponse.student_id,
       class_id:req.body.class_id
      })
@@ -543,7 +544,7 @@ let taskResponse=await Task.find({
           }
       })
      }
-    let attendanceResponse = await Attendance.insertMany({
+     attendanceResponse = await Attendance.insertMany({
       check_in_datetime: new Date(moment(req.body.check_in_datetime)),
       teacher_id: req.user._id,
       class_id: req.body.class_id,

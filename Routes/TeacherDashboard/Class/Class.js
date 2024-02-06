@@ -5,10 +5,7 @@ import { acceptClassRequest, acceptRescheduledClass, addHomework, addNotesToClas
 import { authVerify } from "../../../controllers/TeacherDashboard/Auth/Auth.js";
 
 const router = express.Router()
-const classValidationChain = [
-    body('class_id').notEmpty().custom((value) => mongoose.Types.ObjectId.isValid(value)).withMessage("Invalid Class Id"),
 
-]
 const acceptRescheduleValidationChain=[
     param('_id').notEmpty().withMessage("Invalid Class"),
    
@@ -55,11 +52,11 @@ router.post("/review-class",authVerify,classReviewValidationChain,validationErro
 router.post("/homework",authVerify,taskValidation,validationError,addHomework)
 router.post("/task",authVerify,taskValidation,validationError,addTask)
 router.patch("/notes/:_id", authVerify, notesValidation, validationError, addNotesToClass)
-router.post("/reminder", authVerify, classValidationChain, validationError, setReminder)
+router.post("/reminder", authVerify,  validationError, setReminder)
 router.patch("/reschedule-class/:_id", authVerify, rescheduleValidationChain, validationError, rescheduleClass)
 router.get("/class-details", authVerify, classDetailsValidationChain, validationError, getClassDetails)
-router.post("/join-class",authVerify,classValidationChain,validationError,joinClass)
-router.post("/leave-class",authVerify,classValidationChain,validationError,leaveClass)
+router.post("/join-class",authVerify,validationError,joinClass)
+router.post("/leave-class",authVerify,validationError,leaveClass)
 router.patch("/request-re-upload/:home_work_id",authVerify,reUploadValiationChain,validationError,requestReUpload)
 router.get("/trial-class-response",authVerify,classDetailsValidationChain,validationError,getTrialClassResponse)
 const dateValidationChain=[

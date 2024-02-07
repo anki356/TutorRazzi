@@ -2,6 +2,7 @@ import AcademicManager from "../../../models/AcademicManager.js"
 import Class from "../../../models/Class.js"
 import HomeWork from "../../../models/HomeWork.js"
 import ResourceRequest from "../../../models/ResourceRequest.js"
+import Support from "../../../models/Support.js"
 import { responseObj } from "../../../util/response.js"
 const getTotalTrialRequests=async(req,res)=>{
     console.log(req.user._id)
@@ -85,11 +86,15 @@ const getHomeworks=async(req,res)=>{
         teacher_id:{$in:[...academicManagerResponse.teachers]},
        
     })
-   let homeworks=HomeWork.find({
+   let homeworks=await HomeWork.find({
 class_id:{
     $in:classResponse.map((data)=>data._id)},
-}
-)
+    status:{$in:["Done","ReUpload"]}
+},
+
+).populate({
+    path:"answer_document_id"
+})
     return  res.json(responseObj(true,homeworks,"Total Homework"))
 
 }

@@ -83,6 +83,61 @@ const getMonthlyReport=async(req,res,next)=>{
 }
 
 const addMonthlyReport=async(req,res)=>{
+    const monthlyReport=await Report.aggregate([
+        {
+            $match:{
+                student_id:new ObjectID(req.query.student_id),
+                teacher_id:new ObjectID(req.user._id),
+                subject:req.query.subject
+            }
+        },  {
+            $group: {
+                _id: {
+                    year: "$year",
+                    month:"$month"
+                },
+                averageRating: { $avg: "$rating" },
+                subject:{
+                    $first:"$subject"
+                }
+              // You can use other accumulator operators based on your requirements
+                // Add other fields or calculations as needed
+            }
+        },
+        
+        {
+            $project: {
+                _id: 0,
+                year: "$_id.year",
+                month: "$_id.month",
+                averageRating: 1,// Include other fields as needed,
+                subject:1,
+                month_name: {
+                    $let: {
+                      vars: {
+                        monthsInString: [
+                    
+                          'January', 'February', 'March', 'April', 'May', 'June',
+                          'July', 'August', 'September', 'October', 'November', 'December'
+                        ]
+                      },
+                      in: { $arrayElemAt: ['$$monthsInString', '$_id.month'] }
+                    }
+                  },
+            }
+        },
+        {
+            $sort: {
+                year: -1,
+                month: -1
+            }
+        }
+    ])
+    if(monthlyReport.length>0&& monthlyReport[0].averageRating['$numberDecimal']===null){
+
+
+
+    
     const report=await Report.updateOne({
 title:"Academic Performance",
 sub_title:"Subject Knowledge and Understanding",
@@ -290,6 +345,7 @@ year:moment().year(),
         year:moment().year(),
         teacher_id:req.user._id
     })
+}
     return res.json(responseObj(true,null ,"Student Report Added"))
 }
 const getMonthlyReportDetails=async(req,res)=>{

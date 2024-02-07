@@ -18,6 +18,73 @@ const ReportValidation=[
     body('time_management').notEmpty().withMessage("Time management rating cannot be empty"),
     body('organization_and_preparedness').notEmpty().withMessage("Organization and Preparedness rating cannot be empty"),
     body('responsibility_and_accountability').notEmpty().withMessage("Responsiblity and Accountability rating cannot be empty"),
+    body('subject_knowledge_and_understanding').isNumeric().bail().custom(value => {
+        if (value < 1 || value > 5) {
+            throw new Error('The subject_knowledge_and_understanding must be between 1 and 5');
+        }
+        return true;
+    }),
+    body('class_participation_and_engagement').isNumeric().bail().custom(value => {
+        if (value < 1 || value > 5) {
+            throw new Error('The class_participation_and_engagement must be between 1 and 5');
+        }
+        return true;
+    }),
+    body('homeworks_and_assignment_completion').isNumeric().bail().custom(value => {
+        if (value < 1 || value > 5) {
+            throw new Error('The homeworks_and_assignment_completion must be between 1 and 5');
+        }
+        return true;
+    }),
+    body('problem_solving_and_critical_thinking_skills').isNumeric().bail().custom(value => {
+        if (value < 1 || value > 5) {
+            throw new Error('The problem_solving_and_critical_thinking_skills must be between 1 and 5');
+        }
+        return true;
+    }),
+    body('motivation_and_enthusiasm').isNumeric().bail().custom(value => {
+        if (value < 1 || value > 5) {
+            throw new Error('The motivation_and_enthusiasm must be between 1 and 5');
+        }
+        return true;
+    }),
+    body('collaboration_and_teamwork').isNumeric().bail().custom(value => {
+        if (value < 1 || value > 5) {
+            throw new Error('The collaboration_and_teamwork must be between 1 and 5');
+        }
+        return true;
+    }),
+    body('verbal_communication').isNumeric().bail().custom(value => {
+        if (value < 1 || value > 5) {
+            throw new Error('The verbal_communication must be between 1 and 5');
+        }
+        return true;
+    }),
+    body('written_communication').isNumeric().bail().custom(value => {
+        if (value < 1 || value > 5) {
+            throw new Error('The written_communication must be between 1 and 5');
+        }
+        return true;
+    }),
+    body('responsibility_and_accountability').isNumeric().bail().custom(value => {
+        if (value < 1 || value > 5) {
+            throw new Error('The responsibility_and_accountability must be between 1 and 5');
+        }
+        return true;
+    }),
+    body('organization_and_preparedness').isNumeric().bail().custom(value => {
+        if (value < 1 || value > 5) {
+            throw new Error('The organization_and_preparedness must be between 1 and 5');
+        }
+        return true;
+    }),
+    body('time_management').isNumeric().bail().custom(value => {
+        if (value < 1 || value > 5) {
+            throw new Error('The time_management must be between 1 and 5');
+        }
+        return true;
+    }),
+   
     body('subject_knowledge_and_understanding_message').notEmpty().withMessage("Subject knowledge message cannot be empty"),
     body('class_participation_and_engagement_message').notEmpty().withMessage("Class participation and engagement  message cannot be empty"),
     body('homeworks_and_assignment_completion_message').notEmpty().withMessage("Homework and assignment completion message cannot be empty"),

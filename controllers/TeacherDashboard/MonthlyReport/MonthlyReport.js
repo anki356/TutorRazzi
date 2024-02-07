@@ -345,8 +345,12 @@ year:moment().year(),
         year:moment().year(),
         teacher_id:req.user._id
     })
-}
+
     return res.json(responseObj(true,null ,"Student Report Added"))
+}
+else{
+    return res.json(responseObj(false,null ,"Student Report already added or class not found"))
+}
 }
 const getMonthlyReportDetails=async(req,res)=>{
     const averageGrade=await Report.aggregate([

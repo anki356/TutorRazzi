@@ -1,6 +1,7 @@
 import AcademicManager from "../../../models/AcademicManager.js"
 import Class from "../../../models/Class.js"
 import HomeWork from "../../../models/HomeWork.js"
+import Reference from "../../../models/Reference.js"
 import ResourceRequest from "../../../models/ResourceRequest.js"
 import Support from "../../../models/Support.js"
 import { responseObj } from "../../../util/response.js"
@@ -99,5 +100,10 @@ class_id:{
 
 }
 
-
-export {getHomeworks,getTotalTrialRequests,getTotalRescheduledRequests,getTotalResourceRequests,getTotalPendingHomeworks,getTotalPendingTickets}
+const referSomeone=async(req,res)=>{
+    await Reference.create({
+        email:req.body.email
+    })
+    return res.json(responseObj(true,null,"Reference Added Successfully"))
+}
+export {referSomeone,getHomeworks,getTotalTrialRequests,getTotalRescheduledRequests,getTotalResourceRequests,getTotalPendingHomeworks,getTotalPendingTickets}

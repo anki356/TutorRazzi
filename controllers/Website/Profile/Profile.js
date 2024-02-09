@@ -138,7 +138,7 @@ const selectStudent=async(req,res)=>{
 const onBoarding=async(req,res)=>{
 if(req.body.key==='Parent'){
   console.log(req.user.user)
-  const user=await User.findOne({
+  let user=await User.findOne({
    email:req.user.user,
    role:"parent"
   })

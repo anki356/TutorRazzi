@@ -217,43 +217,48 @@ const getTrialClasses = async (req, res) => {
             }
         }],
         select:{
-          subject:1,start_time:1,name:1,status:1, class_type:1
+          subject:1,start_time:1,name:1,status:1, class_type:1,student_id:1,teacher_id:1
         }
     }
+   
 
-    let query = {
-        student_id: {
-            $in: academicManagerResponse.students
-        },
-        teacher_id: { $in: academicManagerResponse.teachers },
-        class_type: "Trial",
-       
-      
+let query = {
+  
+      // { student_id: { $in: student_ids.map(data => data.user_id) } },
+      student_id: { $in: academicManagerResponse.students } ,
+  
+  teacher_id: { $in: academicManagerResponse.teachers },
+  class_type: "Trial"
+};
 
-    }
     if(req.query.date){
       
 query["start_time"]={
   $gte : moment(req.query.date).format("YYYY-MM-DD"),$lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
 }
     }
+    console.log(academicManagerResponse.students)
     if (req.query.search) {
         query["$or"]=[
-          {"subject.name": {$regex: req.query.search,$options: 'i'}},
-          {
-            name:{$regex: req.query.search,$options: 'i'}
-          },
-         { "student_id.name":{$regex: req.query.search,$options: 'i'}},
-         { "teacher_id.name":{$regex: req.query.search,$options: 'i'}},
+          // {"subject.name": {$regex: req.query.search,$options: 'i'}},
+          // {
+          //   name:{$regex: req.query.search,$options: 'i'}
+          // }
+         { "student_id.name":{$regex: req.query.search,$options: 'i'}}
+         
          
         ]
+        
+       
+        
            
            
             
         
     }
+    
     Class.paginate(query, options, (err,classResponse) => {
-
+console.log(err)
         return  res.json(responseObj(true, classResponse, "Trial Classes"))
     })
 
@@ -340,7 +345,7 @@ const getResourceRequests=async(req,res)=>{
         "class_id.subject.name":{$regex: req.query.search,$options: 'i'}
       },
      { "class_id.student_id.name":{$regex: req.query.search,$options: 'i'}},
-     { "class_id.teacher_id.name":{$regex: req.query.search,$options: 'i'}},
+     { "teacher_id.name":{$regex: req.query.search,$options: 'i'}},
      
     ]
       }

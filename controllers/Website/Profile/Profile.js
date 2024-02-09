@@ -5,6 +5,8 @@ import { responseObj } from "../../../util/response.js"
 import Testimonial from "../../../models/Testimonial.js"
 import SubscribedEmail from "../../../models/SubscribedEmail.js"
 import unlinkFile from "../../../util/unlinkFile.js"
+import bcrypt from "bcrypt"
+import Subject from "../../../models/Subject.js"
 const getProfileDetails=async(req,res)=>{
     let user_id=req.user._id
     let userDetails=await User.findOne({_id:user_id})
@@ -134,6 +136,70 @@ const selectStudent=async(req,res)=>{
   },"Token with Student Details Attached",null) )
 }
 const onBoarding=async(req,res)=>{
-
+if(req.body.key==='Parent'){
+  const user=await User.findOne({
+   email:req.body.email,
+   role:"parent"
+  })
+  let hash=await bcrypt.hash(req.body.password, 10);
+  if(!user){
+await User.create({
+  email:req.body.email,
+  password:hash,
+  role:'parent',
+  name:req.body.name
+})
+  }
+  
+  let parent=await Parent.findOne({
+    user_id:user._id
+  })
+  
+  if(parent){
+    return res.json(false,null,"Profile Already Complete Please Sign in")
+  }
+  parent=await Parent.create({
+    user_id:user._id,
+    preferred_name:req.body.name
+    
+    
+        })
+        return res.json(true,null,"Onboarding Done Successfully")
 }
-export {selectStudent,getProfileDetails,editProfileDetails,getHomework,uploadHomework,subscribeToNewsLetter,getAllStudents}
+else{
+  const user=await User.findOne({
+    email:req.body.email,
+    role:"student"
+   })
+   if(user){
+    return res.json(false,null,"Profile Already Complete Please Sign in")
+   }
+   let hash=await bcrypt.hash(req.body.password, 10);
+   await User.create({
+     email:req.body.email,
+     password:hash,
+     role:'student',
+     name:req.body.name
+
+   })
+   let parent_user_id=await User.findOne({
+    email:req.body.parent_email,
+    role:"parent"
+   })
+   if(!parent_user_id){
+    parent_user_id=await User.create({
+    email:req.body.parent_email,
+role:'parent'
+   })
+   }
+   await Student.create({
+    user_id:user._id,
+    preferred_name:req.body.name,
+    subjects:req.body.subjects,
+grade:req.body.grade,
+curriculum:req.body.curriculum,
+parent_id:parent_user_id._id
+   })
+}
+}
+export {onBoarding,selectStudent,getProfileDetails,editProfileDetails,getHomework,uploadHomework,subscribeToNewsLetter,getAllStudents}

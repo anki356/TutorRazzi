@@ -10,6 +10,7 @@ import {  changePasswordEmail } from "../../../util/EmailFormats/changePasswordE
 import generateOTP from "../../../util/generateOtp.js";
 import Otp from "../../../models/Otp.js";
 import { createJWT } from "../../../util/auth.js";
+import Parent from "../../../models/Parent.js";
 const ObjectId=mongoose.Types.ObjectId
 
 const SignUp = async (req, res) => {
@@ -100,7 +101,25 @@ res.json(responseObj(true,{
 const verifyEmail=async(req,res,next)=>{
     
     //false condition before
-   
+   if(req.body.key==='Parent'){
+    const user_details=await User.findOne({
+        email:req.body.email
+    })
+    const parent_details=await Parent.findOne({
+        user_id:user_details._id
+    })
+    if(parent_details!==null){
+        return res.json(false,"Parent Details already exist.Please Sign in.")
+    }
+   }
+   else{
+    const user_details=await User.findOne({
+        email:req.body.email
+    })
+    if(user_details!==null){
+        return res.json(false,"Student Details already exist.Please Sign in.")
+    }
+   }
 
 
     const verificationToken=generateOTP(5)

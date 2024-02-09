@@ -133,4 +133,7 @@ const selectStudent=async(req,res)=>{
       
   },"Token with Student Details Attached",null) )
 }
+const onBoarding=async(req,res)=>{
+
+}
 export {selectStudent,getProfileDetails,editProfileDetails,getHomework,uploadHomework,subscribeToNewsLetter,getAllStudents}

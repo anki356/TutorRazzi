@@ -3,7 +3,7 @@ import validationError from "../../../middleware/validationError.js"
 const router = express.Router()
 
 import {authVerify} from "../../../controllers/AcademicManager/Auth/Auth.js"
-import { acceptRescheduledClass, acceptTrialClassRequest, addExtraClassQuote, getClassDetails, getHomeworks, getPastClasses, getRescheduledClasses, getResourceRequests, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, notifyStudent, notifyTeacher, rescheduleClass, resolveHomework, reviewClass, reviewTeacher } from "../../../controllers/AcademicManager/Class/Class.js"
+import { acceptClassRequest, acceptTrialClassRequest, addExtraClassQuote, getClassDetails, getHomeworks, getPastClasses, getRescheduledClasses, getResourceRequests, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, notifyStudent, notifyTeacher, rescheduleClass, resolveHomework, reviewClass, reviewTeacher } from "../../../controllers/AcademicManager/Class/Class.js"
 import { body, param } from "express-validator"
 import upload from "../../../util/upload.js"
 
@@ -30,7 +30,7 @@ const acceptRescheduleValidationChain=[
     param('_id').notEmpty().withMessage("Invalid Class"),
    
 ]
-router.patch("/accept-rescheduled-class/:_id",authVerify,acceptRescheduleValidationChain,validationError,acceptRescheduledClass)
+router.patch("/accept-class/:_id",authVerify,acceptRescheduleValidationChain,validationError,acceptClassRequest)
 const rescheduleValidationChain=[
     param('_id').notEmpty().withMessage("Invalid Class"),
     body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time"),

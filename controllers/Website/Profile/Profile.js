@@ -138,13 +138,13 @@ const selectStudent=async(req,res)=>{
 const onBoarding=async(req,res)=>{
 if(req.body.key==='Parent'){
   const user=await User.findOne({
-   email:req.body.email,
+   email:req.user.email,
    role:"parent"
   })
   let hash=await bcrypt.hash(req.body.password, 10);
   if(!user){
 await User.create({
-  email:req.body.email,
+  email:req.user.email,
   password:hash,
   role:'parent',
   name:req.body.name
@@ -168,7 +168,7 @@ await User.create({
 }
 else{
   const user=await User.findOne({
-    email:req.body.email,
+    email:req.user.email,
     role:"student"
    })
    if(user){
@@ -176,7 +176,7 @@ else{
    }
    let hash=await bcrypt.hash(req.body.password, 10);
    await User.create({
-     email:req.body.email,
+     email:req.user.email,
      password:hash,
      role:'student',
      name:req.body.name

@@ -136,7 +136,7 @@ const selectStudent=async(req,res)=>{
   },"Token with Student Details Attached",null) )
 }
 const onBoarding=async(req,res)=>{
-if(req.body.key==='Parent'){
+if(req.body.key==='parent'){
   console.log(req.user.user)
   let user=await User.findOne({
    email:req.user.user,

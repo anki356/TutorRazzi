@@ -36,7 +36,7 @@ const SignIn=async(req,res,next)=>{
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user &&!(user.role==='student'||user.role==='parent') ) {
+    if (!user &&!(user.role===req.body.key) ) {
         throw new Error("Invalid credentials or no user exist.");
     }
 
@@ -101,7 +101,7 @@ res.json(responseObj(true,{
 const verifyEmail=async(req,res,next)=>{
     
     //false condition before
-   if(req.body.key==='Parent'){
+   if(req.body.key==='parent'){
     const user_details=await User.findOne({
         email:req.body.email
     })

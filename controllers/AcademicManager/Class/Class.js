@@ -242,7 +242,10 @@ query["start_time"]={
           {"subject.name": {$regex: req.query.search,$options: 'i'}},
           {
             name:{$regex: req.query.search,$options: 'i'}
-          }
+          },
+         { "student_id.name":{$regex: req.query.search,$options: 'i'}},
+         { "teacher_id.name":{$regex: req.query.search,$options: 'i'}},
+         
         ]
            
            
@@ -296,12 +299,15 @@ $gte : moment(req.query.date).format("YYYY-MM-DD"),$lt:moment(req.query.date).ad
 }
   }
   if (req.query.search) {
-      query["$or"]=[
-        {"subject.name": {$regex: req.query.search,$options: 'i'}},
-        {
-          name:{$regex: req.query.search,$options: 'i'}
-        }
-      ]
+    query["$or"]=[
+      {"subject.name": {$regex: req.query.search,$options: 'i'}},
+      {
+        name:{$regex: req.query.search,$options: 'i'}
+      },
+     { "student_id.name":{$regex: req.query.search,$options: 'i'}},
+     { "teacher_id.name":{$regex: req.query.search,$options: 'i'}},
+     
+    ]
          
          
           
@@ -328,10 +334,15 @@ const getResourceRequests=async(req,res)=>{
    
    }
    if(req.query.search){
-    query.message={
-       
-         $regex: req.query.search,$options: 'i'
-       }
+    query["$or"]=[
+      {"message": {$regex: req.query.search,$options: 'i'}},
+      {
+        "class_id.subject.name":{$regex: req.query.search,$options: 'i'}
+      },
+     { "class_id.student_id.name":{$regex: req.query.search,$options: 'i'}},
+     { "class_id.teacher_id.name":{$regex: req.query.search,$options: 'i'}},
+     
+    ]
       }
       if(req.query.date){
         query["createdAt"]=moment(req.query.date).format("YYYY-MM-DD")

@@ -80,7 +80,7 @@ $set:{...req.body}
    
 const verifyOTP=async(req,res,next)=>{
 
-const otpResponse=await Otp.findOne({otp:req.body.code})
+const otpResponse=await Otp.findOne({code:req.body.code})
 if(!otpResponse){
     throw new Error('Invalid or expired reset token.')
 }
@@ -126,7 +126,7 @@ const verifyEmail=async(req,res,next)=>{
 
     await Otp.create({
         email:req.body.email,
-        otp:verificationToken
+        code:verificationToken
     })
    // Create a transporter using the Ethereal account
   sendEmail(req.body.email,"Verification Email", "Verificaion code is "+verificationToken)

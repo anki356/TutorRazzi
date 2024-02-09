@@ -44,7 +44,7 @@ app.use("/api/",AcademicManagerRouter)
 app.use("/api/",TeacherDashboardRouter)
 app.use("/api/",WebsiteRouter)
 app.use("/api/",AuthRouter)
-app.use(errorHandlerMiddleware);
+// app.use(errorHandlerMiddleware);
 
 app.set('view engine', 'ejs');
 app.set('views', "./util" + '/views');

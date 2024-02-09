@@ -137,14 +137,15 @@ const selectStudent=async(req,res)=>{
 }
 const onBoarding=async(req,res)=>{
 if(req.body.key==='Parent'){
+  console.log(req.user.user)
   const user=await User.findOne({
-   email:req.user.email,
+   email:req.user.user,
    role:"parent"
   })
   let hash=await bcrypt.hash(req.body.password, 10);
   if(!user){
-await User.create({
-  email:req.user.email,
+user=await User.create({
+  email:req.user.user,
   password:hash,
   role:'parent',
   name:req.body.name
@@ -156,7 +157,7 @@ await User.create({
   })
   
   if(parent){
-    return res.json(false,null,"Profile Already Complete Please Sign in")
+    return res.json(responseObj(false,null,"Profile Already Complete Please Sign in"))
   }
   parent=await Parent.create({
     user_id:user._id,
@@ -164,19 +165,19 @@ await User.create({
     
     
         })
-        return res.json(true,null,"Onboarding Done Successfully")
+        return res.json(responseObj(true,null,"Onboarding Done Successfully"))
 }
 else{
-  const user=await User.findOne({
-    email:req.user.email,
+  let user=await User.findOne({
+    email:req.user.user,
     role:"student"
    })
    if(user){
-    return res.json(false,null,"Profile Already Complete Please Sign in")
+    return res.json(responseObj(false,null,"Profile Already Complete Please Sign in"))
    }
    let hash=await bcrypt.hash(req.body.password, 10);
-   await User.create({
-     email:req.user.email,
+ user=  await User.create({
+     email:req.user.user,
      password:hash,
      role:'student',
      name:req.body.name
@@ -195,11 +196,12 @@ role:'parent'
    await Student.create({
     user_id:user._id,
     preferred_name:req.body.name,
-    subjects:req.body.subjects,
-grade:req.body.grade,
-curriculum:req.body.curriculum,
+    subjects:req.body.subjects.map((data)=>{return {name:data}}),
+grade:{name:req.body.grade},
+curriculum:{name:req.body.curriculum},
 parent_id:parent_user_id._id
    })
+   return res.json(responseObj(true,null,"Onboarding Done Successfully"))
 }
 }
 export {onBoarding,selectStudent,getProfileDetails,editProfileDetails,getHomework,uploadHomework,subscribeToNewsLetter,getAllStudents}

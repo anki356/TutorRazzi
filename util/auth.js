@@ -1,8 +1,8 @@
 import jwt  from "jsonwebtoken";
-const createJWT = (email) => {
+const createJWT = (user) => {
    
    const payload = {
-      email,
+      user
      
       
    };

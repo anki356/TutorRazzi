@@ -87,7 +87,7 @@ if(!otpResponse){
 
 
 const token = createJWT({
-    email:otpResponse.email
+    user:otpResponse.email
 })
 await Otp.deleteOne({
     _id:otpResponse._id
@@ -108,8 +108,9 @@ const verifyEmail=async(req,res,next)=>{
     const parent_details=await Parent.findOne({
         user_id:user_details._id
     })
+    
     if(parent_details!==null){
-        return res.json(false,"Parent Details already exist.Please Sign in.")
+        return res.json(responseObj(false,null,"Parent Details already exist.Please Sign in."))
     }
    }
    else{
@@ -117,7 +118,7 @@ const verifyEmail=async(req,res,next)=>{
         email:req.body.email
     })
     if(user_details!==null){
-        return res.json(false,"Student Details already exist.Please Sign in.")
+        return res.json(responseObj(false,"Student Details already exist.Please Sign in."))
     }
    }
 
@@ -144,14 +145,14 @@ const authVerify = (req, res, next) => {
     }
 
     token = token.replace("Bearer ", "");
-
+console.log(token)
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
             console.log(err);
             const response = responseObj(false, null, 'Token has expired.');
             return res.status(200).json(response);
         }
-
+console.log(user)
         req.user = user.user; // Store the user data from the token
         next();
     });

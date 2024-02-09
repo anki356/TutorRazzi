@@ -41,4 +41,29 @@ class_id:{
 }, {
 versionKey: false })
 HomeWorkSchema.plugin(mongoosePaginate)
+HomeWorkSchema.set('toJSON', { virtuals: true });
+HomeWorkSchema.virtual('subject_name').get(function(){
+    if(this.class_id){
+        return this.class_id.subject_name
+    }
+})
+HomeWorkSchema.virtual('student_name').get(function(){
+    if(this.class_id){
+        return this.class_id.student_name
+    }
+})
+HomeWorkSchema.virtual('days_left').get(function(){
+    if(this.due_date!==undefined&& moment().diff(this.due_date,'d')<=0){
+        const now = moment();
+        const duration = moment(this.due_date).diff(moment(), 'd');
+        
+         
+          return `${duration} days left`;
+       
+    
+    }
+    else if(moment().diff(this.due_date,'d')>0){
+        return 'Due Date Passed'
+    }
+})
 export default mongoose.model("HomeWork",HomeWorkSchema)

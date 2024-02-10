@@ -699,13 +699,18 @@ const getUpcomingClasses=async(req,res,next)=>{
     })
     let homeworkResponse=await HomeWork.find({
       class_id:req.query.class_id
+  }).populate({
+    path:"answer_document_id"
   })
   let taskResponse=await Task.find({
       class_id:req.query.class_id
   })
     
     let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
-    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails }, null))
+    let ratingsResponse=await Review.findOne({
+      class_id:req.query.class_id
+    })
+    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails,ratingsResponse:ratingsResponse }, null))
   }
   const getTrialClassDetails = async (req, res, next) => {
     let classDetails = {}
@@ -734,35 +739,75 @@ const getUpcomingClasses=async(req,res,next)=>{
     })
     let homeworkResponse=await HomeWork.find({
       class_id:req.query.class_id
+  }).populate({
+    path:"answer_document_id"
   })
   let taskResponse=await Task.find({
       class_id:req.query.class_id
   })
     
     let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
-    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails }, null))
+    let ratingsResponse=await Review.findOne({
+      class_id:req.query.class_id
+    })
+    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails ,ratingsResponse:ratingsResponse}, null))
   }
   const reviewClass=async(req,res,next)=>{
-    const reviewResponse=await Review.insertMany({
+    let reviewResponse=await Review.findOne({
+      class_id:req.body.class_id,
+      given_by:req.user._id
+    })
+    if(!reviewResponse){
+      reviewResponse=await Review.insertMany({
         class_id:req.body.class_id,
         message:req.body.message?req.body.message:'',
         rating:req.body.rating,
         given_by:req.user._id
     })
+    }
+    else{
+      reviewResponse=await Review.updateOne({
+        _id:reviewResponse._id
+      },{
+        $set:{
+          message:req.body.message?req.body.message:'',
+          rating:req.body.rating,
+        }
+      })
+    }
+     
    
-    return res.json(responseObj(true,reviewResponse,null))
+    return res.json(responseObj(true,reviewResponse,"Class Review Recorded"))
   }
   const reviewTeacher = async (req, res, next) => {
-   
-    const reviewResponse = await Review.insertMany({
+    let reviewResponse=await Review.findOne({
+      class_id:req.body.class_id,
+      given_by:req.user._id,
+      teacher_id:req.body.teacher_id
+    })
+    if(!reviewResponse){
+      reviewResponse = await Review.insertMany({
         message: req.body.message?req.body.message:'',
         rating: req.body.rating,
         teacher_id: req.body.teacher_id,
         class_id: req.body.class_id,
         given_by:req.user._id
     })
-
-   return res.json(responseObj(true, { reviewResponse }, 'Teacher Review Recorded'))
+    }
+    else{
+      reviewResponse=await Review.updateOne({
+        _id:reviewResponse._id
+      },{
+        $set:{
+          message:req.body.message?req.body.message:'',
+          rating:req.body.rating,
+        }
+      })
+    }
+     
+   
+    return res.json(responseObj(true,reviewResponse,"Teacher Review Recorded"))
+    
 
 }
 

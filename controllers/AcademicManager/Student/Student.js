@@ -16,8 +16,8 @@ const getAllStudents=async(req,res)=>{
         }
     }
     let options={
-        limit:req.query.limit,
-        page:req.query.page,
+        limit:req.query.limit||StudentIds.students.length,
+        page:req.query.page||1,
         select:{
             "grade":1,"curriculum":1,_id:1,"preferred_name":1
         },

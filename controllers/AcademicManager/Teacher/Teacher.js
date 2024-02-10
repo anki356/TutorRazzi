@@ -7,6 +7,7 @@ import { responseObj } from "../../../util/response.js"
 import Support from "../../../models/Support.js"
 const getAllTeachers = async (req, res, next) => {
     let TeacherIds=await AcademicManager.findOne({user_id:req.user._id},{teachers:1})
+
     let query={
     
         user_id:{
@@ -60,15 +61,15 @@ if(req.query.search){
 
         }
     },{
-        $limit:Number(req.query.limit),
+        $limit:Number(req.query.limit)||TeacherIds.teachers.length,
         
     },{
-        $skip:(Number(req.query.page)-1)*req.query.limit
+        $skip:(Number(req.query.page)-1)*req.query.limit||0
     }])
 
 let options={
-    limit:req.query.limit,
-    page:req.query.page,
+    limit:req.query.limit||TeacherIds.teachers.length,
+    page:req.query.page||1,
     select:{"preferred_name":1}
 }
 Teacher.paginate(query,options,(err,result)=>{

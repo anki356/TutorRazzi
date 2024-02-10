@@ -680,8 +680,13 @@ const getUpcomingClasses=async(req,res,next)=>{
       school:1
     })
     let teacherDetails=await Teacher.findOne({user_id:classDetails.teacher_id},{
-      qualification:1,
-
+    preferred_name:1,
+    exp_details:1
+  
+    }).populate({
+      path: 'user_id', select: {
+        'profile_image': 1
+      }
     })
     let homeworkResponse=await HomeWork.find({
       class_id:req.query.class_id
@@ -749,8 +754,13 @@ const getUpcomingClassDetails=async(req,res)=>{
     school:1
   })
   let teacherDetails=await Teacher.findOne({user_id:classDetails.teacher_id},{
-    qualification:1,
+    degree_details:1,
+  preferred_name:1,
 
+  }).populate({
+    path: 'user_id', select: {
+      'profile_image': 1
+    }
   })
  
   

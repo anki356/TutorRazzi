@@ -235,17 +235,18 @@ if(req.query.date) {
 }
 
 console.log(academicManagerResponse.students);
-let student_ids=await User.find({
-name:{
-  $regex: req.query.search, $options: 'i' 
-}
-})
-let teacher_ids=await User.find({
-  name:{
-    $regex: req.query.search, $options: 'i'
-  }
-})
+
 if(req.query.search) {
+  let student_ids=await User.find({
+    name:{
+      $regex: req.query.search, $options: 'i' 
+    }
+    })
+    let teacher_ids=await User.find({
+      name:{
+        $regex: req.query.search, $options: 'i'
+      }
+    })
   query["$or"] = [
    
     { "subject.name": { $regex: req.query.search, $options: 'i' } },
@@ -309,17 +310,18 @@ query["start_time"]={
 $gte : moment(req.query.date).format("YYYY-MM-DD"),$lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
 }
   }
-  let student_ids=await User.find({
-    name:{
-      $regex: req.query.search, $options: 'i' 
-    }
-    })
-    let teacher_ids=await User.find({
-      name:{
-        $regex: req.query.search, $options: 'i'
-      }
-    })
+ 
     if(req.query.search) {
+      let student_ids=await User.find({
+        name:{
+          $regex: req.query.search, $options: 'i' 
+        }
+        })
+        let teacher_ids=await User.find({
+          name:{
+            $regex: req.query.search, $options: 'i'
+          }
+        })
       query["$or"] = [
        
         { "subject.name": { $regex: req.query.search, $options: 'i' } },
@@ -535,19 +537,20 @@ const getUpcomingClasses=async(req,res,next)=>{
   
      
     }
-    let student_ids=await User.find({
-      name:{
-        $regex: req.query.search, $options: 'i' 
-      }
-      })
-      let teacher_ids=await User.find({
-        name:{
-          $regex: req.query.search, $options: 'i'
-        }
-      })
-    
+   
     
     if(req.query.search){
+      let student_ids=await User.find({
+        name:{
+          $regex: req.query.search, $options: 'i' 
+        }
+        })
+        let teacher_ids=await User.find({
+          name:{
+            $regex: req.query.search, $options: 'i'
+          }
+        })
+      
       query={$and:[
         { start_time :{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")}},
        
@@ -618,6 +621,16 @@ const getUpcomingClasses=async(req,res,next)=>{
     }
    
     if(req.query.search){
+      let student_ids=await User.find({
+        name:{
+          $regex: req.query.search, $options: 'i' 
+        }
+        })
+        let teacher_ids=await User.find({
+          name:{
+            $regex: req.query.search, $options: 'i'
+          }
+        })
       query={$and:[
         {
     

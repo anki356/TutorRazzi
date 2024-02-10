@@ -136,11 +136,11 @@ const selectStudent=async(req,res)=>{
   },"Token with Student Details Attached",null) )
 }
 const onBoarding=async(req,res)=>{
-if(req.body.key==='parent'){
+
   console.log(req.user.user)
   let user=await User.findOne({
    email:req.user.user,
-   role:"parent"
+   
   })
   let hash=await bcrypt.hash(req.body.password, 10);
   if(!user){
@@ -151,7 +151,9 @@ user=await User.create({
   name:req.body.name
 })
   }
-  
+  if(user.role!=='parent'){
+    return res.json(responseObj(false,null,"Email Already Exist for other User"))
+  }
   let parent=await Parent.findOne({
     user_id:user._id
   })
@@ -166,11 +168,14 @@ user=await User.create({
     
         })
         return res.json(responseObj(true,null,"Onboarding Done Successfully"))
+
+  
+
 }
-else{
+const onBoardingStudent=async(req,res)=>{
   let user=await User.findOne({
-    email:req.user.user,
-    role:"student"
+    email:req.user.user
+    
    })
    if(user){
     return res.json(responseObj(false,null,"Profile Already Complete Please Sign in"))
@@ -203,5 +208,4 @@ parent_id:parent_user_id._id
    })
    return res.json(responseObj(true,null,"Onboarding Done Successfully"))
 }
-}
-export {onBoarding,selectStudent,getProfileDetails,editProfileDetails,getHomework,uploadHomework,subscribeToNewsLetter,getAllStudents}
+export {onBoardingStudent,onBoarding,selectStudent,getProfileDetails,editProfileDetails,getHomework,uploadHomework,subscribeToNewsLetter,getAllStudents}

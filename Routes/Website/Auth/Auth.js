@@ -7,7 +7,9 @@ const loginValidationChain = [
     body('email').notEmpty().isEmail().trim(),
 body('password').notEmpty().withMessage('Password is required field.')
     .isLength({ min: 8 }).optional()
-    .withMessage('Password should have atleast 8 characters.')];
+    .withMessage('Password should have atleast 8 characters.'),
+    body('key').notEmpty().withMessage('Key is required field.')
+];
 
 
 

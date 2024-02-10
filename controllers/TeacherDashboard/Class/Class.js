@@ -602,7 +602,8 @@ let taskResponse=await Task.find({
           _id:req.params.home_work_id
         
     },{
-      status:"ReUpload"
+     is_reupload:true,
+     status:"Pending"
     })
     res.json(responseObj(true,[],"Request for Re Upload of Homework placed Successfully"))
 

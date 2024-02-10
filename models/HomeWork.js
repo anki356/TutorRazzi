@@ -10,10 +10,14 @@ const HomeWorkSchema=new mongoose.Schema({
         type:String,
         required:true
 
-    },
+    },is_reupload:
+{
+type:Boolean,
+default:false
+},
    status:{
 type:String,
-enum:['Pending','Done','ReUpload'],
+enum:['Pending','Resolved'],
 default:'Pending'
    },
     answer_document_id:{

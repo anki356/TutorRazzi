@@ -446,7 +446,7 @@ const resolveHomework=async(req,res)=>{
     const homeworkResponse=await HomeWork.updateOne({
         _id:req.params.homework_id
     },{
-        $set:{status:'Done'}
+        $set:{status:'Resolve'}
     })
     return res.json(responseObj(true,[],"Homework mark Completed"))
 }

@@ -572,7 +572,7 @@ if(homeworkResponse.answer_document_id!==null&&homeworkResponse.answer_document_
     _id:req.params._id
   },{
     $set:{
-        status:"Done",
+        status:"Resolved",
         answer_document_id:documentResponse._id
     }
   })

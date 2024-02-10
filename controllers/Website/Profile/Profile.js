@@ -167,7 +167,13 @@ user=await User.create({
     
     
         })
-        return res.json(responseObj(true,null,"Onboarding Done Successfully"))
+        const token = user.signJWT();
+   
+        return res.json(responseObj(true,{
+          access_token:token,
+          user:user
+          
+      },"Onboarding Done Successfully"))
 
   
 
@@ -206,6 +212,11 @@ grade:{name:req.body.grade},
 curriculum:{name:req.body.curriculum},
 parent_id:parent_user_id._id
    })
-   return res.json(responseObj(true,null,"Onboarding Done Successfully"))
+   const token = user.signJWT();
+   return res.json(responseObj(true,{
+    access_token:token,
+    user:user
+    
+},"Onboarding Done Successfully"))
 }
 export {onBoardingStudent,onBoarding,selectStudent,getProfileDetails,editProfileDetails,getHomework,uploadHomework,subscribeToNewsLetter,getAllStudents}

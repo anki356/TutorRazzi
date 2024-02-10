@@ -3,7 +3,7 @@ import validationError from "../../../middleware/validationError.js"
 const router = express.Router()
 
 import {authVerify} from "../../../controllers/AcademicManager/Auth/Auth.js"
-import { acceptClassRequest, acceptTrialClassRequest, addExtraClassQuote, getClassDetails, getHomeworks, getPastClasses, getRescheduledClasses, getResourceRequests, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, notifyStudent, notifyTeacher, rescheduleClass, resolveHomework, reviewClass, reviewTeacher } from "../../../controllers/AcademicManager/Class/Class.js"
+import { acceptClassRequest, acceptTrialClassRequest, addExtraClassQuote, getClassDetails, getHomeworks, getPastClasses, getRescheduledClasses, getResourceRequests, getTrialClassDetails, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, notifyStudent, notifyTeacher, rescheduleClass, resolveHomework, reviewClass, reviewTeacher } from "../../../controllers/AcademicManager/Class/Class.js"
 import { body, param } from "express-validator"
 import upload from "../../../util/upload.js"
 
@@ -42,6 +42,7 @@ router.get("/past-classes",authVerify,getPastClasses)
 router.get("/upcoming-classes",authVerify,getUpcomingClasses)
 router.get("/homeworks-list",authVerify,getHomeworks)
 router.get("/class-details",authVerify,getClassDetails)
+router.get("/trial-class-details",authVerify,getTrialClassDetails)
 const classReviewValidationChain=[
     body('class_id').notEmpty().withMessage("Invalid Class"),
     body('rating').notEmpty().isFloat({ min: 0, max: 5 }).withMessage("Must be between 0 and 5")
@@ -53,6 +54,7 @@ const reviewValidation=[
 
 
 ]
+
 router.post("/review-class",authVerify,classReviewValidationChain,validationError,reviewClass)
 router.post("/review-teacher",authVerify,reviewValidation,validationError,reviewTeacher)
 router.get("/upcoming-class-details",authVerify,getUpcomingClassDetails)

@@ -13,9 +13,7 @@ const TeacherSchema = new mongoose.Schema({
     bio: {
         type: String,
     },
-    qualification: {
-        type: String,
-    },
+   
     preferred_name: {
         type: String,
         required: true
@@ -51,11 +49,6 @@ const TeacherSchema = new mongoose.Schema({
     gender: {
         type: String,
         enum: ["Female", "Male"],
-
-    },
-    exp: {
-        type: Number,
-
 
     },
     subject_curriculum:{
@@ -107,6 +100,18 @@ TeacherSchema.virtual('profileImageUrl').get(function () {
     }
 
 })
+TeacherSchema.virtual('exp').get(function () {
+    if (this.exp_details !== undefined&&this.exp_details.length>0) {
+        let exp=0
+this.exp_details.forEach((data)=>{
+    exp+=data.exp
+})
+return exp
+    }
+
+})
+
+
 TeacherSchema.plugin(mongoosePaginate)
 
 

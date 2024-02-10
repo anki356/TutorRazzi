@@ -674,7 +674,7 @@ const getUpcomingClasses=async(req,res,next)=>{
   }
   const getClassDetails = async (req, res, next) => {
     let classDetails = {}
-    classDetails = await Class.findOne({ _id: req.query.class_id }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject_id: 1, teacher_id: 1, notes: 1,  materials: 1, recordings: 1,response:1,reason_disliking:1 }).populate({
+    classDetails = await Class.findOne({ _id: req.query.class_id }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,  materials: 1, recordings: 1,response:1,reason_disliking:1 }).populate({
       path: 'teacher_id', select: {
        name: 1,profile_image:1
       }
@@ -783,7 +783,7 @@ const getExtraClassRequests=async(req,res)=>{
 
 const getUpcomingClassDetails=async(req,res)=>{
   let classDetails = {}
-  classDetails = await Class.findOne({ _id: req.query.class_id }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject_id: 1, teacher_id: 1, notes: 1 }).populate({
+  classDetails = await Class.findOne({ _id: req.query.class_id }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1 }).populate({
     path: 'teacher_id', select: {
      name: 1,profile_image:1
     }

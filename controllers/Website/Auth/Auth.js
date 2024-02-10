@@ -105,8 +105,9 @@ const verifyEmail=async(req,res,next)=>{
     const user_details=await User.findOne({
         email:req.body.email
     })
+
     const parent_details=await Parent.findOne({
-        user_id:user_details._id
+        user_id:user_details?._id
     })
     
     if(parent_details!==null){

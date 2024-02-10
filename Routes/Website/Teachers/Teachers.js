@@ -25,7 +25,7 @@ const contactValidation=[
     body('message').notEmpty().withMessage("Message is Required")
 ]
 router.post("/contact",contactValidation,validationError,postContact)
-router.get("/grades",authVerify,getGrades)
-router.get("/subjects",authVerify,getSubjects)
-router.get("/curriculums",authVerify,getCurriculums)
+router.get("/grades",getGrades)
+router.get("/subjects",getSubjects)
+router.get("/curriculums",getCurriculums)
 export default router

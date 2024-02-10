@@ -199,68 +199,74 @@ const addExtraClassQuote = async (req, res, next) => {
 }
 
 const getTrialClasses = async (req, res) => {
-    const academicManagerResponse = await AcademicManager.findOne({ user_id: req.user._id }, { teachers: 1, students: 1 })
+  const academicManagerResponse = await AcademicManager.findOne({ user_id: req.user._id }, { teachers: 1, students: 1 })
    
-    let options = {
-        limit: req.query.limit,
-        page: req.query.page,
-        populate: [{
-            path: "teacher_id",
-            select:{
-              name:1,
-
-            }
-        }, {
-            path: "student_id",
-            select:{
-              name:1
-            }
-        }],
-        select:{
-          subject:1,start_time:1,name:1,status:1, class_type:1,student_id:1,teacher_id:1
+let options = {
+    limit: req.query.limit,
+    page: req.query.page,
+    populate: [{
+        path: "teacher_id",
+        select: {
+          name: 1
         }
+    }, {
+        path: "student_id",  // Assuming "student_id" is the correct field name to populate
+        select: {
+          name: 1
+        },
+        
+    }],
+    select: {
+      subject: 1, start_time: 1, name: 1, status: 1, class_type: 1, student_id: 1, teacher_id: 1
     }
-   
+};
 
 let query = {
-  
-      // { student_id: { $in: student_ids.map(data => data.user_id) } },
-      student_id: { $in: academicManagerResponse.students } ,
-  
+  student_id: { $in: academicManagerResponse.students },
   teacher_id: { $in: academicManagerResponse.teachers },
   class_type: "Trial"
 };
 
-    if(req.query.date){
-      
-query["start_time"]={
-  $gte : moment(req.query.date).format("YYYY-MM-DD"),$lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+if(req.query.date) {
+  query["start_time"] = {
+    $gte: moment(req.query.date).format("YYYY-MM-DD"),
+    $lt: moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+  }
 }
-    }
-    console.log(academicManagerResponse.students)
-    if (req.query.search) {
-        query["$or"]=[
-          // {"subject.name": {$regex: req.query.search,$options: 'i'}},
-          // {
-          //   name:{$regex: req.query.search,$options: 'i'}
-          // }
-         { "student_id.name":{$regex: req.query.search,$options: 'i'}}
-         
-         
-        ]
-        
-       
-        
-           
-           
-            
-        
-    }
-    
-    Class.paginate(query, options, (err,classResponse) => {
-console.log(err)
-        return  res.json(responseObj(true, classResponse, "Trial Classes"))
-    })
+
+console.log(academicManagerResponse.students);
+let student_ids=await User.find({
+name:{
+  $regex: req.query.search, $options: 'i' 
+}
+})
+let teacher_ids=await User.find({
+  name:{
+    $regex: req.query.search, $options: 'i'
+  }
+})
+if(req.query.search) {
+  query["$or"] = [
+   
+    { "subject.name": { $regex: req.query.search, $options: 'i' } },
+    {"name":  {$regex: req.query.search, $options: 'i' }
+     
+    },
+    {"student_id":{
+      $in:student_ids.map((data)=>data._id)
+    }},
+    {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+  ];
+}
+console.log("Query:", JSON.stringify(query, null, 2));
+Class.paginate(query, options, (err, classResponse) => {
+  if(err) {
+    console.error(err);
+    return res.status(500).json(responseObj(false, null, "Error retrieving classes"));
+  }
+  return res.json(responseObj(true, classResponse, "Trial Classes"));
+});
+
 
 }
 
@@ -303,21 +309,29 @@ query["start_time"]={
 $gte : moment(req.query.date).format("YYYY-MM-DD"),$lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
 }
   }
-  if (req.query.search) {
-    query["$or"]=[
-      {"subject.name": {$regex: req.query.search,$options: 'i'}},
-      {
-        name:{$regex: req.query.search,$options: 'i'}
-      },
-     { "student_id.name":{$regex: req.query.search,$options: 'i'}},
-     { "teacher_id.name":{$regex: req.query.search,$options: 'i'}},
-     
-    ]
+  let student_ids=await User.find({
+    name:{
+      $regex: req.query.search, $options: 'i' 
+    }
+    })
+    let teacher_ids=await User.find({
+      name:{
+        $regex: req.query.search, $options: 'i'
+      }
+    })
+    if(req.query.search) {
+      query["$or"] = [
+       
+        { "subject.name": { $regex: req.query.search, $options: 'i' } },
+        {"name":  {$regex: req.query.search, $options: 'i' }
          
-         
-          
-      
-  }
+        },
+        {"student_id":{
+          $in:student_ids.map((data)=>data._id)
+        }},
+        {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+      ];
+    }
     Class.paginate(query, options, (err,classResponse) => {
 
         return  res.json(responseObj(true, classResponse, "Rescheduled Classes"))
@@ -521,7 +535,18 @@ const getUpcomingClasses=async(req,res,next)=>{
   
      
     }
-   
+    let student_ids=await User.find({
+      name:{
+        $regex: req.query.search, $options: 'i' 
+      }
+      })
+      let teacher_ids=await User.find({
+        name:{
+          $regex: req.query.search, $options: 'i'
+        }
+      })
+    
+    
     if(req.query.search){
       query={$and:[
         { start_time :{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")}},
@@ -532,31 +557,17 @@ const getUpcomingClasses=async(req,res,next)=>{
        
          {status:'Scheduled'},{
           $or:
-            [
-              { "subject.name":{
-                 $regex:req.query.search,
-                 $options:'i'
-               }}, { "curriculum.name":{
-              
-                $regex:req.query.search,
-                $options:'i'
-              }},
-              { "grade.name":{
-                  
-                $regex:req.query.search,
-                $options:'i'
-              }},{
-                name:{
-                      
-                $regex:req.query.search,
-                $options:'i'
-                }
-              }
+          [
+         
+            { "subject.name": { $regex: req.query.search, $options: 'i' } },
+            {"name":  {$regex: req.query.search, $options: 'i' }
              
-       
-       
-             ]
-          
+            },
+            {"student_id":{
+              $in:student_ids.map((data)=>data._id)
+            }},
+            {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+          ]
          }
        ]
      
@@ -618,34 +629,19 @@ const getUpcomingClasses=async(req,res,next)=>{
           status:'Done'
         },{
           $or: [
-            { "subject.name":{
-              
-               $regex:req.query.search,
-               $options:'i'
-             }}
-           , { "curriculum.name":{
-              
-            $regex:req.query.search,
-            $options:'i'
-          }},
-          { "grade.name":{
-              
-            $regex:req.query.search,
-            $options:'i'
-          }},{
-            name:{
-              $regex:req.query.search,
-              $options:'i'
-            }
-          }
-        
-     
-     
-           ]
+         
+            { "subject.name": { $regex: req.query.search, $options: 'i' } },
+            {"name":  {$regex: req.query.search, $options: 'i' }
+             
+            },
+            {"student_id":{
+              $in:student_ids.map((data)=>data._id)
+            }},
+            {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+          ]
         }
-      ]
-    
-      }
+      ]}
+      
     }
     
     if(req.query.student_id){

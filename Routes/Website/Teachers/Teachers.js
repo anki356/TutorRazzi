@@ -8,7 +8,7 @@ import { authVerify } from '../../../controllers/Website/Auth/Auth.js'
 router.get("/great-teachers",getGreatTeachers)
 router.get("/testimonials",getTestimonials)
 router.get("/feedbacks",getFeedBacks)
-router.get("/great-teachers-list",authVerify,getGreatTeachersList)
+router.get("/great-teachers-list",getGreatTeachersList)
 router.get("/teacher-details-by-id",getTeacherDetailsById)
 router.get("/request-trial-class",authVerify,requestTrialClass)
 const reviewValidation=[

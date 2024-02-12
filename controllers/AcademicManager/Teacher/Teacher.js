@@ -76,9 +76,9 @@ if(req.query.search){
             total_exp: {
                 $sum: {
                     $map: {
-                        input: "$exp_detail",
-                        as: "exp_detail",
-                        in: "$$exp_detail.exp"
+                        input: "$exp_details", // Changed to exp_details
+                        as: "exp",
+                        in: "$$exp.exp" 
                     }
                 }
             }

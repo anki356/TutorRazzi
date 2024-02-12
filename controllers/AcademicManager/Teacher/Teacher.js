@@ -44,7 +44,21 @@ if(req.query.search){
 
         }
 
-    }, {
+    }
+    , {
+        $lookup: {
+            from: "users",
+            foreignField: "_id",
+            localField: "user_id",
+            as: "users"
+
+        }
+
+    }, 
+    
+    
+    
+    {
         $project: {
             _id: 1,
             preferred_name: 1,
@@ -57,7 +71,18 @@ if(req.query.search){
             no_of_classes: {
                 $size: "$classes"
             },
-            user_id:1
+            user_id:1,
+            "users.profile_image":1,
+            total_exp: {
+                $sum: {
+                    $map: {
+                        input: "$exp_detail",
+                        as: "exp_detail",
+                        in: "$$exp_detail.exp"
+                    }
+                }
+            }
+        
 
         }
     },{

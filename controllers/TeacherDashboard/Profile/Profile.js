@@ -403,7 +403,7 @@ teacher_id:req.user._id
 })
 const testimonial=await Testimonial.findOne({teacher_id:req.user._id})
 let is_complete=teacherDetails!==null
-return  res.json(responseObj(true,{teacherResponse:teacherResponse,is_complete:is_complete,testimonial:testimonial,testimonialResponse:testimonialResponse},"Teacher Profile Completed Successfully"))
+return  res.json(responseObj(true,{teacherResponse:teacherDetails,is_complete:is_complete,testimonial:testimonial,is_testimonial:testimonial!==null},"Teacher Profile Completed Successfully"))
   
  }
 export {uploadTestimonialComplete,getSubjectCurriculum,editTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum,getAllCurriculums}

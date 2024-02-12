@@ -105,7 +105,7 @@ Teacher.paginate(query,options,(err,result)=>{
 const getTeacherById = async (req, res, next) => {
 
     const { id } = req.query
-    const teacherResponse = await Teacher.find({ user_id: id }).populate({ path: 'user_id' })
+    const teacherResponse = await Teacher.findOne({ user_id: id }).populate({ path: 'user_id' })
     const testimonialResponse=await Testimonial.find({teacher_id:id})
     const upcomingClasses=await Class.countDocuments({
         teacher_id:id,

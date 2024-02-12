@@ -13,7 +13,7 @@ import ResourceRequest from "../../../models/ResourceRequest.js"
 import Teacher from "../../../models/Teacher.js"
 import mongoose from "mongoose"
 import Attendance from "../../../models/Attendance.js"
-const ObjectId=mongoose.Schema.Types.ObjectId
+const ObjectId=mongoose.Types.ObjectId
 const getUpcomingClasses = async (req, res, next) => {
   
   

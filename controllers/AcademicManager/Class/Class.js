@@ -872,6 +872,17 @@ const getUpcomingClassDetails=async(req,res)=>{
   let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
   res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,teacherDetails:teacherDetails }, null))
 }
+const requestReUpload=async(req,res)=>{
+  await HomeWork.updateOne({
+   
+        _id:req.params.home_work_id
+      
+  },{
+   is_reupload:true,
+   status:"Pending"
+  })
+  res.json(responseObj(true,[],"Request for Re Upload of Homework placed Successfully"))
 
-export {markTaskDone,getRescheduledClasses, acceptClassRequest, reviewClass,reviewTeacher,getClassDetails,getPastClasses,getUpcomingClasses,getHomeworks, addExtraClassQuote, getTrialClasses,getResourceRequests,notifyTeacher,notifyStudent,resolveHomework,acceptTrialClassRequest ,rescheduleClass,getUpcomingClassDetails,getTrialClassDetails}
+}
+export {requestReUpload,markTaskDone,getRescheduledClasses, acceptClassRequest, reviewClass,reviewTeacher,getClassDetails,getPastClasses,getUpcomingClasses,getHomeworks, addExtraClassQuote, getTrialClasses,getResourceRequests,notifyTeacher,notifyStudent,resolveHomework,acceptTrialClassRequest ,rescheduleClass,getUpcomingClassDetails,getTrialClassDetails}
 

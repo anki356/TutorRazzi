@@ -3,7 +3,7 @@ import validationError from "../../../middleware/validationError.js"
 const router = express.Router()
 
 import {authVerify} from "../../../controllers/AcademicManager/Auth/Auth.js"
-import { acceptClassRequest, acceptTrialClassRequest, addExtraClassQuote, getClassDetails, getHomeworks, getPastClasses, getRescheduledClasses, getResourceRequests, getTrialClassDetails, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, markTaskDone, notifyStudent, notifyTeacher, rescheduleClass, resolveHomework, reviewClass, reviewTeacher } from "../../../controllers/AcademicManager/Class/Class.js"
+import { acceptClassRequest, acceptTrialClassRequest, addExtraClassQuote, getClassDetails, getHomeworks, getPastClasses, getRescheduledClasses, getResourceRequests, getTrialClassDetails, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, markTaskDone, notifyStudent, notifyTeacher, requestReUpload, rescheduleClass, resolveHomework, reviewClass, reviewTeacher } from "../../../controllers/AcademicManager/Class/Class.js"
 import { body, param } from "express-validator"
 import upload from "../../../util/upload.js"
 
@@ -19,11 +19,14 @@ const notifyStudentValidation=[
     body("homework_id").notEmpty().withMessage("Homework Id is required"),
     
 ]
-
+const reUploadValiationChain=[
+    param("home_work_id").notEmpty().withMessage("Invalid HomeWork Id")
+    ]
 
 router.patch("/mark-task-done/:_id",authVerify,markTaskDone)
 router.get("/rescheduled-classes",authVerify,getRescheduledClasses)
 
+router.patch("/request-re-upload/:home_work_id",authVerify,reUploadValiationChain,validationError,requestReUpload)
 router.post('/notify-student', notifyStudentValidation,validationError,authVerify,notifyStudent)
 const homeworkResolvedValidation=[
     param('homework_id').notEmpty().custom((value)=>mongoose.Types.ObjectId.isValid(value)).withMessage("Invalid Homework Id")

@@ -777,7 +777,7 @@ const getUpcomingClasses=async(req,res,next)=>{
     }).populate({
       path:'teacher_id',
       populate:{
-        path:"user_id"
+        path:"_id"
       }
     })
     let is_pricing=false

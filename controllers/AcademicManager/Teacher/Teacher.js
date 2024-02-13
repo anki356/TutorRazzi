@@ -97,10 +97,19 @@ let options={
     page:req.query.page||1,
     select:{"preferred_name":1}
 }
-Teacher.paginate(query,options,(err,result)=>{
+if (!teacherResponse.length>0) {
+    return res.json(responseObj(true,[],"No teachers"));
+}
+let limit=req.query.limit||TeacherIds.teachers.length
+let page=req.query.page||1
+let totalDocs=teacherResponse.length
+let totalPages=Math.ceil(totalDocs/Number(limit))
+let hasPrevPage=page>1
+let hasNextPage=page<totalPages
+let prevPage=hasPrevPage?Number(page)-1:null
+let nextPage=hasNextPage?Number(page)+1:null
+return res.json(responseObj(true,{docs:teacherResponse,totalDocs:totalDocs,limit:limit,page:page,pagingCounter:page,totalPages:totalPages,hasNextPage:hasNextPage,hasPrevPage:hasPrevPage,prevPage:prevPage,nextPage:nextPage},"All Teachers"));
 
-    res.json(responseObj(true, {teacherResponse:teacherResponse,result:result}, 'All Teachers'))
-})
 }
 const getTeacherById = async (req, res, next) => {
 

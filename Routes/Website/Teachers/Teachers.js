@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { getCurriculums, getFeedBacks, getGrades, getGreatTeachers, getGreatTeachersList, getReviewDetails, getSubjects, getTeacherDetailsById, getTestimonials, postContact, postReview, requestTrialClass } from '../../../controllers/Website/Teachers/Teachers.js'
+import { getCurriculums, getFeedBacks, getGrades, getGreatTeachers, getGreatTeachersList, getReviewDetails, getSubjects, getTeacherDetailsById, getTestimonials, postAFlag, postContact, postReview, requestTrialClass } from '../../../controllers/Website/Teachers/Teachers.js'
 import { body } from 'express-validator'
 const router=express.Router()
 import  validationError from "../../../middleware/validationError.js"
@@ -29,4 +29,8 @@ router.get("/grades",getGrades)
 router.get("/subjects",getSubjects)
 router.get("/curriculums",getCurriculums)
 router.get("/review-details",getReviewDetails)
+const teacherReportValidation=[
+    body('flag').notEmpty().withMessage("Flag is required")
+]
+router.patch("/report/:id",authVerify,postAFlag)
 export default router

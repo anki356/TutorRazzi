@@ -10,6 +10,7 @@ import Class from "../../../models/Class.js"
 import Student from "../../../models/Student.js"
 import moment from "moment"
 import mongoose from "mongoose"
+import TeacherReport from "../../../models/TeacherReport.js"
 const objectId=mongoose.Types.ObjectId
 const getGreatTeachers=async(req,res)=>{
    
@@ -302,4 +303,31 @@ const postContact=async(req,res)=>{
     })
     res.json(responseObj(true,contactResponse,"Contact Saved Successfully"))
 }
-export {getGrades,getCurriculums,getSubjects,postContact,getGreatTeachers,getTestimonials,getFeedBacks,getGreatTeachersList,getTeacherDetailsById,requestTrialClass,postReview,getCurriculums,getReviewDetails}
+const postAFlag=async(req,res)=>{
+    const { id } = req.params;
+    const { flag } = req.body;
+
+    const teacher = await User.findOne({
+        _id:id,
+        role:'teacher'
+    });
+
+    if (!teacher) {
+        throw new Error('Invalid Teacher ID try again.');
+    }
+
+
+    const reportDoc = await TeacherReport.findOne({ teacher: id, reportBy: req.user._id });
+
+    if (reportDoc) {
+        throw new Error('Already reported this profile.');
+    }
+
+    const report = { teacher: id, flag, reportBy: req.user._id }
+
+    const reportCreate = await Report.create(report);
+
+    
+    return res.json(responseObj(true, reportCreate, 'Profile Reported.',  []))
+}
+export {getGrades,getCurriculums,getSubjects,postContact,getGreatTeachers,getTestimonials,getFeedBacks,getGreatTeachersList,getTeacherDetailsById,requestTrialClass,postReview,getCurriculums,getReviewDetails,postAFlag}

@@ -772,8 +772,8 @@ const getUpcomingClasses=async(req,res,next)=>{
     })
     let quotes=await Quote.find({
       student_id:classDetails.student_id,
-      curriculum:classDetails.curriculum.name,
-      grade:classDetails.grade.name
+      "subject_curriculum_grade.curriculum":classDetails.curriculum.name,
+      "subject_curriculum_grade.grade":classDetails.grade.name
     })
     let is_pricing=false
     if(quotes.length>0){

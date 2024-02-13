@@ -62,7 +62,8 @@ const getStats=async(req,res)=>{
         const responses=await SupportResponses.create({
             user_id:req.user._id,
             support_id:req.body.support_id,
-            response:req.body?.response?req.body.response:req.files[0].filename,
+            response:req.body?.response,
+            response_document:req.files[0].filename,
             is_sender:true,
     
         })
@@ -91,4 +92,4 @@ const getStats=async(req,res)=>{
     
         return  res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses},"Ticket marked Resolved"))
     }
-    export {getStats,getTickets,getTicketDetails,addSupport}
+    export {getStats,getTickets,getTicketDetails,addSupport,saveResponse,markResolveTicket}

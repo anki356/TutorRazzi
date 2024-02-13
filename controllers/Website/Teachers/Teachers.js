@@ -11,6 +11,7 @@ import Student from "../../../models/Student.js"
 import moment from "moment"
 import mongoose from "mongoose"
 import TeacherReport from "../../../models/TeacherReport.js"
+import User from "../../../models/User.js"
 const objectId=mongoose.Types.ObjectId
 const getGreatTeachers=async(req,res)=>{
    
@@ -325,7 +326,7 @@ const postAFlag=async(req,res)=>{
 
     const report = { teacher: id, flag, reportBy: req.user._id }
 
-    const reportCreate = await Report.create(report);
+    const reportCreate = await TeacherReport.create(report);
 
     
     return res.json(responseObj(true, reportCreate, 'Profile Reported.',  []))

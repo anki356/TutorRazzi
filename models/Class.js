@@ -187,8 +187,8 @@ ClassSchema.virtual('curriculum_name').get(function(){
 })
 ClassSchema.virtual('is_past').get(function(){
     
-    if(this.end_time!==undefined){
-        return moment(this.end_time).isBefore(moment())  
+    if(this.status!==undefined){
+        return this.status==='Done'
     }
     
 

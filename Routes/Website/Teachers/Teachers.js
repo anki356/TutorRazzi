@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { getCurriculums, getFeedBacks, getGrades, getGreatTeachers, getGreatTeachersList, getSubjects, getTeacherDetailsById, getTestimonials, postContact, postReview, requestTrialClass } from '../../../controllers/Website/Teachers/Teachers.js'
+import { getCurriculums, getFeedBacks, getGrades, getGreatTeachers, getGreatTeachersList, getReviewDetails, getSubjects, getTeacherDetailsById, getTestimonials, postContact, postReview, requestTrialClass } from '../../../controllers/Website/Teachers/Teachers.js'
 import { body } from 'express-validator'
 const router=express.Router()
 import  validationError from "../../../middleware/validationError.js"
@@ -28,4 +28,5 @@ router.post("/contact",contactValidation,validationError,postContact)
 router.get("/grades",getGrades)
 router.get("/subjects",getSubjects)
 router.get("/curriculums",getCurriculums)
+router.get("/review-details",getReviewDetails)
 export default router

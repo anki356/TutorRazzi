@@ -185,6 +185,12 @@ const getTeacherDetailsById=async(req,res)=>{
             }
         
     })
+  
+        return res.json(responseObj(true,{teacherDetails:teacherDetails}))
+
+}
+const getReviewDetails=async(req,res)=>{
+    let teacher_id = req.query.teacher_id
     let reviews = await Review.aggregate([
         {
             $match:{teacher_id:new objectId(teacher_id)}
@@ -235,10 +241,8 @@ const getTeacherDetailsById=async(req,res)=>{
                 }
             }
         ])
-        return res.json(responseObj(true,{teacherDetails:teacherDetails,reviews:reviews,reviewList:reviewList,reviewCategorization:reviewCategorization}))
-
+        return res.json(responseObj(true,{reviews:reviews,reviewList:reviewList,reviewCategorization:reviewCategorization}))   
 }
-
 const requestTrialClass = async (req, res, next) => {
    
     let classResponseArray = []
@@ -298,4 +302,4 @@ const postContact=async(req,res)=>{
     })
     res.json(responseObj(true,contactResponse,"Contact Saved Successfully"))
 }
-export {getGrades,getCurriculums,getSubjects,postContact,getGreatTeachers,getTestimonials,getFeedBacks,getGreatTeachersList,getTeacherDetailsById,requestTrialClass,postReview}
+export {getGrades,getCurriculums,getSubjects,postContact,getGreatTeachers,getTestimonials,getFeedBacks,getGreatTeachersList,getTeacherDetailsById,requestTrialClass,postReview,getCurriculums,getReviewDetails}

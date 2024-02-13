@@ -721,16 +721,8 @@ const getUpcomingClasses=async(req,res,next)=>{
     let ratingsResponse=await Review.findOne({
       class_id:req.query.class_id
     })
-    let quotes=await Quote.find({
-      student_id:classDetails.student_id,
-      curriculum:classDetails.curriculum.name,
-      grade:classDetails.grade.name
-    })
-    let is_pricing=false
-    if(quotes.length>0){
-      is_pricing=true
-    }
-    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails,ratingsResponse:ratingsResponse,quotes:quotes,is_pricing:is_pricing }, null))
+   
+    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails,ratingsResponse:ratingsResponse }, null))
   }
   const getTrialClassDetails = async (req, res, next) => {
     let classDetails = {}
@@ -770,7 +762,16 @@ const getUpcomingClasses=async(req,res,next)=>{
     let ratingsResponse=await Review.findOne({
       class_id:req.query.class_id
     })
-    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails ,ratingsResponse:ratingsResponse}, null))
+    let quotes=await Quote.find({
+      student_id:classDetails.student_id,
+      curriculum:classDetails.curriculum.name,
+      grade:classDetails.grade.name
+    })
+    let is_pricing=false
+    if(quotes.length>0){
+      is_pricing=true
+    }
+    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails ,ratingsResponse:ratingsResponse,quotes:quotes,is_pricing:is_pricing}, null))
   }
   const reviewClass=async(req,res,next)=>{
     let reviewResponse=await Review.findOne({

@@ -228,7 +228,7 @@ let options = {
         
     }],
     select: {
-      subject: 1, start_time: 1, name: 1, status: 1, class_type: 1, student_id: 1, teacher_id: 1
+      subject: 1, start_time: 1, name: 1, status: 1, class_type: 1, student_id: 1, teacher_id: 1,"end_time":1
     }
 };
 

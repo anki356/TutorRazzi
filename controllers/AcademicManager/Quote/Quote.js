@@ -2,6 +2,7 @@ import Payment from "../../../models/Payment.js"
 import Quote from "../../../models/Quote.js"
 import Class from "../../../models/Class.js"
 import {responseObj} from "../../../util/response.js"
+import Student from "../../../models/Student.js"
 const addQuote=async(req,res,next)=>{
    
     const response=await Quote.insertMany({
@@ -28,4 +29,11 @@ const addQuote=async(req,res,next)=>{
 
     res.json(responseObj(true,{response,paymentResponse},null))
 }
-export  {addQuote};
+const getSubjectCurriculum=async(req,res)=>{
+    const subject_curriculum=await SubjectCurriculum.find({
+       curriculum:req.query.curriculum
+    })
+    let subjects=subject_curriculum.map((data)=>data.subject)
+    return res.json(responseObj(true,subjects,"Subject Curriculum"))
+   }
+export  {addQuote,getSubjectCurriculum};

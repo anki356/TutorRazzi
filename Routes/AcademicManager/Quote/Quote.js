@@ -1,6 +1,6 @@
 import express from "express"
 const router = express.Router()
-import {addQuote} from "../../../controllers/AcademicManager/Quote/Quote.js"
+import {addQuote, getSubjectCurriculum} from "../../../controllers/AcademicManager/Quote/Quote.js"
 import {authVerify} from "../../../controllers/AcademicManager/Auth/Auth.js"
 import { body } from "express-validator"
 import validationError from "../../../middleware/validationError.js"
@@ -12,4 +12,6 @@ const QuoteValidation=[
     body('amount').notEmpty().withMessage("Amount is Required")
 ]
 router.post("/Quote",authVerify,QuoteValidation,validationError,addQuote)
+
+router.get("/subject-by-curriculum",authVerify,getSubjectCurriculum)
 export default router

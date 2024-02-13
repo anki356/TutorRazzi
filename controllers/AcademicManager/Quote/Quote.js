@@ -38,6 +38,19 @@ const getSubjectCurriculum=async(req,res)=>{
     return res.json(responseObj(true,subjects,"Subject Curriculum"))
    }
    const editQuote=async(req,res)=>{
+    let quoteDetails=await Quote.findOne({
+      _id:req.params._id  ,
+    
+       
+    })
+if(quoteDetails==null){
+return res.json(responseObj(false,null,"Invalid Quote id"))
+}
+if(quoteDetails.status==='Paid'){
+    return res.json(responseObj(false,null,"You cannot edit quote now"))
+
+}
+
     await Quote.updateOne({
         _id:req.params._id
     },{

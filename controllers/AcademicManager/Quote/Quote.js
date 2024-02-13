@@ -37,4 +37,20 @@ const getSubjectCurriculum=async(req,res)=>{
     let subjects=subject_curriculum.map((data)=>data.subject)
     return res.json(responseObj(true,subjects,"Subject Curriculum"))
    }
-export  {addQuote,getSubjectCurriculum};
+   const editQuote=async(req,res)=>{
+    await Quote.updateOne({
+        _id:req.params._id
+    },{
+        $set:{
+            ...req.body
+        }
+    })
+    return res.json(responseObj(true,null,"Quote edited successfully"))
+   }
+   const getQuoteById=async(req,res)=>{
+    let quote=await Quote.findOne({
+        _id:req.query.quote_id
+    })
+    return res.json(responseObj(true,quote,"Quote Details"))
+   }
+export  {addQuote,getSubjectCurriculum,editQuote,getQuoteById};

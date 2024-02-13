@@ -1,6 +1,6 @@
 import express from "express"
 const router = express.Router()
-import {addQuote, getSubjectCurriculum} from "../../../controllers/AcademicManager/Quote/Quote.js"
+import {addQuote, editQuote, getQuoteById, getSubjectCurriculum} from "../../../controllers/AcademicManager/Quote/Quote.js"
 import {authVerify} from "../../../controllers/AcademicManager/Auth/Auth.js"
 import { body } from "express-validator"
 import validationError from "../../../middleware/validationError.js"
@@ -14,4 +14,6 @@ const QuoteValidation=[
 router.post("/Quote",authVerify,QuoteValidation,validationError,addQuote)
 
 router.get("/subject-by-curriculum",authVerify,getSubjectCurriculum)
+router.get("/quote",authVerify,getQuoteById)
+router.patch("/quote/:_id",authVerify,editQuote)
 export default router

@@ -72,5 +72,10 @@ QuoteSchema.virtual('curriculum_name').get(function(){
         return this.subject_curriculum_grade.curriculum;
     }
 })
+QuoteSchema.virtual('is_edit').get(function(){
+    if(this.status){
 
+        return this.status==='Pending';
+    }
+})
 export default mongoose.model("Quote", QuoteSchema)

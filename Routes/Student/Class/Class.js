@@ -1,5 +1,5 @@
 import express from 'express'
-import { getClassDetails, requestTrialClass,rescheduleClass,getPurchasedClasses, reviewClass,raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass, markTaskDone, uploadHomework, getQuotes, scheduleClass, requestExtraclass, getExtraClassQuotes, getPurchasedClassesByQuoteId, likeClass, getLastTrialClass, dislikeClass, getClassesBasedOnDate, getUpcomingClassDetails } from '../../../controllers/Student/Class/Class.js'
+import { getClassDetails, requestTrialClass,rescheduleClass,getPurchasedClasses, reviewClass,raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass,  uploadHomework, getQuotes, scheduleClass, requestExtraclass, getExtraClassQuotes, getPurchasedClassesByQuoteId, likeClass, getLastTrialClass, dislikeClass, getClassesBasedOnDate, getUpcomingClassDetails } from '../../../controllers/Student/Class/Class.js'
 import { authVerify } from '../../../controllers/Student/Auth/Auth.js'
 import { addHomework, setReminder } from '../../../controllers/TeacherApp/Class/Class.js'
 import upload from "../../../util/upload.js"
@@ -43,11 +43,6 @@ const classValidatonChain=[
 router.post("/join-class",authVerify,classValidatonChain,validationError,joinClass)
 router.post("/leave-class",authVerify,classValidatonChain,validationError,leaveClass)
 router.patch("/accept-rescheduled-class/:_id",authVerify,acceptRescheduledClass)
-const taskValidationChain=[
-    param('_id').notEmpty().withMessage("Invalid Task Id"),
-    
-]
-router.patch("/mark-task-done/:_id",authVerify,taskValidationChain,validationError,markTaskDone)
 const homeworkValidationChain=[
 
 param('_id').notEmpty().withMessage("Invalid Homework Id "),

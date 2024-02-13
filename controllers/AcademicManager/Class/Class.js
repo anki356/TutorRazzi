@@ -17,6 +17,22 @@ import Task from "../../../models/Task.js"
 import Reminder from "../../../models/Reminder.js"
 import User from "../../../models/User.js"
 import Review from "../../../models/Review.js"
+const markTaskDone=async(req,res)=>{
+  const taskDetails=await Task.findOne({
+_id:req.params._id
+  })
+  if(taskDetails===null){
+    return res.json(responseObj(false,null,"Task is not present"))
+  }
+  await Task.updateOne({
+    _id:req.params._id
+  },{
+    $set:{
+      status:"Done"
+    }
+  })
+  return res.json(responseObj(true,null,"Task Mark as done"))
+}
 const acceptTrialClassRequest = async (req, res, next) => {
   let details=await Class.findOne({_id:req.params._id})
   let classDetails = await Class.find({
@@ -857,5 +873,5 @@ const getUpcomingClassDetails=async(req,res)=>{
   res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,teacherDetails:teacherDetails }, null))
 }
 
-export {getRescheduledClasses, acceptClassRequest, reviewClass,reviewTeacher,getClassDetails,getPastClasses,getUpcomingClasses,getHomeworks, addExtraClassQuote, getTrialClasses,getResourceRequests,notifyTeacher,notifyStudent,resolveHomework,acceptTrialClassRequest ,rescheduleClass,getUpcomingClassDetails,getTrialClassDetails}
+export {markTaskDone,getRescheduledClasses, acceptClassRequest, reviewClass,reviewTeacher,getClassDetails,getPastClasses,getUpcomingClasses,getHomeworks, addExtraClassQuote, getTrialClasses,getResourceRequests,notifyTeacher,notifyStudent,resolveHomework,acceptTrialClassRequest ,rescheduleClass,getUpcomingClassDetails,getTrialClassDetails}
 

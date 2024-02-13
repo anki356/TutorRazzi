@@ -58,4 +58,37 @@ const getStats=async(req,res)=>{
         })
         res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses},"Ticket Details"))
     }
+    const saveResponse=async(req,res)=>{
+        const responses=await SupportResponses.create({
+            user_id:req.user._id,
+            support_id:req.body.support_id,
+            response:req.body?.response?req.body.response:req.files[0].filename,
+            is_sender:true,
+    
+        })
+        return  res.json(responseObj(true,responses,"Response Saved Successfully"))
+    }
+    
+    const markResolveTicket=async(req,res)=>{
+        await Support.updateOne({
+            _id:req.params.support_id
+        },{
+    status:"Resolved"
+        })
+        const ticketDetails=await Support.findById({_id:req.params.support_id}).populate({
+            path:"user_id",select:{
+                name:1
+            }
+        })
+        const responses=await SupportResponses.find({
+            support_id:req.params.support_id
+        }).populate({
+            path:"user_id",
+            select:{
+                name:1
+            }
+        })
+    
+        return  res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses},"Ticket marked Resolved"))
+    }
     export {getStats,getTickets,getTicketDetails,addSupport}

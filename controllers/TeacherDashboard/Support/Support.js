@@ -67,8 +67,10 @@ const saveResponse=async(req,res)=>{
     const responses=await SupportResponses.create({
         user_id:req.user._id,
         support_id:req.body.support_id,
-        response:req.body.response,
-        is_sender:true
+        response:req.body?.response?req.body.response:null,
+        response_document:req.files[0].filename,
+        is_sender:true,
+
     })
     return  res.json(responseObj(true,responses,"Response Saved Successfully"))
 }

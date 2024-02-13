@@ -776,9 +776,7 @@ const getUpcomingClasses=async(req,res,next)=>{
       "subject_curriculum_grade.grade":classDetails.grade.name
     }).populate({
       path:'teacher_id',
-      populate:{
-        path:"_id"
-      }
+      
     })
     let is_pricing=false
     if(quotes.length>0){

@@ -26,7 +26,7 @@ const SupportSchema = new mongoose.Schema({
     category:{
 type:"String",
 enum:["High","Medium","Low"],
-required: true
+
     },
     document_id: {
         type: mongoose.SchemaTypes.ObjectId,

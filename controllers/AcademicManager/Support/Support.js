@@ -4,6 +4,7 @@ import SupportResponses from "../../../models/SupportResponses.js"
 import { responseObj } from "../../../util/response.js"
 
 const addSupport=async (req,res,next)=>{
+    let documentResponse
     if(req.files.length>0){
         documentResponse=await Document.insertMany({
    name:req.files[0].filename
@@ -17,10 +18,10 @@ const addSupport=async (req,res,next)=>{
         description:req.body.description,
         status:"Pending",
         document_id:req.files.length>0?documentResponse._id:null,
-        category:req.body.category
+       
 
     })
-    res.json(responseObj(true,{documentResponse,supportResponse},null))
+    res.json(responseObj(true,null,"Support Added"))
 }
 
 const getStats=async(req,res)=>{

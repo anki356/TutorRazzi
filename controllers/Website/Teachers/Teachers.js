@@ -330,4 +330,4 @@ const postAFlag=async(req,res)=>{
     
     return res.json(responseObj(true, reportCreate, 'Profile Reported.',  []))
 }
-export {getGrades,getCurriculums,getSubjects,postContact,getGreatTeachers,getTestimonials,getFeedBacks,getGreatTeachersList,getTeacherDetailsById,requestTrialClass,postReview,getCurriculums,getReviewDetails,postAFlag}
+export {getGrades,getCurriculums,getSubjects,postContact,getGreatTeachers,getTestimonials,getFeedBacks,getGreatTeachersList,getTeacherDetailsById,requestTrialClass,postReview,getReviewDetails,postAFlag}

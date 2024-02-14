@@ -218,9 +218,9 @@ console.log(payment)
 const studentDetails=await Student.findOne({
 user_id:payment.class_id[0].student_id._id
 },{
-    select:{
+    
         "grade":1, "curriculum":1
-    }
+    
 }).populate({
     path:'user_id',
     select:{

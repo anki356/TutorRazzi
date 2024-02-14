@@ -34,7 +34,7 @@ console.log(query)
         {
             $lookup: {
                 from: 'users',
-                localField: 'student_id',
+                localField: 'students',
                 foreignField: '_id',
                 as: 'user',
                 pipeline: [

@@ -1,3 +1,4 @@
+import Document from "../../../models/Document.js"
 import Support from "../../../models/Support.js"
 import { responseObj } from "../../../util/response.js"
 const getAllTickets=async(req,res)=>{

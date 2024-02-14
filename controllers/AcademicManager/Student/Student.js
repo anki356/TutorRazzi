@@ -188,12 +188,45 @@ const getStudentPersonalDetails=async(req,res)=>{
     return res.json(responseObj(true,{studentDetails:studentDetails,parentID:parentID+1,studentId:studentId+1},"Student Details"));
 }
 const getPaymentDetails=async(req,res)=>{
-const payment=await Payment.findOne({_id:req.query.payment_id}).populate({
+const payment=await Payment.findOne({_id:req.query.payment_id},{
+    trx_ref_no:1
+}).populate({
     path:'quote_id',select:{
         "class_count":1,'subject_curriculum_grade':1,
     }
+}).populate({
+    path:"class_id",
+    select:{
+        "teacher_id":1,"student_id":1,"subject":1,"start_time":1,"end_time":1
+    },
+    populate:[{
+        path:'teacher_id',
+        select:{
+            name:1,profile_image:1
+        }
+    },{
+        path:'student_id',
+        select:{
+            name:1,_id:1
+        }
+
+    }]
+    
+})
+const studentDetails=await Student.findOne({
+user_id:payment.class_id[0].student_id._id
+}).populate({
+    path:'user_id',
+    select:{
+        name:1,profile_image:1
+    }
 })
 
+const payments=await Payment.find()
+let payment_id=payments.findIndex((data)=>{
+    return data._id===req.query.payment_id
+})
+return res.json(responseObj(true,{payment_id:payment_id,studentDetails:studentDetails,payment:payment},"Payment Details"))
 
 }
 export {getAllStudents,getStudentById,getStudentClassList,getAllStudentPayments,getBundleDetails,getStudentPersonalDetails}

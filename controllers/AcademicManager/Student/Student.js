@@ -31,17 +31,27 @@ const getAllStudents=async(req,res)=>{
 }
 const getStudentById=async(req,res)=>{
     const studentId = req.query.student_id;
-    const studentResponse=await Student.findOne({user_id:studentId}).populate({
-        path:'user_id'
+    const studentResponse=await Student.findOne({user_id:studentId},{
+        curriculum:1,preferred_name:1,createdAt:1
+    }).populate({
+        path:'user_id',
+            select:{
+                "email":1
+            
+        }
     })
-    const no_of_trial_classes_done=await Class.countDocuments({
-        class_type:"Trial",
-        status:"Done",
+    // const no_of_trial_classes_done=await Class.countDocuments({
+    //     class_type:"Trial",
+    //     status:"Done",
+    //     student_id:studentId
+    // })
+    let query={
         student_id:studentId
-    })
-    let quotes=await Quote.find({
-        student_id:studentId
-    })
+    }
+    if(req.query.teacher_id){
+       query.teacher_id=req.query.teacher_id
+    }
+    let quotes=await Quote.find(query)
     let array=[]
     quotes.forEach(async(data)=>{
         let classes=await Class.find({
@@ -66,20 +76,8 @@ let last_payment=await Payment.find({
 }).sort({
     createdAt:-1
 }).limit(1)
-const teacher_classes=await Class.find({
-    status:{
-        $ne:"Cancelled"
-    },
-    student_id:studentId
-},{
-    subject:1,grade:1,curriculum:1,name:1,teacher_id:1
-}).populate({
-    path:"teacher_id",
-    select:{
-        profile_image:1,name:1
-    }
-})
-    return res.json(responseObj(true,{"studentResponse":studentResponse,"no_of_trial_classes_done":no_of_trial_classes_done,"no_of_requests":no_of_requests,"teacher_classes":teacher_classes},"Student Data"))
+
+    return res.json(responseObj(true,{"studentResponse":studentResponse,"no_of_classes":no_of_classes,"last_payment":last_payment[0].amount,"quotes":array},"Student Data"))
 }
 
 export {getAllStudents,getStudentById}

@@ -6,6 +6,7 @@ import Quote from "../../../models/Quote.js"
 import Student from "../../../models/Student.js"
 import {responseObj} from "../../../util/response.js"
 import User from "../../../models/User.js"
+import Parent from "../../../models/Parent.js"
 const getAllStudents=async(req,res)=>{
     let StudentIds=await AcademicManager.findOne({user_id:req.user._id},{students:1})
     let query={

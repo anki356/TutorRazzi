@@ -66,7 +66,7 @@ const getTicketDetails=async(req,res)=>{
 const saveResponse=async(req,res)=>{
     const responses=await SupportResponses.create({
         user_id:req.user._id,
-        ticket_id:req.body.support_id,
+        support_id:req.body.support_id,
         response:req.body?.response?req.body.response:null,
         response_document:req.files[0].filename,
         is_sender:true,

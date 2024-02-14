@@ -55,7 +55,7 @@ const getStats=async(req,res)=>{
     const getTicketDetails=async(req,res)=>{
         const ticketDetails=await Support.findById({_id:req.query.ticket_id})
         const responses=await SupportResponses.find({
-            ticket_id:req.query.ticket_id
+            support_id:req.query.ticket_id
         })
         res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses,response_count:responses.length},"Ticket Details"))
     }
@@ -63,7 +63,7 @@ const getStats=async(req,res)=>{
         console.log(req.files)
         const responses=await SupportResponses.create({
             user_id:req.user._id,
-            ticket_id:req.body.support_id,
+            support_id:req.body.support_id,
             response:req.body?.response,
             response_document:req?.files[0]?.filename,
             is_sender:true,

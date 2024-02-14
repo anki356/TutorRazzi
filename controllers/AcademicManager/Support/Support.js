@@ -57,7 +57,7 @@ const getStats=async(req,res)=>{
         const responses=await SupportResponses.find({
             ticket_id:req.query.ticket_id
         })
-        res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses},"Ticket Details"))
+        res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses,response_count:responses.length},"Ticket Details"))
     }
     const saveResponse=async(req,res)=>{
         const responses=await SupportResponses.create({

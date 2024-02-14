@@ -101,13 +101,16 @@ TeacherSchema.virtual('profileImageUrl').get(function () {
 
 })
 TeacherSchema.virtual('exp').get(function () {
+    let exp=0
     if (this.exp_details !== undefined&&this.exp_details.length>0) {
-        let exp=0
+        
 this.exp_details.forEach((data)=>{
     exp+=data.exp
 })
-return exp
     }
+    
+        return exp
+    
 
 })
 

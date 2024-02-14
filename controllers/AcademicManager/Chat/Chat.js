@@ -11,7 +11,9 @@ const getAll=async (req,res)=>{
         page,
     }
 
-    
+    let query={
+        user_id:new ObjectId(req.user._id)
+    }
 
     const orConditions = [];
 
@@ -27,9 +29,7 @@ const getAll=async (req,res)=>{
 console.log(query)
     const students = await AcademicManager.aggregate([
         {
-                $match: {
-                    user_id:new ObjectId(req.user._id)
-                }
+                $match: query
             },
         {
             $lookup: {

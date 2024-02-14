@@ -63,7 +63,7 @@ const getStats=async(req,res)=>{
         console.log(req.files)
         const responses=await SupportResponses.create({
             user_id:req.user._id,
-            support_id:req.body.support_id,
+            ticket_id:req.body.support_id,
             response:req.body?.response,
             response_document:req?.files[0]?.filename,
             is_sender:true,

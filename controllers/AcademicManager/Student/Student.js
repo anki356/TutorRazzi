@@ -136,7 +136,8 @@ const getStudentClassList=async(req,res)=>{
 }
 const getAllStudentPayments=async(req,res)=>{
     let query={
-        sender_id:req.query.student_id
+        sender_id:req.query.student_id,
+        status:"Paid"
     }
     if(req.query.date){
         query.createdAt=req.query.date
@@ -189,7 +190,7 @@ const getStudentPersonalDetails=async(req,res)=>{
 }
 const getPaymentDetails=async(req,res)=>{
 const payment=await Payment.findOne({_id:req.query.payment_id},{
-    trx_ref_no:1
+    trx_ref_no:1,status:1
 }).populate({
     path:'quote_id',select:{
         "class_count":1,'subject_curriculum_grade':1,
@@ -213,6 +214,7 @@ const payment=await Payment.findOne({_id:req.query.payment_id},{
     }]
     
 })
+console.log(payment)
 const studentDetails=await Student.findOne({
 user_id:payment.class_id[0].student_id._id
 }).populate({

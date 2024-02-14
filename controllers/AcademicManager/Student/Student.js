@@ -45,26 +45,7 @@ const getStudentById=async(req,res)=>{
     //     status:"Done",
     //     student_id:studentId
     // })
-    let query={
-        student_id:studentId
-    }
-    if(req.query.teacher_id){
-       query.teacher_id=req.query.teacher_id
-    }
-    let quotes=await Quote.find(query)
-    let array=[]
-    quotes.forEach(async(data)=>{
-        let classes=await Class.find({
-            quote_id:data._id,
-            status:'Scheduled'
-                }) 
-                let obj=data
-              
-    if(classes.length===1){
-obj.due_date=classes[0].end_date
-    }
-    array.push(obj)
-    })
+    
    
 const no_of_classes=await Class.countDocuments({
   
@@ -77,7 +58,40 @@ let last_payment=await Payment.find({
     createdAt:-1
 }).limit(1)
 
-    return res.json(responseObj(true,{"studentResponse":studentResponse,"no_of_classes":no_of_classes,"last_payment":last_payment[0].amount,"quotes":array},"Student Data"))
+    return res.json(responseObj(true,{"studentResponse":studentResponse,"no_of_classes":no_of_classes,"last_payment":last_payment[0].amount},"Student Data"))
+}
+const getStudentClassList=async(req,res)=>{
+    let query={
+        student_id:req.query.sudent_id
+    }
+    if(req.query.teacher_id){
+       query.teacher_id=req.query.teacher_id
+    }
+    let {limit,page}=req.query
+    
+    
+    let array=[]
+    let quotes=await Quote.find(query).limit(limit).skip((page-1)*limit)
+    quotes.forEach(async(data)=>{
+        let classes=await Class.find({
+            quote_id:data._id,
+            status:'Scheduled'
+                }) 
+                let obj=data
+              
+    if(classes.length===1){
+obj.due_date=classes[0].end_date
+    }
+    array.push(obj)
+    })
+    let totalDocs=array.length
+    let totalPages=Math.ceil(totalDocs/Number(limit))
+    let hasPrevPage=page>1
+    let hasNextPage=page<totalPages
+    let prevPage=hasPrevPage?Number(page)-1:null
+    let nextPage=hasNextPage?Number(page)+1:null
+     return res.json(responseObj(true,{docs:array,totalDocs:totalDocs,limit:limit,page:page,pagingCounter:page,totalPages:totalPages,hasNextPage:hasNextPage,hasPrevPage:hasPrevPage,prevPage:prevPage,nextPage:nextPage},"All Quotes"));
+ 
 }
 
 export {getAllStudents,getStudentById}

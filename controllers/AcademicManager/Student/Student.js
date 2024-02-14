@@ -1,5 +1,6 @@
 import AcademicManager from "../../../models/AcademicManager.js"
 import Class from "../../../models/Class.js"
+import Payment from "../../../models/Payment.js"
 import Quote from "../../../models/Quote.js"
 import Student from "../../../models/Student.js"
 import {responseObj} from "../../../util/response.js"
@@ -90,8 +91,28 @@ obj.due_date=classes[0].end_date
     let hasNextPage=page<totalPages
     let prevPage=hasPrevPage?Number(page)-1:null
     let nextPage=hasNextPage?Number(page)+1:null
-     return res.json(responseObj(true,{docs:array,totalDocs:totalDocs,limit:limit,page:page,pagingCounter:page,totalPages:totalPages,hasNextPage:hasNextPage,hasPrevPage:hasPrevPage,prevPage:prevPage,nextPage:nextPage},"All Quotes"));
+     return res.json(responseObj(true,{result:{docs:array,totalDocs:totalDocs,limit:limit,page:page,pagingCounter:page,totalPages:totalPages,hasNextPage:hasNextPage,hasPrevPage:hasPrevPage,prevPage:prevPage,nextPage:nextPage}},"All Quotes"));
  
 }
-
-export {getAllStudents,getStudentById,getStudentClassList}
+const getAllStudentPayments=async(req,res)=>{
+    let query={
+        sender_id:req.query.student_id
+    }
+    let options={
+        limit:req.query.limit,
+        page:req.query.page,
+        populate:{
+            path:'quote_id',
+            select:{
+                'subject_curriculum_grade.subject':1,class_count:1
+            }
+        },
+        select:{
+            'createdAt':1,'trx_ref_no':1,"net_amount":1
+        }
+    }
+    Payment.paginate(query,options,(err,result)=>{
+        return res.json(responseObj(true,result,"All Quotes"));
+    })
+}
+export {getAllStudents,getStudentById,getStudentClassList,getAllStudentPayments}

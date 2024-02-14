@@ -171,7 +171,7 @@ const getStudentPersonalDetails=async(req,res)=>{
         curriculum:1,
         grade:1,
         school:1,
-        parent_id
+        parent_id:1
     }).populate({
         path:'email_id',
         select:{
@@ -186,5 +186,8 @@ const getStudentPersonalDetails=async(req,res)=>{
         return data.user_id=studentDetails.parent_id
     })
     return res.json(responseObj(true,{studentDetails:studentDetails,parentID:parentID+1,studentId:studentId+1},"Student Details"));
+}
+const getPaymentDetails=async(req,res)=>{
+
 }
 export {getAllStudents,getStudentById,getStudentClassList,getAllStudentPayments,getBundleDetails,getStudentPersonalDetails}

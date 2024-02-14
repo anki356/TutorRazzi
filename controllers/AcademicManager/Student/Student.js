@@ -1,3 +1,4 @@
+import moment from "moment"
 import AcademicManager from "../../../models/AcademicManager.js"
 import Class from "../../../models/Class.js"
 import Payment from "../../../models/Payment.js"
@@ -61,6 +62,36 @@ let last_payment=await Payment.find({
 
     return res.json(responseObj(true,{"studentResponse":studentResponse,"no_of_classes":no_of_classes,"last_payment":last_payment[0].net_amount},"Student Data"))
 }
+const getBundleDetails=async(req,res)=>{
+    const bundles=await Class.find({
+        quote_id:req.query.quote_id
+    })
+    if(bundles.length===0){
+        return res.json(responseObj(false, null,"Incorrect Bundle ID"))
+    }
+    const teacher_name=await User.findOne({
+       _id: bundles[0].teacher_id
+    })
+    const subject=bundles[0].subject.name
+    const classRemaining=await Class.find({
+        quote_id:req.query.quote_id,
+        $or:[
+            {
+status:"Pending"
+            },{
+status:"Scheduled",
+start_time:{
+    $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
+}
+            }
+        ] 
+    })
+let show=false
+    if(classRemaining.length===1&&moment(classRemaining[0].end_time).diff(moment(),'d')<=3){
+show=true
+    }
+    return res.json(responseObj(true,{bundles:bundles,show:show,classRemaining:classRemaining,subject:subject,teacher_name:teacher_name}))
+}
 const getStudentClassList=async(req,res)=>{
     let query={
         student_id:req.query.student_id
@@ -115,4 +146,4 @@ const getAllStudentPayments=async(req,res)=>{
         return res.json(responseObj(true,result,"All Quotes"));
     })
 }
-export {getAllStudents,getStudentById,getStudentClassList,getAllStudentPayments}
+export {getAllStudents,getStudentById,getStudentClassList,getAllStudentPayments,getBundleDetails}

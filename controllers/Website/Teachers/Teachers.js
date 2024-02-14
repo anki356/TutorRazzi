@@ -256,6 +256,9 @@ const getReviewDetails=async(req,res)=>{
             }
         ])
         let reviewArray=[]
+        let totalReviews=await Review.countDocuments({
+            teacher_id:teacher_id
+        })
         for (let i=1;i<=5;i++){
 if(reviewCategorization.includes({
     _id:i
@@ -265,7 +268,8 @@ if(reviewCategorization.includes({
     })
     reviewArray.push({
         rating:i,
-        no_of_reviews:reviewCategorization[index].no_of_reviews
+        no_of_reviews:reviewCategorization[index].no_of_reviews,
+        percentage:no_of_reviews/totalReviews*100
     })
 }
 else{
@@ -275,7 +279,7 @@ else{
     })  
 }
         }
-        return res.json(responseObj(true,{reviews:reviews,reviewCategorization:reviewCategorization}))   
+        return res.json(responseObj(true,{reviews:reviews,reviewCategorization:reviewArray}))   
 }
 const requestTrialClass = async (req, res, next) => {
    

@@ -229,4 +229,4 @@ let payment_id=payments.findIndex((data)=>{
 return res.json(responseObj(true,{payment_id:payment_id,studentDetails:studentDetails,payment:payment},"Payment Details"))
 
 }
-export {getAllStudents,getStudentById,getStudentClassList,getAllStudentPayments,getBundleDetails,getStudentPersonalDetails}
+export {getAllStudents,getStudentById,getStudentClassList,getAllStudentPayments,getBundleDetails,getStudentPersonalDetails,getPaymentDetails}

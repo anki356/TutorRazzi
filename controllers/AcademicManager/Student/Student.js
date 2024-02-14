@@ -189,7 +189,9 @@ const getStudentPersonalDetails=async(req,res)=>{
 }
 const getPaymentDetails=async(req,res)=>{
 const payment=await Payment.findOne({_id:req.query.payment_id}).populate({
-    path:'quote_id'
+    path:'quote_id',select:{
+        "class_count":1,'subject_curriculum_grade':1,
+    }
 })
 
 

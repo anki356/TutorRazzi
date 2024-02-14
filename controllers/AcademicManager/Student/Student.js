@@ -37,7 +37,7 @@ const getStudentById=async(req,res)=>{
     }).populate({
         path:'user_id',
             select:{
-                "email":1
+                "email":1,"profile_image":1
             
         }
     })

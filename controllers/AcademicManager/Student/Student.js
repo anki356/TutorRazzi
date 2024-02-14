@@ -1,5 +1,6 @@
 import AcademicManager from "../../../models/AcademicManager.js"
 import Class from "../../../models/Class.js"
+import Quote from "../../../models/Quote.js"
 import Student from "../../../models/Student.js"
 import {responseObj} from "../../../util/response.js"
 const getAllStudents=async(req,res)=>{
@@ -38,10 +39,33 @@ const getStudentById=async(req,res)=>{
         status:"Done",
         student_id:studentId
     })
-const no_of_requests=await Class.countDocuments({
-    status:"Pending",
+    let quotes=await Quote.find({
+        student_id:studentId
+    })
+    let array=[]
+    quotes.forEach(async(data)=>{
+        let classes=await Class.find({
+            quote_id:data._id,
+            status:'Scheduled'
+                }) 
+                let obj=data
+              
+    if(classes.length===1){
+obj.due_date=classes[0].end_date
+    }
+    array.push(obj)
+    })
+   
+const no_of_classes=await Class.countDocuments({
+  
+    class_type:"Non-Trial",
     student_id:studentId
 })
+let last_payment=await Payment.find({
+    sender_id:studentId
+}).sort({
+    createdAt:-1
+}).limit(1)
 const teacher_classes=await Class.find({
     status:{
         $ne:"Cancelled"

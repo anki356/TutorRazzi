@@ -157,4 +157,33 @@ const getAllStudentPayments=async(req,res)=>{
         return res.json(responseObj(true,result,"All Quotes"));
     })
 }
-export {getAllStudents,getStudentById,getStudentClassList,getAllStudentPayments,getBundleDetails}
+const getStudentPersonalDetails=async(req,res)=>{
+    let students=await Student.find()
+    let studentDetails=await Student.findOne({
+        user_id:req.query.student_id
+    },{
+        preferred_name:1,
+        address:1,
+        city:1,
+        state:1,
+        subjects:1,
+        curriculum:1,
+        grade:1,
+        school:1,
+        parent_id
+    }).populate({
+        path:'email_id',
+        select:{
+            email:1,mobile_number:1
+        }
+    })
+    let studentId=students.findIndex((data)=>{
+        return data.user_id=req.query.student_id
+    })
+    let parents=await Parent.find({})
+    let parentID=parents.findIndex((data)=>{
+        return data.user_id=studentDetails.parent_id
+    })
+    return res.json(responseObj(true,{studentDetails:studentDetails,parentID:parentID+1,studentId:studentId+1},"Student Details"));
+}
+export {getAllStudents,getStudentById,getStudentClassList,getAllStudentPayments,getBundleDetails,getStudentPersonalDetails}

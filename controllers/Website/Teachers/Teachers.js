@@ -163,7 +163,9 @@ const getFeedBacks=async(req,res)=>{
 const reviews=await Review.find({message:{
 $nin:['',null]
 }}).limit(10).populate({
-    path:'given_by'
+    path:'given_by',select:{
+        name:1,profile_image:1
+    }
 })
 return res.json(responseObj(true,reviews,"Feedbacks"))
 }

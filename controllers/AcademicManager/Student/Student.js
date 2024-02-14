@@ -63,7 +63,7 @@ let last_payment=await Payment.find({
 }
 const getStudentClassList=async(req,res)=>{
     let query={
-        student_id:req.query.sudent_id
+        student_id:req.query.student_id
     }
     if(req.query.teacher_id){
        query.teacher_id=req.query.teacher_id

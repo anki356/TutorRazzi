@@ -255,6 +255,26 @@ const getReviewDetails=async(req,res)=>{
                 }
             }
         ])
+        let reviewArray=[]
+        for (let i=1;i<=5;i++){
+if(reviewCategorization.includes({
+    _id:i
+})){
+    let index=reviewCategorization.findIndex((data)=>{
+        return data._id==i
+    })
+    reviewArray.push({
+        rating:i,
+        no_of_reviews:reviewCategorization[index].no_of_reviews
+    })
+}
+else{
+    reviewArray.push({
+        rating:i,
+        no_of_reviews:0
+    })  
+}
+        }
         return res.json(responseObj(true,{reviews:reviews,reviewCategorization:reviewCategorization}))   
 }
 const requestTrialClass = async (req, res, next) => {
@@ -345,11 +365,11 @@ const postAFlag=async(req,res)=>{
 
 
     const reportDoc = await TeacherReport.findOne({ teacher: id, reportBy: req.user._id });
-
+console.log(reportDoc)
     if (reportDoc) {
         throw new Error('Already reported this profile.');
     }
-
+console.log(req.user)
     const report = { teacher: id, flag, reportBy: req.user._id }
 
     const reportCreate = await TeacherReport.create(report);

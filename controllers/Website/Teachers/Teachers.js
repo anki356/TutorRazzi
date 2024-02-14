@@ -259,17 +259,19 @@ const getReviewDetails=async(req,res)=>{
         let totalReviews=await Review.countDocuments({
             teacher_id:teacher_id
         })
+        console.log(reviewCategorization)
         for (let i=1;i<=5;i++){
-if(reviewCategorization.includes({
-    _id:i
-})){
+
     let index=reviewCategorization.findIndex((data)=>{
         return data._id==i
     })
+    if(index!==-1){
+
+    
     reviewArray.push({
         rating:i,
         no_of_reviews:reviewCategorization[index].no_of_reviews,
-        percentage:no_of_reviews/totalReviews*100
+        percentage:reviewCategorization[index].no_of_reviews/totalReviews*100
     })
 }
 else{

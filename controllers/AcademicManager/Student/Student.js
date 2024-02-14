@@ -30,7 +30,9 @@ const getAllStudents=async(req,res)=>{
 }
 const getStudentById=async(req,res)=>{
     const studentId = req.query.student_id;
-    const studentResponse=await Student.findOne({user_id:studentId})
+    const studentResponse=await Student.findOne({user_id:studentId}).populate({
+        path:'user_id'
+    })
     const no_of_trial_classes_done=await Class.countDocuments({
         class_type:"Trial",
         status:"Done",

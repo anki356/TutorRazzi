@@ -8,6 +8,7 @@ import DashboardRouter from "./Dashboard/Dashboard.js"
 import StudentRouter from "./Students/Students.js"
 import TeacherRouter from "./Teachers/Teachers.js"
 import Support from "./Support/Support.js"
+import Chat from "./Chat/Chat.js"
 router.use("/academic-manager/",DashboardRouter)
 router.use("/academic-manager/",QuoteROuter)
 router.use("/academic-manager/",AuthRouter)
@@ -16,5 +17,6 @@ router.use("/academic-manager/",StudentRouter)
 router.use("/academic-manager/",TeacherRouter)
 router.use("/academic-manager/",TeacherRouter)
 router.use("/academic-manager/",Support)
+router.use("/academic-manager/",Chat)
 
 export default router

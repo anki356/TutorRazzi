@@ -5,6 +5,7 @@ import Payment from "../../../models/Payment.js"
 import Quote from "../../../models/Quote.js"
 import Student from "../../../models/Student.js"
 import {responseObj} from "../../../util/response.js"
+import User from "../../../models/User.js"
 const getAllStudents=async(req,res)=>{
     let StudentIds=await AcademicManager.findOne({user_id:req.user._id},{students:1})
     let query={
@@ -65,6 +66,8 @@ let last_payment=await Payment.find({
 const getBundleDetails=async(req,res)=>{
     const bundles=await Class.find({
         quote_id:req.query.quote_id
+    },{
+        subject:1,start_time:1,end_time:1,status:1,teacher_id:1
     })
     if(bundles.length===0){
         return res.json(responseObj(false, null,"Incorrect Bundle ID"))
@@ -77,7 +80,9 @@ const getBundleDetails=async(req,res)=>{
         quote_id:req.query.quote_id,
         $or:[
             {
-status:"Pending"
+status:"Pending",
+start_time:null,
+
             },{
 status:"Scheduled",
 start_time:{
@@ -87,10 +92,10 @@ start_time:{
         ] 
     })
 let show=false
-    if(classRemaining.length===1&&moment(classRemaining[0].end_time).diff(moment(),'d')<=3){
+    if(classRemaining.length===1&&moment(classRemaining[0].end_time).diff(moment(),'d')<3){
 show=true
     }
-    return res.json(responseObj(true,{bundles:bundles,show:show,classRemaining:classRemaining,subject:subject,teacher_name:teacher_name}))
+    return res.json(responseObj(true,{bundles:bundles,show:show,classRemaining:classRemaining.length,subject:subject,teacher_name:teacher_name.name}))
 }
 const getStudentClassList=async(req,res)=>{
     let query={

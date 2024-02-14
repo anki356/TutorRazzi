@@ -198,7 +198,7 @@ const getTeacherDetailsById=async(req,res)=>{
 const getTestimonialsOfTeacher=async(req,res)=>{
     let query={teacher_id:req.query.teacher_id}
     let options={
-        limit:req.query.limi,
+        limit:req.query.limit,
         page:req.query.page
     }
     Testimonial.paginate(query,options,(err,result)=>{

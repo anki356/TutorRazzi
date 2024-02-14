@@ -779,7 +779,7 @@ const getUpcomingClasses=async(req,res,next)=>{
     })
     
   
-    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails ,ratingsResponse:ratingsResponse,quotes:quotes,is_pricing:is_pricing}, null))
+    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails ,ratingsResponse:ratingsResponse}, null))
   }
   const getQuotes=async(req,res)=>{
     let classDetails = {}

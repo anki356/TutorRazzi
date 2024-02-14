@@ -60,11 +60,12 @@ const getStats=async(req,res)=>{
         res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses,response_count:responses.length},"Ticket Details"))
     }
     const saveResponse=async(req,res)=>{
+        console.log(req.files)
         const responses=await SupportResponses.create({
             user_id:req.user._id,
             support_id:req.body.support_id,
             response:req.body?.response,
-            response_document:req.files[0].filename,
+            response_document:req?.files[0]?.filename,
             is_sender:true,
     
         })

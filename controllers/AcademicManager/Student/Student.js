@@ -94,4 +94,4 @@ obj.due_date=classes[0].end_date
  
 }
 
-export {getAllStudents,getStudentById}
+export {getAllStudents,getStudentById,getStudentClassList}

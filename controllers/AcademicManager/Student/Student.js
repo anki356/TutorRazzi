@@ -59,7 +59,7 @@ let last_payment=await Payment.find({
     createdAt:-1
 }).limit(1)
 
-    return res.json(responseObj(true,{"studentResponse":studentResponse,"no_of_classes":no_of_classes,"last_payment":last_payment[0].amount},"Student Data"))
+    return res.json(responseObj(true,{"studentResponse":studentResponse,"no_of_classes":no_of_classes,"last_payment":last_payment[0].net_amount},"Student Data"))
 }
 const getStudentClassList=async(req,res)=>{
     let query={

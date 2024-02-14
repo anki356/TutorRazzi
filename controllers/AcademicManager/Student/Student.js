@@ -173,7 +173,7 @@ const getStudentPersonalDetails=async(req,res)=>{
         school:1,
         parent_id:1
     }).populate({
-        path:'email_id',
+        path:'user_id',
         select:{
             email:1,mobile_number:1
         }
@@ -188,6 +188,10 @@ const getStudentPersonalDetails=async(req,res)=>{
     return res.json(responseObj(true,{studentDetails:studentDetails,parentID:parentID+1,studentId:studentId+1},"Student Details"));
 }
 const getPaymentDetails=async(req,res)=>{
+const payment=await Payment.findOne({_id:req.query.payment_id}).populate({
+    path:'quote_id'
+})
+
 
 }
 export {getAllStudents,getStudentById,getStudentClassList,getAllStudentPayments,getBundleDetails,getStudentPersonalDetails}

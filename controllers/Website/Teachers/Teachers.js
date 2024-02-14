@@ -162,7 +162,9 @@ const getTestimonials=async(req,res)=>{
 const getFeedBacks=async(req,res)=>{
 const reviews=await Review.find({message:{
 $nin:['',null]
-}}).limit(10)
+}}).limit(10).populate({
+    path:given_by
+})
 return res.json(responseObj(true,reviews,"Feedbacks"))
 }
 
@@ -224,6 +226,8 @@ const getReviewDetails=async(req,res)=>{
     ])
         let reviewList=await Review.find({
             teacher_id:teacher_id
+        }).populate({
+            path:"given_by"
         })
         let reviewCategorization=await Review.aggregate([
             {

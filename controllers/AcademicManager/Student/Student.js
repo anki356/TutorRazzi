@@ -217,6 +217,10 @@ const payment=await Payment.findOne({_id:req.query.payment_id},{
 console.log(payment)
 const studentDetails=await Student.findOne({
 user_id:payment.class_id[0].student_id._id
+},{
+    select:{
+        "grade":1, "curriculum":1
+    }
 }).populate({
     path:'user_id',
     select:{
@@ -226,7 +230,7 @@ user_id:payment.class_id[0].student_id._id
 
 const payments=await Payment.find()
 let payment_id=payments.findIndex((data)=>{
-    return data._id===req.query.payment_id
+    return data._id==req.query.payment_id
 })
 return res.json(responseObj(true,{payment_id:payment_id,studentDetails:studentDetails,payment:payment},"Payment Details"))
 

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 import moment from "moment";
+import mongoosePaginate from 'mongoose-paginate-v2'
 const TestimonialSchema = new mongoose.Schema({
     video: {
         type: String,
@@ -29,5 +30,5 @@ required: true
     
 }//timesatap
 )
-
+TestimonialSchema.plugin(mongoosePaginate)
 export default mongoose.model('Testimonial', TestimonialSchema)

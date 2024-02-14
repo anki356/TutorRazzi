@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import moment from "moment";
+import mongoosePaginate from 'mongoose-paginate-v2'
 const ReviewSchema = new mongoose.Schema({
     teacher_id: { type: mongoose.SchemaTypes.ObjectId, ref: 'User' },
    
@@ -24,4 +25,5 @@ const ReviewSchema = new mongoose.Schema({
     
     versionKey: false
 })
+ReviewSchema.plugin(mongoosePaginate)
 export default mongoose.model("Review", ReviewSchema)

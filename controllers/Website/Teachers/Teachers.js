@@ -189,9 +189,21 @@ const getTeacherDetailsById=async(req,res)=>{
             }
         
     })
-  
-        return res.json(responseObj(true,{teacherDetails:teacherDetails}))
+  const introVideo=await Testimonial.findOne({
+    teacher_id:teacher_id
+  })
+        return res.json(responseObj(true,{teacherDetails:teacherDetails,introVideo:introVideo},"Teacher Details"))
 
+}
+const getTestimonialsOfTeacher=async(req,res)=>{
+    let query={teacher_id:req.query.teacher_id}
+    let options={
+        limit:req.query.limi,
+        page:req.query.page
+    }
+    Testimonial.paginate(query,options,(err,result)=>{
+        return res.json(responseObj(true,result,"Testimonials"))
+    })
 }
 const getReviewDetails=async(req,res)=>{
     let teacher_id = req.query.teacher_id
@@ -224,11 +236,7 @@ const getReviewDetails=async(req,res)=>{
             }
         }
     ])
-        let reviewList=await Review.find({
-            teacher_id:teacher_id
-        }).populate({
-            path:"given_by"
-        })
+        
         let reviewCategorization=await Review.aggregate([
             {
                 $match:{teacher_id:new objectId(teacher_id)}
@@ -247,7 +255,7 @@ const getReviewDetails=async(req,res)=>{
                 }
             }
         ])
-        return res.json(responseObj(true,{reviews:reviews,reviewList:reviewList,reviewCategorization:reviewCategorization}))   
+        return res.json(responseObj(true,{reviews:reviews,reviewCategorization:reviewCategorization}))   
 }
 const requestTrialClass = async (req, res, next) => {
    
@@ -289,8 +297,22 @@ const requestTrialClass = async (req, res, next) => {
 
 
 
+} 
+const getReviewList=async(req,res)=>{
+    let query={
+        teacher_id:req.query.teacher_id
+    }
+    let options={
+        page:req.query.page,
+        limit:req.query.limit,
+        populate:{
+            path:"given_by"
+        }
+    }
+    Review.paginate(query,options,(err,result)=>{
+        return res.json(responseObj(true,{reviewsList:result}))
+    })
 }
-
 const postReview=async(req,res)=>{
     const reviewResponse=await Review.create({
         message: req.body.message?req.body.message:null,
@@ -335,4 +357,4 @@ const postAFlag=async(req,res)=>{
     
     return res.json(responseObj(true, reportCreate, 'Profile Reported.',  []))
 }
-export {getGrades,getCurriculums,getSubjects,postContact,getGreatTeachers,getTestimonials,getFeedBacks,getGreatTeachersList,getTeacherDetailsById,requestTrialClass,postReview,getReviewDetails,postAFlag}
+export {getGrades,getReviewList,getTestimonialsOfTeacher,getCurriculums,getSubjects,postContact,getGreatTeachers,getTestimonials,getFeedBacks,getGreatTeachersList,getTeacherDetailsById,requestTrialClass,postReview,getReviewDetails,postAFlag}

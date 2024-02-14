@@ -336,7 +336,14 @@ const getReviewList=async(req,res)=>{
         page:req.query.page,
         limit:req.query.limit,
         populate:{
-            path:"given_by"
+            path:"given_by",
+            select:{
+                name:1,
+                profile_image:1
+            }
+        },
+        sort:{
+            "createdAt":-1
         }
     }
     Review.paginate(query,options,(err,result)=>{

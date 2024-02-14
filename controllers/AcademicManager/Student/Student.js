@@ -94,7 +94,8 @@ show=true
 }
 const getStudentClassList=async(req,res)=>{
     let query={
-        student_id:req.query.student_id
+        student_id:req.query.student_id,
+        status:"Paid"
     }
     if(req.query.teacher_id){
        query.teacher_id=req.query.teacher_id
@@ -103,19 +104,21 @@ const getStudentClassList=async(req,res)=>{
     
     
     let array=[]
-    let quotes=await Quote.find(query).limit(limit).skip((page-1)*limit)
-    quotes.forEach(async(data)=>{
-        let classes=await Class.find({
-            quote_id:data._id,
-            status:'Scheduled'
-                }) 
-                let obj=data
-              
-    if(classes.length===1){
-obj.due_date=classes[0].end_date
+    let quotes=await Quote.find(query,{
+        'subject_curriculum_grade':1,"class_count":1,"status":1
+    }).limit(limit).skip((page-1)*limit)
+    console.log(quotes)
+    
+    for (let data of quotes) {
+        let classes = await Class.find({ quote_id: data._id, status: 'Scheduled' });
+        let obj = data;
+    
+        if (classes.length === 1) {
+            obj.due_date = classes[0].end_date;
+        }
+        array.push(obj);
     }
-    array.push(obj)
-    })
+    console.log(array)
     let totalDocs=array.length
     let totalPages=Math.ceil(totalDocs/Number(limit))
     let hasPrevPage=page>1
@@ -128,6 +131,9 @@ obj.due_date=classes[0].end_date
 const getAllStudentPayments=async(req,res)=>{
     let query={
         sender_id:req.query.student_id
+    }
+    if(req.query.date){
+        query.createdAt=req.query.date
     }
     let options={
         limit:req.query.limit,

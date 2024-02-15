@@ -68,7 +68,7 @@ const getBundleDetails=async(req,res)=>{
     const bundles=await Class.find({
         quote_id:req.query.quote_id
     },{
-        subject:1,start_time:1,end_time:1,status:1,teacher_id:1
+        subject:1,start_time:1,end_time:1,status:1,teacher_id:1,curriculum:1
     })
     if(bundles.length===0){
         return res.json(responseObj(false, null,"Incorrect Bundle ID"))

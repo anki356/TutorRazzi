@@ -4,6 +4,7 @@ import Class from "../../../models/Class.js"
 import {responseObj} from "../../../util/response.js"
 import Student from "../../../models/Student.js"
 import SubjectCurriculum from "../../../models/SubjectCurriculum.js"
+import Curriculum from "../../../models/Curriculum.js"
 const addQuote=async(req,res,next)=>{
    
     const response=await Quote.insertMany({

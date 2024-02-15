@@ -13,17 +13,22 @@ const getAllTickets=async(req,res)=>{
         page:req.query.page,
         limit:req.query.limit
     }
-   Support.paginate(query,options,(err,result)=>{
-    let array=result.docs
-    array.forEach(async element => {
-       element.response_count=await SupportResponses.countDocuments({
-is_read:false,
-is_sender:false
-       }) 
-    });
-    result.docs=array
-    return res.json(responseObj(true,result,"All Support Tickets"))
-   })
+  let pipeline=[
+    {
+        $match:query
+    },{
+        $lookup:{
+            from :'supportresponses',
+            localfield:"_id",
+            foreighfield:"support_id",
+            as:"response",
+            pipeline:[
+                $match
+            ]
+        }
+    }
+  ]
+   
 
 }
 

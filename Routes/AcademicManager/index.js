@@ -9,7 +9,7 @@ import StudentRouter from "./Students/Students.js"
 import TeacherRouter from "./Teachers/Teachers.js"
 import Support from "./Support/Support.js"
 import Chat from "./Chat/Chat.js"
-import Payment from "./Payment/Payment.js"
+import Payment from "./Payments/Payments.js"
 router.use("/academic-manager/",DashboardRouter)
 router.use("/academic-manager/",QuoteROuter)
 router.use("/academic-manager/",AuthRouter)

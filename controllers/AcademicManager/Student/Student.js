@@ -111,7 +111,7 @@ const getStudentClassList=async(req,res)=>{
     
     let array=[]
     let quotes=await Quote.find(query,{
-        'subject_curriculum_grade':1,"class_count":1,"status":1
+        'subject_curriculum_grade':1,"class_count":1,"schedule_status":1
     }).limit(limit).skip((page-1)*limit)
     console.log(quotes)
     

@@ -11,7 +11,7 @@ const addSupport=async (req,res,next)=>{
        })
 
    }
-    const supportResponse=await Support.insertMany({
+    const supportResponse=await Support.create({
         ticket_id:await Support.countDocuments()+1,
         user_id:req.user._id,
         subject:req.body.title,
@@ -21,6 +21,22 @@ const addSupport=async (req,res,next)=>{
        
 
     })
+    await SupportResponses.create({
+        support_id:supportResponse._id,
+        user_id:req.user._id,
+        is_sender:true,
+        response:req.body.description,
+        
+    })
+    if(req.files?.length>0){
+        await SupportResponses.create({
+            support_id:supportResponse._id,
+            user_id:req.user._id,
+            is_sender:true,
+            response_document:documentResponse._id,
+            
+        })
+    }
     res.json(responseObj(true,null,"Support Added"))
 }
 

@@ -70,7 +70,7 @@ const saveResponse=async(req,res)=>{
         support_id:req.body.support_id,
         response:req.body?.response,
         response_document:req?.files[0]?.filename,
-        is_sender:true,
+        is_sender:true
 
     })
     return  res.json(responseObj(true,responses,"Response Saved Successfully"))

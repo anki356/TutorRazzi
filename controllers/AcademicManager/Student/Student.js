@@ -77,6 +77,7 @@ const getBundleDetails=async(req,res)=>{
        _id: bundles[0].teacher_id
     })
     const subject=bundles[0].subject.name
+    const curriculum=bundles[0].curriculum.name
     const classRemaining=await Class.find({
         quote_id:req.query.quote_id,
         $or:[
@@ -96,7 +97,7 @@ let show=false
     if(classRemaining.length===1&&moment(classRemaining[0].end_time).diff(moment(),'d')<3){
 show=true
     }
-    return res.json(responseObj(true,{bundles:bundles,show:show,classRemaining:classRemaining.length,subject:subject,teacher_name:teacher_name.name}))
+    return res.json(responseObj(true,{bundles:bundles,curriculum:curriculum,show:show,classRemaining:classRemaining.length,subject:subject,teacher_name:teacher_name.name}))
 }
 const getStudentClassList=async(req,res)=>{
     let query={

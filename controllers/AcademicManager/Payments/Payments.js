@@ -71,7 +71,7 @@ sender_id:{
             }
         },
         select:{
-            "net_amount":1,"createdAt":1
+            "net_amount":1,"createdAt":1,"trx_ref_no":1
         }
     }
     Payment.paginate(query,options,(err,result)=>{

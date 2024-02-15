@@ -10,7 +10,7 @@ router.get("/testimonials",getTestimonials)
 router.get("/feedbacks",getFeedBacks)
 router.get("/great-teachers-list",getGreatTeachersList)
 router.get("/teacher-details-by-id",getTeacherDetailsById)
-router.get("/request-trial-class",authVerify,requestTrialClass)
+router.post("/request-trial-class",authVerify,requestTrialClass)
 const reviewValidation=[
     body("rating","Rating is required").not().isEmpty(),
     body("teacher_id","Teacher ID is Required").not().isEmpty(),

@@ -13,7 +13,10 @@ const getAllTickets=async(req,res)=>{
     }
     let options={
         page:req.query.page,
-        limit:req.query.limit
+        limit:req.query.limit,
+        sort:{
+            createdAt:-1
+        }
     }
     console.log(query)
     let pipeline = Support.aggregate([
@@ -48,7 +51,8 @@ const getAllTickets=async(req,res)=>{
             "createdAt": 1,
             "description": 1,
             "responseLength": 1,
-            "user_id":1 // Include responseLength field
+            "user_id":1 ,// Include responseLength field
+            "status":1
           }
         }
       ]);

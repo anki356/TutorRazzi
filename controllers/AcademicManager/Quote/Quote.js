@@ -66,4 +66,8 @@ if(quoteDetails.status==='Paid'){
     })
     return res.json(responseObj(true,quote,"Quote Details"))
    }
-export  {addQuote,getSubjectCurriculum,editQuote,getQuoteById};
+   const getAllCurriculums=async (req,res)=>{
+    const curriculums=await Curriculum.find({})
+    return res.json(responseObj(true,curriculums,"All Curriculums"))
+   }
+export  {addQuote,getSubjectCurriculum,editQuote,getQuoteById,getAllCurriculums};

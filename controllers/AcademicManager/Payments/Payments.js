@@ -2,7 +2,7 @@ import Student from '../../../models/Student.js'
 import Quote from "../../../models/Quote.js"
 import Payment from "../../../models/Payment.js"
 import AcademicManager from "../../../models/AcademicManager.js"
-import { responseObj } from '../../../util/response'
+import { responseObj } from '../../../util/response.js'
 import moment from 'moment'
 const getPayments=async(req,res)=>{
     let students=await AcademicManager.findOne({

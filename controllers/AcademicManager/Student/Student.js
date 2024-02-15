@@ -191,7 +191,7 @@ const getStudentPersonalDetails=async(req,res)=>{
 }
 const getPaymentDetails=async(req,res)=>{
 const payment=await Payment.findOne({_id:req.query.payment_id},{
-    trx_ref_no:1,status:1,createdAt:1,net_amount:1
+    trx_ref_no:1,status:1,createdAt:1,net_amount:1,sender_id:1
 }).populate({
     path:'quote_id',select:{
         "class_count":1,'subject_curriculum_grade':1,
@@ -228,12 +228,16 @@ user_id:payment.sender_id
         name:1,profile_image:1
     }
 })
-
+const teacherDetails=await User.findOne({
+   user_id: payment?.class_id[0]?.teacher_id},{
+    name:1,profile_image:1
+   })
 const payments=await Payment.find()
 let payment_id=payments.findIndex((data)=>{
     return data._id==req.query.payment_id
 })
-return res.json(responseObj(true,{payment_id:payment_id,studentDetails:studentDetails,payment:payment},"Payment Details"))
+
+return res.json(responseObj(true,{payment_id:payment_id,studentDetails:studentDetails,payment:payment,teacherDetails:teacherDetails},"Payment Details"))
 
 }
 export {getAllStudents,getStudentById,getStudentClassList,getAllStudentPayments,getBundleDetails,getStudentPersonalDetails,getPaymentDetails}

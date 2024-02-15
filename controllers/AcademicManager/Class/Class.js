@@ -182,7 +182,11 @@ const rescheduleClassResponse=await Class.updateOne({_id:req.params._id},{$set:{
 }
 
 const addExtraClassQuote = async (req, res, next) => {
-
+  const gradeDetails=await Student.findOne({
+    user_id:req.body.student_id
+   },{
+    grade:1
+   })
     const extraClassQuoteResponse = await Quote.insertMany({
         class_count: req.body.class_count,
         amount: req.body.amount,
@@ -191,7 +195,7 @@ const addExtraClassQuote = async (req, res, next) => {
         subject_curriculum_grade: {
           subject: req.body.subject,
           curriculum:req.body.curriculum,
-          grade:req.body.grade
+          grade:gradeDetails.grade
 
         },
         class_type: 'Extra',

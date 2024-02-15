@@ -6,7 +6,11 @@ import Student from "../../../models/Student.js"
 import SubjectCurriculum from "../../../models/SubjectCurriculum.js"
 import Curriculum from "../../../models/Curriculum.js"
 const addQuote=async(req,res,next)=>{
-   
+   const gradeDetails=await Student.findOne({
+    user_id:req.body.student_id
+   },{
+    grade:1
+   })
     const response=await Quote.insertMany({
         class_count:req.body.class_count,
         amount:req.body.amount,
@@ -14,7 +18,7 @@ const addQuote=async(req,res,next)=>{
         subject_curriculum_grade:{
             subject: req.body.subject,
             curriculum:req.body.curriculum,
-            grade:req.body.grade
+            grade:gradeDetails.grade
         },
         student_id:req.body.student_id,
         class_type:'Normal',

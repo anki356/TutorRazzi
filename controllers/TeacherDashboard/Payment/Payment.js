@@ -41,20 +41,24 @@ const getPaymentWeekly=async(req,res)=>{
       ])
       let array=[]
       console.log(response)
+      const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+console.log(weekdays);
+
       for (let i=1;i<=7;i++){
         let index=response.findIndex((data)=>{
             return data._id===i
         })
         if(index!==-1){
         array.push({
-            week:response[index]._id,
+            day:weekdays[response[index]._id-1],
             
             amount:response[index].totalPayment,
         })
         }
         else{
             array.push({
-                week:i,
+                day:weekdays[i-1],
             
                 amount:0,
             })

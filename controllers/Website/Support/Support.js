@@ -38,4 +38,46 @@ const addSupport=async (req,res,next)=>{
     })
     res.json(responseObj(true,{documentResponse,supportResponse},null))
 }
-export {getAllTickets, addSupport}
+const getTicketDetails=async(req,res)=>{
+    const ticketDetails=await Support.findById({_id:req.query.ticket_id})
+    const responses=await SupportResponses.find({
+        support_id:req.query.ticket_id
+    })
+    res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses,response_count:responses.length},"Ticket Details"))
+}
+const saveResponse=async(req,res)=>{
+    console.log(req.files)
+    const responses=await SupportResponses.create({
+        user_id:req.user._id,
+        support_id:req.body.support_id,
+        response:req.body?.response,
+        response_document:req?.files[0]?.filename,
+        is_sender:true,
+
+    })
+    return  res.json(responseObj(true,responses,"Response Saved Successfully"))
+}
+
+const markResolveTicket=async(req,res)=>{
+    await Support.updateOne({
+        _id:req.params.support_id
+    },{
+status:"Resolved"
+    })
+    const ticketDetails=await Support.findById({_id:req.params.support_id}).populate({
+        path:"user_id",select:{
+            name:1
+        }
+    })
+    const responses=await SupportResponses.find({
+        support_id:req.params.support_id
+    }).populate({
+        path:"user_id",
+        select:{
+            name:1
+        }
+    })
+
+    return  res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses},"Ticket marked Resolved"))
+}
+export {getAllTickets, addSupport,getTicketDetails,saveResponse,markResolveTicket}

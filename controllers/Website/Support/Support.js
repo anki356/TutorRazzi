@@ -7,7 +7,7 @@ const getAllTickets=async(req,res)=>{
         user_id:req.user._id
     }
     if(req.query.status){
-        query,status=req.query.status
+        query.status=req.query.status
     }
     let options={
         page:req.query.page,

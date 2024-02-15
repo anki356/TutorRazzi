@@ -79,7 +79,7 @@ sender_id:{
     })
 }
 const getPaymentStats=async(req,res)=>{
-    let students=await AcademicManager.findOne({
+    let studentsDetails=await AcademicManager.findOne({
         user_id:req.user._id
     },{
         students:1
@@ -92,7 +92,7 @@ const getPaymentStats=async(req,res)=>{
                     "$gte": moment().startOf('year').format("YYYY-MM-DDTHH:mm:ss"),// Start of current year
                     "$lte": moment().endOf('year').format("YYYY-MM-DDTHH:mm:ss")// // Start of next year
                   }},{
-      sender_id:students.map((data)=>data.students)
+      sender_id:studentsDetails.students
                   }
             ]
           }

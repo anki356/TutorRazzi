@@ -319,6 +319,9 @@ const requestTrialClass = async (req, res, next) => {
         "subject.name": req.body.subject ,
         status: 'Done'
     })
+    let studentResponse=await Student.findOne({
+        usr_id:req.user._id
+    })
     if (classResponse) {
         throw new Error("Subject Trial Class already done")
 
@@ -335,7 +338,7 @@ const requestTrialClass = async (req, res, next) => {
             end_time: moment(element).add(1, 'h').format("YYYY-MM-DDTHH:mm:ss"),
             subject: { name: req.body.subject },
             curriculum: { name: req.body.curriculum },
-            grade: { name: req.body.grade },
+            grade: { name: studentResponse.grade.name },
             class_type: "Trial",
             status: "Pending",
             is_rescheduled: false,

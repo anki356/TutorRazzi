@@ -12,6 +12,7 @@ import moment from "moment"
 import mongoose from "mongoose"
 import TeacherReport from "../../../models/TeacherReport.js"
 import User from "../../../models/User.js"
+import { ObjectId } from "bson"
 const objectId=mongoose.Types.ObjectId
 const getGreatTeachers=async(req,res)=>{
    
@@ -59,12 +60,34 @@ const getGreatTeachers=async(req,res)=>{
 
 }
 const getSubjects=async(req,res)=>{
-const subjects=await Subject.find({})
+    const subjects=await Teacher.aggregate([ { $match: { user_id:new ObjectId(req.query.teacher_id )} },
+        { $unwind: "$subject_curriculum" }, // Unwind the subject_curriculum array
+        {
+          $group: {
+            _id: "$subject_curriculum.curriculum", // Group by the curriculum field within each subject_curriculum object
+            // teacher_id: { $first: "$user_id" }, // Preserve the teacher's user_id
+            // curriculum_name: { $first: "$subject_curriculum.curriculum" }, // Preserve the curriculum name
+            subject_name: { $addToSet: "$subject_curriculum.subject" }
+             // Collect unique subjects for each curriculum
+          }
+        }
+    ])
 return res.json(responseObj(true,subjects,"All Subjects"))
 }
 const getCurriculums=async(req,res)=>{
+
+    const curriculums=await Teacher.aggregate([ { $match: { user_id:new ObjectId(req.query.teacher_id )} },
+        { $unwind: "$subject_curriculum" }, // Unwind the subject_curriculum array
+        {
+          $group: {
+            _id: "$subject_curriculum.curriculum", // Group by the curriculum field within each subject_curriculum object
+            // teacher_id: { $first: "$user_id" }, // Preserve the teacher's user_id
+            curriculum_name: { $first: "$subject_curriculum.curriculum" }, // Preserve the curriculum name
+             // Collect unique subjects for each curriculum
+          }
+        }
+    ])
     
-    const curriculums=await Curriculum.find({})
     return res.json(responseObj(true,curriculums,"All Curriculums"))
 }
 const getGrades=async(req,res)=>{

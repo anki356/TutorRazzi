@@ -63,8 +63,9 @@ preferred_name:{
     $options:"i"
 }
             },{
-grade:{
-    
+"grade.name":{
+    $regex:req.query.search,
+    $options:"i"
 }
             }
         ]
@@ -81,7 +82,11 @@ _id:req.query.student_id
   },{profile_image:1})
   let query={
     student_id:req.query.student_id,
-    teacher_id:req.user._id
+    teacher_id:req.user._id,
+    start_time:{
+        $ne:null
+    },
+class_type:"Non-Trial"
   }
   let options={
     limit:req.query.limit,

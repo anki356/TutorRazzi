@@ -88,7 +88,7 @@ const getPaymentStats=async(req,res)=>{
         {
           $match: {
             $and:[
-                { "date": {
+                { "createdAt": {
                     "$gte": moment().startOf('year').format("YYYY-MM-DDTHH:mm:ss"),// Start of current year
                     "$lte": moment().endOf('year').format("YYYY-MM-DDTHH:mm:ss")// // Start of next year
                   }},{
@@ -103,8 +103,8 @@ const getPaymentStats=async(req,res)=>{
         {
           "$group": {
             "_id": {
-              "year": { "$year": "$date" },
-              "month": { "$month": "$date" }
+              "year": { "$year": {"$toDate":"$createdAt"} },
+              "month": { "$month":  {"$toDate":"$createdAt"}}
             },
             "total": { "$sum": "$amount" }
           }
@@ -119,22 +119,22 @@ const getPaymentStats=async(req,res)=>{
       )
       let array=[]
       let monthArray=[  "January", "February", "March", "April", "May", "June",  "July", "August", "September", "October", "November", "December"]
-
-      for (let i=0;i<12;i++){
+console.log(payments)
+      for (let i=1;i<=12;i++){
 let index=payments.findIndex((data)=>{
     return data._id.month===i
 })
 if(index!==-1){
 array.push({
-    year:data._id.year,
-    month:monthArray[data._id.month],
-    amount:data.total
+    year:payments[index]._id.year,
+    month:monthArray[payments[index]._id.month-1],
+    amount:payments[index].total
 })
 }
 else{
     array.push({
         year:moment().year(),
-        month:monthArray[i],
+        month:monthArray[i-1],
         amount:0
     })
 }

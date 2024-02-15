@@ -465,7 +465,7 @@ const setReminder = async (req, res, next) => {
   }
   const addNotesToClass = async (req, res, next) => {
     let notesResponseAlready=await Class.findOne({
-      _id: new ObjectId(req.params._id)
+      _id: req.params._id
     },{
       notes:1,_id:1
     })
@@ -475,7 +475,7 @@ const setReminder = async (req, res, next) => {
     if(notesResponseAlready.notes!==null){
       throw new Error("Notes already added")
     }
-    let notesResponse = await Class.updateOne({ _id: new ObjectId(req.params._id) }, {
+    let notesResponse = await Class.updateOne({ _id: req.params._id }, {
       $set: {
         notes: req.body.notes
       }

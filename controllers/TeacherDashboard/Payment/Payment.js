@@ -37,6 +37,7 @@ const getPaymentWeekly=async(req,res)=>{
           $sort: { _id: 1 } // Sort by week in ascending order
         }
       ])
+      let array=[]
       for (let i=1;i<=52;i++){
         let index=response.findIndex((data)=>{
             return data._id===i
@@ -56,7 +57,7 @@ const getPaymentWeekly=async(req,res)=>{
             })
         }
               }
-    return  res.json(responseObj(true,response,'Weekly payments'))
+    return  res.json(responseObj(true,array,'Weekly payments'))
 }
 
 const getWalletBalance=async(req,res)=>{

@@ -217,7 +217,7 @@ const payment=await Payment.findOne({_id:req.query.payment_id},{
 })
 console.log(payment)
 const studentDetails=await Student.findOne({
-user_id:payment.class_id[0].student_id._id
+user_id:payment.sender_id
 },{
     
         "grade":1, "curriculum":1

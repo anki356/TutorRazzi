@@ -14,6 +14,14 @@ const getAllTickets=async(req,res)=>{
         limit:req.query.limit
     }
    Support.paginate(query,options,(err,result)=>{
+    let array=result.docs
+    array.forEach(async element => {
+       element.response_count=await SupportResponses.countDocuments({
+is_read:false,
+is_sender:false
+       }) 
+    });
+    result.docs=array
     return res.json(responseObj(true,result,"All Support Tickets"))
    })
 
@@ -61,6 +69,7 @@ const getTicketDetails=async(req,res)=>{
     const responses=await SupportResponses.find({
         support_id:req.query.ticket_id
     })
+    
     res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses,response_count:responses.length},"Ticket Details"))
 }
 const saveResponse=async(req,res)=>{

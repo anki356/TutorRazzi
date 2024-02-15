@@ -27,6 +27,10 @@ type:String
     is_sender:{
         type:Boolean,
         default:false
+    },
+    is_read:{
+        type:Boolean,
+        default:false
     }
 })
 SupportResponseSchema.set('toJSON', { virtuals: true });

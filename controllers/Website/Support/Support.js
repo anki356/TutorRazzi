@@ -66,6 +66,11 @@ if(req.files?.length>0){
 }
 const getTicketDetails=async(req,res)=>{
     const ticketDetails=await Support.findById({_id:req.query.ticket_id})
+    await SupportResponses.updateMany({
+        support_id:req.query.ticket_id
+    },{
+        is_read:true
+    })
     const responses=await SupportResponses.find({
         support_id:req.query.ticket_id
     })

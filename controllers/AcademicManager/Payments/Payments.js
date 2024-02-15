@@ -139,4 +139,4 @@ else{
       }
       return res.json(responseObj(true,array,null))
 }
-export {getPayments,getStats}
+export {getPayments,getPaymentStats}

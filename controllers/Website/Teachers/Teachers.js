@@ -63,6 +63,7 @@ const subjects=await Subject.find({})
 return res.json(responseObj(true,subjects,"All Subjects"))
 }
 const getCurriculums=async(req,res)=>{
+    
     const curriculums=await Curriculum.find({})
     return res.json(responseObj(true,curriculums,"All Curriculums"))
 }

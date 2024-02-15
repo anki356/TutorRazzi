@@ -65,7 +65,7 @@ let last_payment=await Payment.find({
     return res.json(responseObj(true,{"studentResponse":studentResponse,"no_of_classes":no_of_classes,"last_payment":last_payment[0].net_amount},"Student Data"))
 }
 const getBundleDetails=async(req,res)=>{
-    const purchased_date=await Payment.find({
+    const purchased_date=await Payment.findOne({
         quote_id:req.query.quote_id
     })
     const bundles=await Class.find({
@@ -100,7 +100,7 @@ let show=false
     if(classRemaining.length===1&&moment(classRemaining[0].end_time).diff(moment(),'d')<3){
 show=true
     }
-    return res.json(responseObj(true,{bundles:bundles,curriculum:curriculum,show:show,classRemaining:classRemaining.length,subject:subject,teacher_name:teacher_name.name,purchased_date:purchased_date.createdAt}))
+    return res.json(responseObj(true,{bundles:bundles,curriculum:curriculum,show:show,classRemaining:classRemaining.length,subject:subject,teacher_name:teacher_name.name,purchased_date:purchased_date.payment_date}))
 }
 const getStudentClassList=async(req,res)=>{
     let query={

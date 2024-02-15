@@ -5,13 +5,13 @@ import AcademicManager from "../../../models/AcademicManager.js"
 import { responseObj } from '../../../util/response.js'
 import moment from 'moment'
 const getPayments=async(req,res)=>{
-    let students=await AcademicManager.findOne({
+    let studentsDetails=await AcademicManager.findOne({
         user_id:req.user._id
     },{
         students:1
     })
     let query={sender_id:{
-        $in:students.map((data)=>data.students)
+        $in:studentsDetails.students
     }}
     if(req.query.date){
         query.createdAt=req.query.date

@@ -16,6 +16,7 @@ const getTotalStudents=async(req,res)=>{
         }
     }
     
+    
     let totalStudents=await Student.countDocuments(query)
     res.json(responseObj(true,{"totalStudents":totalStudents},"Total Students"))
 
@@ -53,6 +54,20 @@ const getAllStudents=async(req,res)=>{
 preferred_name:1,
 user_id:1
         }
+    }
+    if(req.query.search){
+        query["$or"]=[
+            {
+preferred_name:{
+    $regex:req.query.search,
+    $options:"i"
+}
+            },{
+grade:{
+    
+}
+            }
+        ]
     }
    Student.paginate(query,options,(err,allStudents)=>{
     return res.json(responseObj(true,allStudents,"All Students List"))

@@ -132,7 +132,7 @@ throw new Error("Slot Already Booked")
 let classResponse=await Class.findOne(
 {_id:req.params._id,
 
-  rescheduled_by:req.user._id
+  rescheduled_by:'academic_manager'
 
 }
 )
@@ -174,7 +174,7 @@ const rescheduleClassResponse=await Class.updateOne({_id:req.params._id},{$set:{
   is_rescheduled:true,
   start_time:moment(req.body.start_time).format("YYYY-MM-DDTHH:mm:ss"),
   end_time:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss"),
-  rescheduled_by:req.user._id,
+  rescheduled_by:'academic_manager',
   status:'Pending'
   }})
   res.json(responseObj(true,[],null))

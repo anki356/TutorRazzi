@@ -229,7 +229,7 @@ user_id:payment.sender_id
     }
 })
 const teacherDetails=await User.findOne({
-   user_id: payment?.class_id[0]?.teacher_id?._id},{
+   _id: payment?.class_id[0]?.teacher_id?._id},{
     name:1,profile_image:1
    })
 const payments=await Payment.find()

@@ -16,5 +16,5 @@ router.post("/Quote",authVerify,QuoteValidation,validationError,addQuote)
 router.get("/subject-by-curriculum",authVerify,getSubjectCurriculum)
 router.get("/quote",authVerify,getQuoteById)
 router.patch("/quote/:_id",authVerify,editQuote)
-router.patch("/curriculums",authVerify,getAllCurriculums)
+router.get("/curriculums",authVerify,getAllCurriculums)
 export default router

@@ -144,7 +144,7 @@ const getAllStudentPayments=async(req,res)=>{
         status:"Paid"
     }
     if(req.query.date){
-        query.createdAt=req.query.date
+        query.payment_date=req.query.date
     }
     let options={
         limit:req.query.limit,
@@ -156,7 +156,7 @@ const getAllStudentPayments=async(req,res)=>{
             }
         },
         select:{
-            'createdAt':1,'trx_ref_no':1,"net_amount":1,"status":1
+            'payment_date':1,'trx_ref_no':1,"net_amount":1,"status":1
         }
     }
     Payment.paginate(query,options,(err,result)=>{

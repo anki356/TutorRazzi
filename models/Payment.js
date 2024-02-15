@@ -50,8 +50,10 @@ const PaymentSchema = new mongoose.Schema({
     class_id:{
         type: [mongoose.SchemaTypes.ObjectId],
         ref:"Class"
-    }
-
+    },
+payment_date:{
+    type:String
+}
 }, {
    
     versionKey: false

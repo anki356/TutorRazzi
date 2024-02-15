@@ -1,10 +1,10 @@
 import Notification from "../models/Notification.js"
 
-export const addNotifications=async (data)=>{
+export const addNotifications=async (user_id,title,description)=>{
     const response=await Notification.insertMany({
-        user_id:data.user_id,
-        title:data.title,
-        description:data.description
+        user_id:user_id,
+        title:title,
+        description:description
     })
     return response
 }

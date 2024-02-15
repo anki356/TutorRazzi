@@ -13,7 +13,7 @@ const getPaymentWeekly=async(req,res)=>{
             $in:classes.map((data)=>data._id)
         }
     },{
-        "createdAt": {
+        "payment_date": {
             "$gte": moment().startOf('week').format("YYYY-MM-DDTHH:mm:ss"),// Start of current year
             "$lte": moment().endOf('week').format("YYYY-MM-DDTHH:mm:ss")// // Start of next year
           }
@@ -25,7 +25,7 @@ const getPaymentWeekly=async(req,res)=>{
 
 {
     $addFields: {
-      dayOfWeek: { $dayOfWeek: { $dateFromString: { dateString: "$createdAt" } } } // Add a new field "dayOfWeek" representing the day of the week
+      dayOfWeek: { $dayOfWeek: { $dateFromString: { dateString: "$payment_date" } } } // Add a new field "dayOfWeek" representing the day of the week
     }
   },
         {
@@ -129,7 +129,7 @@ Payment.paginate(query,options,(err,paymentResponse)=>{
 
 const getPaymentDetails=async(req,res,next)=>{
    const payment = await Payment.findOne({_id: req.query._id},{
-       amount:1,net_amount:1,trx_ref_no:1,createdAt:1,status:1
+       amount:1,net_amount:1,trx_ref_no:1,payment_date:1,status:1
    }).populate({path:'class_id',select:{
        subject:1,
        start_time:1,

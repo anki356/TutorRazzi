@@ -88,7 +88,7 @@ const getPaymentStats=async(req,res)=>{
         {
           $match: {
             $and:[
-                { "createdAt": {
+                { "payment_date": {
                     "$gte": moment().startOf('year').format("YYYY-MM-DDTHH:mm:ss"),// Start of current year
                     "$lte": moment().endOf('year').format("YYYY-MM-DDTHH:mm:ss")// // Start of next year
                   }},{
@@ -103,8 +103,8 @@ const getPaymentStats=async(req,res)=>{
         {
           "$group": {
             "_id": {
-              "year": { "$year": {"$toDate":"$createdAt"} },
-              "month": { "$month":  {"$toDate":"$createdAt"}}
+              "year": { "$year": {"$toDate":"$payment_date"} },
+              "month": { "$month":  {"$toDate":"$payment_date"}}
             },
             "total": { "$sum": "$amount" }
           }

@@ -290,11 +290,8 @@ const teacherResponse=await User.findOne({
     let class_name=classResponse.name!==null&&classResponse.name!==undefined?classResponse.name:classResponse.subject.name+" of " +classResponse.grade.name
 
 
-    addNotifications({
-        user_id:teacherResponse._id,
-        title:"Resource Requested ",
-        description:`${req.user.name} has requested resources for your Class ${class_name}`
-    })
+    addNotifications(teacherResponse._id,"Resource Requested ",`${req.user.name} has requested resources for your Class ${class_name}`
+    )
     res.json(responseObj(true, response, "Resource Requested Successfully"))
 
 

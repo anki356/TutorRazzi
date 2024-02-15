@@ -2,9 +2,11 @@ import Document from "../../../models/Document.js"
 import Support from "../../../models/Support.js"
 import SupportResponses from "../../../models/SupportResponses.js"
 import { responseObj } from "../../../util/response.js"
+import mongoose from "mongoose"
+const ObjectId=mongoose.Types.ObjectId
 const getAllTickets=async(req,res)=>{
     let query={
-        user_id:req.user._id
+        user_id:new ObjectId(req.user._id)
     }
     if(req.query.status){
         query.status=req.query.status
@@ -13,22 +15,48 @@ const getAllTickets=async(req,res)=>{
         page:req.query.page,
         limit:req.query.limit
     }
-  let pipeline=[
-    {
-        $match:query
-    },{
-        $lookup:{
-            from :'supportresponses',
-            localfield:"_id",
-            foreighfield:"support_id",
-            as:"response",
-            pipeline:[
-                $match
+    console.log(query)
+    let pipeline = Support.aggregate([
+        {
+          $match: query
+        },
+        {
+          $lookup: {
+            from: 'supportresponses',
+            localField: "_id",
+            foreignField: "support_id",
+            as: "response",
+            pipeline: [
+              {
+                $match: {
+                  is_sender: false,
+                  is_read: false
+                }
+              }
             ]
+          }
+        },
+        {
+          $addFields: {
+            "responseLength": { $size: "$response" }
+          }
+        },
+        {
+          $project: {
+            "_id": 1,
+            "subject": 1,
+            "createdAt": 1,
+            "description": 1,
+            "responseLength": 1,
+            "user_id":1 // Include responseLength field
+          }
         }
-    }
-  ]
-   
+      ]);
+      
+      Support.aggregatePaginate(pipeline, options, (err, result) => {
+
+        return res.json(responseObj(true, result, "All Tickets"));
+      });
 
 }
 

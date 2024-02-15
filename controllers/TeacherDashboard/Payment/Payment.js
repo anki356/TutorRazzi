@@ -14,22 +14,23 @@ const getPaymentWeekly=async(req,res)=>{
         }
     },{
         "createdAt": {
-            "$gte": moment().startOf('year').format("YYYY-MM-DDTHH:mm:ss"),// Start of current year
-            "$lte": moment().endOf('year').format("YYYY-MM-DDTHH:mm:ss")// // Start of next year
+            "$gte": moment().startOf('week').format("YYYY-MM-DDTHH:mm:ss"),// Start of current year
+            "$lte": moment().endOf('week').format("YYYY-MM-DDTHH:mm:ss")// // Start of next year
           }
-    }
+    },
+   { status:"Paid"}
 ]
 
 }},
 
-        {
-          $addFields: {
-            week: { $isoWeek: { $dateFromString: { dateString: "$createdAt" } } }, // Add a new field "week" based on ISO week number
-          }
-        },
+{
+    $addFields: {
+      dayOfWeek: { $dayOfWeek: { $dateFromString: { dateString: "$createdAt" } } } // Add a new field "dayOfWeek" representing the day of the week
+    }
+  },
         {
           $group: {
-            _id: "$week", // Group by week
+            _id: "$dayOfWeek", // Group by week
             totalPayment: { $sum: "$amount" }, // Calculate the sum of payment amounts for each week
             
           }
@@ -39,7 +40,8 @@ const getPaymentWeekly=async(req,res)=>{
         }
       ])
       let array=[]
-      for (let i=1;i<=52;i++){
+      console.log(response)
+      for (let i=1;i<=7;i++){
         let index=response.findIndex((data)=>{
             return data._id===i
         })

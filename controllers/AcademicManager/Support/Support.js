@@ -3,6 +3,8 @@ import Support from "../../../models/Support.js"
 import SupportResponses from "../../../models/SupportResponses.js"
 import { responseObj } from "../../../util/response.js"
 
+import mongoose from "mongoose"
+const ObjectId=mongoose.Types.ObjectId
 const addSupport=async (req,res,next)=>{
     let documentResponse
     if(req.files.length>0){
@@ -53,19 +55,60 @@ const getStats=async(req,res)=>{
     res.json(responseObj(true,{lastTicketRaisedDate,totalPendingTickets,totalResolvedTicket},"Stats"))
     }
     const getTickets=async(req,res,next)=>{
-        let query={user_id:req.user._id}
-        if(req.query.status){
-            query.status=req.query.status
-            
+        let query={
+    
+            user_id:new ObjectId(req.user._id)
         }
-        let options={
-            limit:req.query.limit,
-            page:req.query.page
+    
+    if(req.query.status){
+        query.status=req.query.status
+    }
+    let options={
+        page:req.query.page,
+        limit:req.query.limit
+    }
+    console.log(query)
+    let pipeline = Support.aggregate([
+        {
+          $match: query
+        },
+        {
+          $lookup: {
+            from: 'supportresponses',
+            localField: "_id",
+            foreignField: "support_id",
+            as: "response",
+            pipeline: [
+              {
+                $match: {
+                  is_sender: false,
+                  is_read: false
+                }
+              }
+            ]
+          }
+        },
+        {
+          $addFields: {
+            "responseLength": { $size: "$response" }
+          }
+        },
+        {
+          $project: {
+            "_id": 1,
+            "subject": 1,
+            "createdAt": 1,
+            "description": 1,
+            "responseLength": 1,
+            "user_id":1 // Include responseLength field
+          }
         }
-       
-    Support.paginate(query,options).then((result)=>{
-        res.json(responseObj(true,result,"Tickets"))
-    })
+      ]);
+      
+      Support.aggregatePaginate(pipeline, options, (err, result) => {
+    
+        return res.json(responseObj(true, result, "All Tickets"));
+      });
        
     }
     const getTicketDetails=async(req,res)=>{

@@ -6,10 +6,19 @@ import { responseObj } from "../../../util/response.js"
 const getPaymentWeekly=async(req,res)=>{
     const classes=await Class.find({teacher_id:req.user._id},{_id:1})
    const response=await  Payment.aggregate([
-{$match:{
-class_id:{
-    $in:classes.map((data)=>data._id)
-}
+{$match:{$and:[
+    {
+        class_id:{
+            $in:classes.map((data)=>data._id)
+        }
+    },{
+        "createdAt": {
+            "$gte": moment().startOf('year').format("YYYY-MM-DDTHH:mm:ss"),// Start of current year
+            "$lte": moment().endOf('year').format("YYYY-MM-DDTHH:mm:ss")// // Start of next year
+          }
+    }
+]
+
 }},
 
         {
@@ -28,6 +37,25 @@ class_id:{
           $sort: { _id: 1 } // Sort by week in ascending order
         }
       ])
+      for (let i=1;i<=52;i++){
+        let index=response.findIndex((data)=>{
+            return data._id===i
+        })
+        if(index!==-1){
+        array.push({
+            week:response[index]._id,
+            
+            amount:response[index].totalPayment,
+        })
+        }
+        else{
+            array.push({
+                week:i,
+            
+                amount:0,
+            })
+        }
+              }
     return  res.json(responseObj(true,response,'Weekly payments'))
 }
 

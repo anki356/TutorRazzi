@@ -92,7 +92,9 @@ const getPaymentStats=async(req,res)=>{
                     "$gte": moment().startOf('year').format("YYYY-MM-DDTHH:mm:ss"),// Start of current year
                     "$lte": moment().endOf('year').format("YYYY-MM-DDTHH:mm:ss")// // Start of next year
                   }},{
-      sender_id:studentsDetails.students
+      sender_id:{$in:studentsDetails.students}
+                  },{
+                    status:"Paid"
                   }
             ]
           }

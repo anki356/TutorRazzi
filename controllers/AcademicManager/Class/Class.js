@@ -706,7 +706,8 @@ const getUpcomingClasses=async(req,res,next)=>{
     let studentDetails=await Student.findOne({user_id:classDetails.student_id},{
       grade:1,
       curriculum:1,
-      school:1
+      school:1,
+      user_id:1
     })
     let teacherDetails=await Teacher.findOne({user_id:classDetails.teacher_id},{
     preferred_name:1,
@@ -757,7 +758,8 @@ const getUpcomingClasses=async(req,res,next)=>{
     let studentDetails=await Student.findOne({user_id:classDetails.student_id},{
       grade:1,
       curriculum:1,
-      school:1
+      school:1,
+      user_id:1
     })
     let teacherDetails=await Teacher.findOne({user_id:classDetails.teacher_id},{
     preferred_name:1,
@@ -922,7 +924,9 @@ const getUpcomingClassDetails=async(req,res)=>{
   let studentDetails=await Student.findOne({user_id:classDetails.student_id},{
     grade:1,
     curriculum:1,
-    school:1
+    school:1,
+user_id:1
+
   })
   let teacherDetails=await Teacher.findOne({user_id:classDetails.teacher_id},{
     degree_details:1,

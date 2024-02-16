@@ -66,7 +66,7 @@ const getSubjects=async(req,res)=>{
         { $unwind: "$subject_curriculum" }, // Unwind the subject_curriculum array
         {
           $group: {
-            _id: "$subject_curriculum.curriculum", // Group by the curriculum field within each subject_curriculum object
+            // _id: "$subject_curriculum.curriculum", // Group by the curriculum field within each subject_curriculum object
             // teacher_id: { $first: "$user_id" }, // Preserve the teacher's user_id
             // curriculum_name: { $first: "$subject_curriculum.curriculum" }, // Preserve the curriculum name
             subject_name: { $addToSet: "$subject_curriculum.subject" }

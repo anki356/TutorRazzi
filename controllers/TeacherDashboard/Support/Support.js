@@ -35,7 +35,7 @@ category:req.body.category
             support_id:supportResponse._id,
             user_id:req.user._id,
             is_sender:true,
-            response_document:documentResponse._id,
+            response_document:req.files[0].filename,
             
         })
     }

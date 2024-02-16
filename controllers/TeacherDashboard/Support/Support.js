@@ -113,10 +113,18 @@ let pipeline = Support.aggregate([
    
 }
 const getTicketDetails=async(req,res)=>{
+
     const ticketDetails=await Support.findById({_id:req.query.ticket_id}).populate({
         path:"user_id",select:{
             name:1
         }
+    })
+    await SupportResponses.updateMany({
+        support_id:req.query.ticket_id
+    },{$set:{
+        is_read:true
+    }
+        
     })
     const responses=await SupportResponses.find({
         support_id:req.query.ticket_id

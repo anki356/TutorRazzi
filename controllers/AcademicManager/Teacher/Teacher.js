@@ -115,7 +115,6 @@ const getTeacherById = async (req, res, next) => {
 
     const { id } = req.query
     const teacherResponse = await Teacher.findOne({ user_id: id }).populate({ path: 'user_id' })
-    const testimonialResponse=await Testimonial.find({teacher_id:id})
     const upcomingClasses=await Class.countDocuments({
         teacher_id:id,
         start_time:{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")},
@@ -138,10 +137,20 @@ const getTeacherById = async (req, res, next) => {
     }).sort({
         "createdAt":-1
     }).limit(3)
-    return res.json(responseObj(true, {teacherResponse:teacherResponse,testimonialResponse:testimonialResponse,upcomingClasses:upcomingClasses,pastClass:pastClass,trialClassesDone:trialClassesDone,latest_support:latest_support}, "Teacher Details"))
+    return res.json(responseObj(true, {teacherResponse:teacherResponse,upcomingClasses:upcomingClasses,pastClass:pastClass,trialClassesDone:trialClassesDone,latest_support:latest_support}, "Teacher Details"))
 
 
 
 
 }
-export {getAllTeachers,getTeacherById}
+const getTestimonialsOfTeacher=async(req,res)=>{
+    let query={teacher_id:req.query.teacher_id}
+    let options={
+        limit:req.query.limit,
+        page:req.query.page
+    }
+    Testimonial.paginate(query,options,(err,result)=>{
+        return res.json(responseObj(true,result,"Testimonials"))
+    })
+}
+export {getAllTeachers,getTeacherById,getTestimonialsOfTeacher}

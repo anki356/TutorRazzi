@@ -43,7 +43,7 @@ const rescheduleValidationChain=[
     ]
 router.patch("/reschedule-class/:_id",authVerify,rescheduleValidationChain,validationError,rescheduleClass)
 router.patch("/accept-trial-class/:_id",authVerify,acceptRescheduleValidationChain,validationError,acceptTrialClassRequest)
-router.patch("/mark-homework-done/:homework_id",homeworkResolvedValidation,validationError,authVerify,resolveHomework)
+router.patch("/mark-homework-done/:homework_id",authVerify,resolveHomework)
 router.get("/past-classes",authVerify,getPastClasses)
 router.get("/upcoming-classes",authVerify,getUpcomingClasses)
 router.get("/homeworks-list",authVerify,getHomeworks)

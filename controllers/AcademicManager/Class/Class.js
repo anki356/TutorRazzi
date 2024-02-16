@@ -468,6 +468,9 @@ const resolveHomework=async(req,res)=>{
     },{
         $set:{status:'Resolve'}
     })
+    if(homeworkResponse===null){
+      return res.json(responseObj(false,null,"Incorrect homework Id"))
+    }
     const teacherDetails=await Class.findOne({
       _id:homeworkResponse.class_id
     })

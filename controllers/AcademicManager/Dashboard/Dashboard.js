@@ -90,7 +90,7 @@ const getHomeworks=async(req,res)=>{
    let homeworks=await HomeWork.find({
 class_id:{
     $in:classResponse.map((data)=>data._id)},
-    status:{$in:["Done","ReUpload"]}
+    status:{$in:["Resolved","ReUpload"]}
 },
 
 ).populate({

@@ -322,7 +322,7 @@ const requestTrialClass = async (req, res, next) => {
         status: 'Done'
     })
     let studentResponse=await Student.findOne({
-        usr_id:req.user._id
+        user_id:req.user._id
     })
     if (classResponse) {
         throw new Error("Subject Trial Class already done")

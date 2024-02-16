@@ -303,7 +303,7 @@ const getRescheduledClasses=async (req, res) => {
             }
         }],
         select:{
-          name:1,subject:1,start_time:1,status:1, class_type:1
+          name:1,subject:1,start_time:1,status:1, class_type:1,rescheduled_by:1
         }
     }
 

@@ -347,13 +347,7 @@ year:moment().year(),
         teacher_id:req.user._id
     })
 addNotifications(req.body.student_id,"Report Filled","Your current month report has been filled for "+req.body.subject+" by teacher "+req.user.name)
-const AcademicManangerResponse=await AcademicMananger.findOne({
-    teachers:{
-         $elemMatch: {
-            $eq: req.user._id
-        }
-    }
-  })
+
   
   
   // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)

@@ -456,11 +456,23 @@ const setReminder = async (req, res, next) => {
   
   const rescheduleClassResponse=await Class.updateOne({_id:req.params._id},{$set:{
     is_rescheduled:true,
-    start_time:moment(req.body.start_time).format("YYYY-MM-DD:HH:mm:ss"),
-    end_time:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DD:HH:mm:ss"),
+    start_time:moment(req.body.start_time).format("YYYY-MM-DDTHH:mm:ss"),
+    end_time:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss"),
     rescheduled_by:'teacher',
     status:'Pending'
     }})
+    const studentDetails=await Student.findOne({
+      user_id:details.student_id
+    })
+    const AcademicManangerResponse=await AcademicMananger.findOne({
+      teachers:{
+           $elemMatch: {
+            $eq: req.user._id
+        }
+      }
+  })
+    addNotifications(rescheduleClassResponse.student_id,"Class Rescheduled","Class of student "+studentDetails.preferred_name+" and teacher"+req.user.name+" which was earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYYTHH:mm:ss"))
+    addNotifications(AcademicManangerResponse.user_id,"Class Rescheduled","Class of student "+studentDetails.preferred_name+" and teacher"+req.user.name+" which was earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYYTHH:mm:ss"))
     res.json(responseObj(true,[],"Class Rescheduled"))
   
   }
@@ -855,9 +867,9 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
   // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
   
   
-    addNotifications(classDetails.student_id,"Accepted Class Request","Accepted Rescheduled Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher"+ req.user.name)
+    addNotifications(classDetails.student_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher"+ req.user.name)
   
-    addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Rescheduled Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by teacher"+ req.user.name)
+    addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by teacher"+ req.user.name)
   
   
   return res.json(responseObj(true, [], null))

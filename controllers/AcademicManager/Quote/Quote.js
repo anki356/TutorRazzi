@@ -5,6 +5,7 @@ import {responseObj} from "../../../util/response.js"
 import Student from "../../../models/Student.js"
 import SubjectCurriculum from "../../../models/SubjectCurriculum.js"
 import Curriculum from "../../../models/Curriculum.js"
+import { addNotifications } from "../../../util/addNotification.js"
 const addQuote=async(req,res,next)=>{
    const gradeDetails=await Student.findOne({
     user_id:req.body.student_id
@@ -32,6 +33,7 @@ const addQuote=async(req,res,next)=>{
         payment_type:"Credit",
         quote_id:response[0]._id
     })
+    addNotifications(req.body.student_id,"Extra Class Quotes added","Extra Class Quotes added for class_name"+req.body.class_name)
 
     res.json(responseObj(true,{response,paymentResponse},null))
 }

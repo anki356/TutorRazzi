@@ -52,7 +52,7 @@ if(quoteDetails==null){
 return res.json(responseObj(false,null,"Invalid Quote id"))
 }
 if(quoteDetails.status==='Paid'){
-    return res.json(responseObj(false,null,"You cannot edit quote now"))
+    return res.json(responseObj(false,null,"You cannot edit because payment is done"))
 
 }
 

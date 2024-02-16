@@ -83,22 +83,14 @@ const addSupport=async (req,res,next)=>{
 
     })
 
-await SupportResponses.create({
-    support_id:supportResponse._id,
-    user_id:req.user._id,
-    is_sender:true,
-    response:req.body.description,
-    
-})
-if(req.files?.length>0){
     await SupportResponses.create({
         support_id:supportResponse._id,
         user_id:req.user._id,
         is_sender:true,
-        response_document:req.files[0].filename,
+        response:req.body.description,
+        response_document:req.files?.length>0?req.files[0].filename:null,
         
     })
-}
     res.json(responseObj(true,{documentResponse,supportResponse},null))
 }
 const getTicketDetails=async(req,res)=>{

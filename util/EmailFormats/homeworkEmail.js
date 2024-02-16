@@ -1,5 +1,5 @@
 import {  marked } from "marked"
-const homeworkEmail=(student_name,title,subject_name,grade_name,teacher_name)=>{
+const homeworkEmail=(student_name,title,teacher_name,subject_name,grade_name)=>{
 
 
 let content=`

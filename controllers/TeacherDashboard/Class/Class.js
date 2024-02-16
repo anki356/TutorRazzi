@@ -581,7 +581,9 @@ let taskResponse=await Task.find({
     class_id:req.body.class_id})
     const AcademicManangerResponse=await AcademicMananger.findOne({
       teachers:{
-          $elemMatch:req.user._id
+           $elemMatch: {
+            $eq: req.user._id
+        }
       }
   })
   
@@ -601,7 +603,9 @@ let taskResponse=await Task.find({
      )
      const AcademicManangerResponse=await AcademicMananger.findOne({
       teachers:{
-          $elemMatch:req.user._id
+           $elemMatch: {
+            $eq: req.user._id
+        }
       }
   })
   
@@ -655,7 +659,9 @@ let taskResponse=await Task.find({
     }
     const AcademicManangerResponse=await AcademicMananger.findOne({
       teachers:{
-          $elemMatch:req.user._id
+           $elemMatch: {
+            $eq: req.user._id
+        }
       }
   })
   
@@ -732,7 +738,9 @@ const resolveResourceRequests=async(req,res)=>{
   })
   const AcademicManangerResponse=await AcademicMananger.findOne({
     teachers:{
-        $elemMatch:req.user._id
+         $elemMatch: {
+            $eq: req.user._id
+        }
     }
 })
 
@@ -779,7 +787,9 @@ throw new Error("Slot Already Booked")
 });
 const AcademicManangerResponse=await AcademicMananger.findOne({
   teachers:{
-      $elemMatch:req.user._id
+       $elemMatch: {
+            $eq: req.user._id
+        }
   }
 })
 
@@ -835,7 +845,9 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
   })
   const AcademicManangerResponse=await AcademicMananger.findOne({
     teachers:{
-        $elemMatch:req.user._id
+         $elemMatch: {
+            $eq: req.user._id
+        }
     }
   })
   
@@ -882,7 +894,9 @@ status:'Scheduled'
 });
 const AcademicManangerResponse=await AcademicMananger.findOne({
   teachers:{
-      $elemMatch:req.user._id
+       $elemMatch: {
+            $eq: req.user._id
+        }
   }
 })
 

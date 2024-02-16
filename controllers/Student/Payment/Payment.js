@@ -105,7 +105,9 @@ else{
       addNotifications(teacherResponse.user_id._id,'Payment Received',markdownContent)   
       const AcademicManangerResponse=await AcademicMananger.findOne({
         students:{
-            $elemMatch:req.user._id
+             $elemMatch: {
+            $eq: req.user._id
+        }
         }
     })
     addNotifications(AcademicManangerResponse.user_id,'Payment Received',"Payment received by "+req.user.name+" for class "+ quoteResponse.class_name)

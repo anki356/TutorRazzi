@@ -36,7 +36,9 @@ const dislikeClass = async (req, res, next) => {
     }})
     const AcademicManangerResponse=await AcademicMananger.findOne({
         students:{
-            $elemMatch:req.user._id
+             $elemMatch: {
+            $eq: req.user._id
+        }
         }
     })
     const teacherResponse=await Teacher.findOne({
@@ -57,7 +59,9 @@ const likeClass = async (req, res, next) => {
     }})
     const AcademicManangerResponse=await AcademicMananger.findOne({
         students:{
-            $elemMatch:req.user._id
+             $elemMatch: {
+            $eq: req.user._id
+        }
         }
     })
     const teacherResponse=await Teacher.findOne({
@@ -78,7 +82,9 @@ const requestExtraclass = async (req, res, next) => {
     res.json(responseObj(true, extraClassRequestResponse, "Request for Extra Class Created Successfully"))
     const AcademicManangerResponse=await AcademicMananger.findOne({
         students:{
-            $elemMatch:req.user._id
+             $elemMatch: {
+            $eq: req.user._id
+        }
         }
     })
     addNotifications(AcademicManangerResponse.user_id,"New Extra Class Request","New Extra Class request has arrived by"+ req.user.name)
@@ -122,7 +128,9 @@ const requestTrialClass = async (req, res, next) => {
     });
     const AcademicManangerResponse=await AcademicMananger.findOne({
         students:{
-            $elemMatch:req.user._id
+             $elemMatch: {
+            $eq: req.user._id
+        }
         }
     })
     const teacherResponse=await Teacher.findOne({
@@ -217,7 +225,9 @@ const scheduleClass = async (req, res, next) => {
     }
     const AcademicManangerResponse=await AcademicMananger.findOne({
         students:{
-            $elemMatch:req.user._id
+             $elemMatch: {
+            $eq: req.user._id
+        }
         }
     })
     const teacherResponse=await Teacher.findOne({
@@ -262,7 +272,9 @@ const rescheduleClass = async (req, res, next) => {
     })
     const AcademicManangerResponse=await AcademicMananger.findOne({
         students:{
-            $elemMatch:req.user._id
+             $elemMatch: {
+            $eq: req.user._id
+        }
         }
     })
 const teacherDetails=await Teacher.findOne({
@@ -343,7 +355,9 @@ const teacherResponse=await User.findOne({
 
     const AcademicManangerResponse=await AcademicMananger.findOne({
         students:{
-            $elemMatch:req.user._id
+             $elemMatch: {
+            $eq: req.user._id
+        }
         }
     })
     addNotifications(teacherResponse._id,"Resource Requested ",`${req.user.name} has requested resources for your Class ${class_name}`
@@ -592,7 +606,9 @@ let classDetails=await Class.findOne({
     });
     const AcademicManangerResponse=await AcademicMananger.findOne({
         students:{
-            $elemMatch:req.user._id
+             $elemMatch: {
+            $eq: req.user._id
+        }
         }
     })
     
@@ -617,7 +633,9 @@ const markTaskDone = async (req, res, next) => {
 })
 const AcademicManangerResponse=await AcademicMananger.findOne({
     students:{
-        $elemMatch:req.user._id
+         $elemMatch: {
+            $eq: req.user._id
+        }
     }
 })
 addNotifications(teacherDetails.teacher_id,"Task marked Done"," Task has been marked as done given to "+req.user.name+ " in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ "with name "+taskResponse.title)
@@ -651,7 +669,9 @@ if(homeworkResponse.answer_document_id!==null&&homeworkResponse.answer_document_
 })
 const AcademicManangerResponse=await AcademicMananger.findOne({
     students:{
-        $elemMatch:req.user._id
+         $elemMatch: {
+            $eq: req.user._id
+        }
     }
 })
 addNotifications(teacherDetails.teacher_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ " with name "+homeworkResponse.title )

@@ -353,7 +353,9 @@ const requestTrialClass = async (req, res, next) => {
     });
     const AcademicManangerResponse=await AcademicManager.findOne({
         students:{
-            $elemMatch:req.user._id
+             $elemMatch: {
+            $eq: req.user._id
+        }
         }
     })
     const teacherResponse=await Teacher.findOne({

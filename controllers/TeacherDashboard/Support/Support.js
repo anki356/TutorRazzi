@@ -100,8 +100,9 @@ let pipeline = Support.aggregate([
         "createdAt": 1,
         "description": 1,
         "responseLength": 1,
-        "user_id":1 // Include responseLength field
-      }
+        "user_id":1, // Include responseLength field
+      "status":1
+    }
     }
   ]);
   

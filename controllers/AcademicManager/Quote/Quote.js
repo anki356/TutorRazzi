@@ -18,7 +18,7 @@ const addQuote=async(req,res,next)=>{
         subject_curriculum_grade:{
             subject: req.body.subject,
             curriculum:req.body.curriculum,
-            grade:gradeDetails.grade
+            grade:gradeDetails.grade.name
         },
         student_id:req.body.student_id,
         class_type:'Normal',

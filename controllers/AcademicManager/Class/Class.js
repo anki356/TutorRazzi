@@ -778,12 +778,19 @@ const getUpcomingClasses=async(req,res,next)=>{
   })
     
     let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
-    let ratingsResponse=await Review.findOne({
-      class_id:req.query.class_id
-    })
     
+    let classRatingsResponse=await Review.findOne({
+      class_id:req.query.class_id,
+      given_by:classDetails.student_id,
+      teacher_id:null
+    })
+   let teacherRatings=await Review.findOne({
+    class_id:req.query.class_id,
+    given_by:classDetails.student_id,
+    teacher_id:classDetails.teacher_id
+  })
   
-    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails ,ratingsResponse:ratingsResponse}, null))
+    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails ,atingsResponse:classRatingsResponse?classRatingsResponse.rating:0,teacherRatings:teacherRatings?teacherRatings.rating:0}, null))
   }
   const getQuotes=async(req,res)=>{
     let classDetails = {}

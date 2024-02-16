@@ -17,7 +17,7 @@ import Task from "../../../models/Task.js"
 import Reminder from "../../../models/Reminder.js"
 import User from "../../../models/User.js"
 import Review from "../../../models/Review.js"
-import {addNotification} from "../../../util/addNotification.js"
+import {addNotifications} from "../../../util/addNotification.js"
 const markTaskDone=async(req,res)=>{
   const taskDetails=await Task.findOne({
 _id:req.params._id
@@ -210,7 +210,7 @@ const addExtraClassQuote = async (req, res, next) => {
       payment_type:"Credit",
       quote_id:extraClassQuoteResponse[0]._id
   })
-addNotification(req.body.student_id,"Extra Class Quotes added","Extra Class Quotes added for class_name"+req.body.class_name)
+addNotifications(req.body.student_id,"Extra Class Quotes added","Extra Class Quotes added for class_name"+req.body.class_name)
    return res.json(responseObj(true, {extraClassQuoteResponse,paymentResponse}, "Extra Class Quotes created"))
 }
 
@@ -431,7 +431,7 @@ const notifyTeacher=async(req,res)=>{
     const content=teacherResourceRequests(classDetails.student_id.name,details.message,classDetails.teacher_id.name,classDetails.subject.name,classDetails.grade.name)
     const teacherResponse=await User.findOne({_id:classDetails.teacher_id},{email:1})
     console.log(teacherResponse)
-    addNotification(classDetails.teacher_id,"Resource Requested",content)
+    addNotifications(classDetails.teacher_id,"Resource Requested",content)
     await sendEmail(teacherResponse.email,"Resource Requested",content)
     return  res.json(responseObj(true,[],"Successfully Notified teacher"))
 }
@@ -458,7 +458,7 @@ const notifyStudent=async(req,res)=>{
     const content=homeworkEmail(classDetails.student_id.name,details.title,classDetails.teacher_id.name,classDetails.subject.name,classDetails.grade.name)
     const studentResponse=await User.findOne({_id:classDetails.student_id},{email:1})
     await sendEmail(studentResponse.email,"Home Work Pending",content)
-    addNotification(classDetails.student_id,"Home Work Pending",content)
+    addNotifications(classDetails.student_id,"Home Work Pending",content)
     return  res.json(responseObj(true,[],"Successfully Notified Student for the homework"))
 }
 
@@ -471,7 +471,7 @@ const resolveHomework=async(req,res)=>{
     const teacherDetails=await Class.findOne({
       _id:homeworkResponse.class_id
     })
-addNotification(teacherDetails.teacher_id,"Home Work Mark Comleted","HomeWork with title "+homeworkResponse.title+ "has been marked completed by Academic Manager")
+addNotifications(teacherDetails.teacher_id,"Home Work Mark Comleted","HomeWork with title "+homeworkResponse.title+ "has been marked completed by Academic Manager")
     return res.json(responseObj(true,[],"Homework mark Completed"))
 }
 
@@ -961,7 +961,7 @@ const requestReUpload=async(req,res)=>{
   const studentDetails=await Class.findOne({
     _id:homeworkResponse.class_id
   })
-  addNotification(studentDetails.student_id,"Request for Re Upload of Homework placed", "Request for Re Upload of Homework placed of Title"+ homeworkResponse.title)
+  addNotifications(studentDetails.student_id,"Request for Re Upload of Homework placed", "Request for Re Upload of Homework placed of Title"+ homeworkResponse.title)
   res.json(responseObj(true,[],"Request for Re Upload of Homework placed Successfully"))
 
 

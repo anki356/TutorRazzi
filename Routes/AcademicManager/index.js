@@ -10,6 +10,7 @@ import TeacherRouter from "./Teachers/Teachers.js"
 import Support from "./Support/Support.js"
 import Chat from "./Chat/Chat.js"
 import Payment from "./Payments/Payments.js"
+import Notification from "./Notification/Notification.js"
 router.use("/academic-manager/",DashboardRouter)
 router.use("/academic-manager/",QuoteROuter)
 router.use("/academic-manager/",AuthRouter)
@@ -20,5 +21,6 @@ router.use("/academic-manager/",TeacherRouter)
 router.use("/academic-manager/",Support)
 router.use("/academic-manager/",Chat)
 router.use("/academic-manager/",Payment)
+router.use("/academic-manager/",Notification)
 
 export default router

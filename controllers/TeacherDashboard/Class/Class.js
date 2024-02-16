@@ -13,6 +13,7 @@ import ResourceRequest from "../../../models/ResourceRequest.js"
 import Teacher from "../../../models/Teacher.js"
 import mongoose from "mongoose"
 import Attendance from "../../../models/Attendance.js"
+import { addNotifications } from "../../../util/addNotification.js"
 const ObjectId=mongoose.Types.ObjectId
 const getUpcomingClasses = async (req, res, next) => {
   
@@ -578,8 +579,14 @@ let taskResponse=await Task.find({
       description: req.body.description,
       due_date: moment(req.body.due_date).format("YYYY-MM-DD"),
     class_id:req.body.class_id})
+    const AcademicManangerResponse=await AcademicMananger.findOne({
+      teachers:{
+          $elemMatch:req.user._id
+      }
+  })
   
-    
+  
+    addNotifications(AcademicManangerResponse.user_id,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
     
     res.json(responseObj(true, taskResponse, "Task Created Successfully"))
   }
@@ -592,7 +599,15 @@ let taskResponse=await Task.find({
                   class_id:req.body.class_id
        }
      )
-       
+     const AcademicManangerResponse=await AcademicMananger.findOne({
+      teachers:{
+          $elemMatch:req.user._id
+      }
+  })
+  
+  
+    addNotifications(AcademicManangerResponse.user_id,"Home Work Added", "A Homework has been added by "+req.user.name+" of title"+ req.body.title)
+    
      
      res.json(responseObj(true, homeworkResponse, null))
    } 
@@ -638,7 +653,16 @@ let taskResponse=await Task.find({
     }
   })
     }
-   
+    const AcademicManangerResponse=await AcademicMananger.findOne({
+      teachers:{
+          $elemMatch:req.user._id
+      }
+  })
+  
+ 
+    // addNotifications(AcademicManangerResponse.user_id,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
+    
+   addNotifications(AcademicManangerResponse.user_id,"A Class Reviewed","A class of "+classDetails.subject.name+" Reviewed as "+ rating+ "by "+req.user.name )
    
     return res.json(responseObj(true,reviewResponse,null))
   }
@@ -684,7 +708,7 @@ const getClasssBasedOnMonth=async(req,res)=>{
 }
 
 const resolveResourceRequests=async(req,res)=>{
-  const materialResponse=await ResourceRequest.findOne({_id:req.body.resource_request_id},{class_id:1})
+  const materialResponse=await ResourceRequest.findOne({_id:req.body.resource_request_id},{class_id:1,message:1})
   let classResponse=await Class.findOne({
     _id:materialResponse.class_id
   },{
@@ -706,6 +730,16 @@ const resolveResourceRequests=async(req,res)=>{
           status:'Resolved'
       }
   })
+  const AcademicManangerResponse=await AcademicMananger.findOne({
+    teachers:{
+        $elemMatch:req.user._id
+    }
+})
+
+
+  addNotifications(AcademicManangerResponse.user_id,"Resource Request resolved", "Resource Request resolved  by "+req.user.name+" of mesaage"+ materialResponse.message)
+  
+  
   return res.json(responseObj(true,[],'Resource Request resolved'))
 }
 
@@ -743,6 +777,21 @@ throw new Error("Slot Already Booked")
   status:'Scheduled'
   }
 });
+const AcademicManangerResponse=await AcademicMananger.findOne({
+  teachers:{
+      $elemMatch:req.user._id
+  }
+})
+
+
+// addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
+
+
+  addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher"+ req.user.name)
+
+  addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher"+ req.user.name)
+
+
 return res.json(responseObj(true,[],"Accepted Rescheduled Request"))
 
 }
@@ -784,6 +833,21 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
       status: 'Scheduled'
     }
   })
+  const AcademicManangerResponse=await AcademicMananger.findOne({
+    teachers:{
+        $elemMatch:req.user._id
+    }
+  })
+  
+  
+  // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
+  
+  
+    addNotifications(classDetails.student_id,"Accepted Class Request","Accepted Rescheduled Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher"+ req.user.name)
+  
+    addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Rescheduled Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by teacher"+ req.user.name)
+  
+  
   return res.json(responseObj(true, [], null))
 }else{
   let classDetails= await Class.find({$and:[{
@@ -816,6 +880,20 @@ $set:{
 status:'Scheduled'
 }
 });
+const AcademicManangerResponse=await AcademicMananger.findOne({
+  teachers:{
+      $elemMatch:req.user._id
+  }
+})
+
+
+// addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
+
+
+  addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher"+ req.user.name)
+
+  addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher"+ req.user.name)
+
 return res.json(responseObj(true,[],"Accepted Rescheduled Request"))
 
 }

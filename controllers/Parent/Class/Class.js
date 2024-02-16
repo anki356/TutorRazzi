@@ -23,7 +23,7 @@ const requestTrialClass = async (req, res, next) => {
    
     let classResponseArray = []
     let classResponse = await Class.findOne({
-        student_id: req.body.student_id,
+        student_id: req.user._id,
         "subject.name": req.body.subject ,
         status: 'Done'
     })
@@ -39,7 +39,7 @@ const requestTrialClass = async (req, res, next) => {
     await req.body.start_time.forEach(async (element) => {
         let newClassResponse = await Class.insertMany({
             teacher_id: req.body.teacher_id,
-            student_id: req.body.student_id,
+            student_id: req.user._id,
             start_time: moment(element).format("YYYY-MM-DDTHH:mm:ss"),
             end_time: moment(element).add(1, 'h').format("YYYY-MM-DDTHH:mm:ss"),
             subject: { name: req.body.subject },
@@ -55,7 +55,19 @@ const requestTrialClass = async (req, res, next) => {
 
 
     });
+    const AcademicManangerResponse=await AcademicMananger.findOne({
+        students:{
+            $elemMatch:req.user._id
+        }
+    })
+    const teacherResponse=await Teacher.findOne({
+        user_id:req.body.teacher_id
+    })
+    addNotifications(AcademicManangerResponse.user_id,"New Trial Class Requested","New Trial Class Requested By"+ req.user.name+" by teacher "+teacherResponse.preferred_name+" of subject "+req.body.subject)
+    addNotifications(req.body.teacher_id,"New Trial Class Requested","New Trial Class Requested By"+ req.user.name+" of subject "+req.body.subject)
     res.json(responseObj(true, classResponseArray, "Trial Class request created Successfully"))
+
+    
 
 
 

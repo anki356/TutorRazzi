@@ -5,6 +5,7 @@ import AdditionalComment from "../../../models/AdditionalComment.js"
 import moment from "moment"
 import Report from "../../../models/Report.js"
 import Class from "../../../models/Class.js"
+import { addNotifications } from "../../../util/addNotification.js"
 const ObjectID=mongoose.Types.ObjectId
 const getMonthlyReport=async(req,res,next)=>{
     const months = [
@@ -345,7 +346,21 @@ year:moment().year(),
         year:moment().year(),
         teacher_id:req.user._id
     })
-
+addNotifications(req.body.student_id,"Report Filled","Your current month report has been filled for "+req.body.subject+" by teacher "+req.user.name)
+const AcademicManangerResponse=await AcademicMananger.findOne({
+    teachers:{
+        $elemMatch:req.user._id
+    }
+  })
+  
+  
+  // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
+  
+  
+   
+  
+    
+  
     return res.json(responseObj(true,null ,"Student Report Added"))
 }
 else{

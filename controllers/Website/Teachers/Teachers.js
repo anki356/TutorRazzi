@@ -13,6 +13,8 @@ import mongoose from "mongoose"
 import TeacherReport from "../../../models/TeacherReport.js"
 import User from "../../../models/User.js"
 import { ObjectId } from "bson"
+import { addNotifications } from "../../../util/addNotification.js"
+import AcademicManager from "../../../models/AcademicManager.js"
 const objectId=mongoose.Types.ObjectId
 const getGreatTeachers=async(req,res)=>{
    
@@ -349,6 +351,16 @@ const requestTrialClass = async (req, res, next) => {
 
 
     });
+    const AcademicManangerResponse=await AcademicManager.findOne({
+        students:{
+            $elemMatch:req.user._id
+        }
+    })
+    const teacherResponse=await Teacher.findOne({
+        user_id:req.body.teacher_id
+    })
+    addNotifications(AcademicManangerResponse.user_id,"New Trial Class Requested","New Trial Class Requested By"+ req.user.name+" by teacher "+teacherResponse.preferred_name+" of subject "+req.body.subject)
+    addNotifications(req.body.teacher_id,"New Trial Class Requested","New Trial Class Requested By"+ req.user.name+" of subject "+req.body.subject)
     res.json(responseObj(true, classResponseArray, "Trial Class request created Successfully"))
 
 

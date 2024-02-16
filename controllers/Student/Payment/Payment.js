@@ -99,10 +99,16 @@ else{
              
               
            
-            let markdownContent =paymentReceiptAcknowlegement(teacherResponse.user_id._id.name,req.body.net_amount)
+            let markdownContent =paymentReceiptAcknowlegement(teacherResponse.preferred_name,req.body.net_amount)
      count=await Payment.countDocuments()
    console.log(teacherResponse)
       addNotifications(teacherResponse.user_id._id,'Payment Received',markdownContent)   
+      const AcademicManangerResponse=await AcademicMananger.findOne({
+        students:{
+            $elemMatch:req.user._id
+        }
+    })
+    addNotifications(AcademicManangerResponse.user_id,'Payment Received',"Payment received by "+req.user.name+" for class "+ quoteResponse.class_name)
             sendEmail(teacherResponse.user_id.email,'Payment Received',markdownContent)
       
          

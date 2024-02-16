@@ -17,7 +17,7 @@ import Task from "../../../models/Task.js"
 import Reminder from "../../../models/Reminder.js"
 import User from "../../../models/User.js"
 import Review from "../../../models/Review.js"
-import addNotification from "../../../util/addNotification.js"
+import {addNotification} from "../../../util/addNotification.js"
 const markTaskDone=async(req,res)=>{
   const taskDetails=await Task.findOne({
 _id:req.params._id

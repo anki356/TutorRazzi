@@ -443,9 +443,15 @@ const setReminder = async (req, res, next) => {
     let details=await Class.findOne({
       _id:req.params._id
     })
-    let classScheduled=await Class.find({$and:[{
-        start_time:req.body.start_time,
-    },{$or:[{
+    let classScheduled=await Class.find({
+      $and: [   { start_time:{$gte:details.start_time}},
+        {start_time:{
+          $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+        }},
+        {end_time:{$gte:details.start_time}},
+        {end_time:{
+          $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+        }},{$or:[{
         teacher_id:req.user._id
     },{
         student_id:details.student_id
@@ -823,13 +829,18 @@ const acceptClassRequest = async (req, res, next) => {
   let details=await Class.findOne({_id:req.params._id})
 if(details.class_type==='Trial' && details.is_rescheduled===false){
   let classDetails = await Class.find({
-    $and: [{
-      start_time: req.body.start_time,
-    }, {
+    $and: [   { start_time:{$gte:details.start_time}},
+      {start_time:{
+        $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+      }},
+      {end_time:{$gte:details.start_time}},
+      {end_time:{
+        $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+      }}, {
       $or: [{
         teacher_id: req.user._id
       }, {
-        student_id: req.body.student_id
+        student_id: details.student_id
       }]
     },{
       status:"Scheduled"
@@ -875,9 +886,15 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
   
   return res.json(responseObj(true, null, "Accepted Class Request"))
 }else{
-  let classDetails= await Class.find({$and:[{
-    start_time:req.body.start_time,
-},{$or:[{
+  let classDetails= await Class.find({
+    $and: [   { start_time:{$gte:details.start_time}},
+      {start_time:{
+        $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+      }},
+      {end_time:{$gte:details.start_time}},
+      {end_time:{
+        $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+      }},{$or:[{
     teacher_id:req.user._id
 },{
     student_id:details.student_id

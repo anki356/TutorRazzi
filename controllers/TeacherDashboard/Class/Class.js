@@ -598,7 +598,7 @@ let taskResponse=await Task.find({
       description: req.body.description,
       due_date: moment(req.body.due_date).format("YYYY-MM-DD"),
     class_id:req.body.class_id})
-    const AcademicManangerResponse=await AcademicMananger.findOne({
+    const AcademicManangerResponse=await AcademicManager.findOne({
       teachers:{
            $elemMatch: {
             $eq: req.user._id

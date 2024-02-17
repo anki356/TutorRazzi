@@ -319,6 +319,82 @@ const getUpcomingClassDetails=async(req,res)=>{
   let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
   res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,teacherDetails:teacherDetails }, null))
 }
+const acceptClassRequest = async (req, res, next) => {
+  let details=await Class.findOne({_id:req.params._id})
+if(details.class_type==='Trial' && details.is_rescheduled===false){
+  let classDetails = await Class.find({
+    $and: [{
+      start_time: req.body.start_time,
+    }, {
+      $or: [{
+        teacher_id: details.teacher_id
+      }, {
+        student_id: req.user._id
+      }]
+    },{
+      status:"Scheduled"
+    }]
+  })
+  if (classDetails.length > 0) {
+    throw new Error("Class in this slot is booked already. Kindly Reschedule")
+  }
+
+  let classUpdateResponse=await  Class.updateMany({
+    student_id:req.user._id,
+    teacher_id:details.teacher_id,
+    class_type:"Trial",
+    "subject.name":details.subject.name
+  },{
+    $set:{
+      status:"Cancelled"
+    }
+  })
+  let classResponse = await Class.updateOne({
+    _id: req.params._id
+  }, {
+    $set: {
+      status: 'Scheduled'
+    }
+  })
+  return res.json(responseObj(true, [], null))
+}else{
+  let classDetails= await Class.find({$and:[{
+    start_time:req.body.start_time,
+},{$or:[{
+    teacher_id:details.teacher_id
+},{
+    student_id:req.user._id
+}]},{
+  status:"Scheduled"
+}]})
+if(classDetails.length!==0){
+throw new Error("Slot Already Booked")
+   
+}
+let classResponse=await Class.findOne(
+{_id:req.params._id,
+
+  rescheduled_by:'academic_manager'
+
+}
+)
+
+if(classResponse!==null){
+throw new Error("You can't Accept your own Reschedule request.")
+}
+let rescheduleacceptResponse=await Class.findOneAndUpdate({_id:req.params._id},{
+$set:{
+   
+status:'Scheduled'
+}
+});
+return res.json(responseObj(true,[],"Accepted Rescheduled Request"))
+
+}
+  
+
+
+}
 
 const getRescheduledClasses=async(req,res,next)=>{
  

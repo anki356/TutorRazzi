@@ -86,9 +86,9 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
       start_time: req.body.start_time,
     }, {
       $or: [{
-        teacher_id: req.user._id
+        teacher_id: details.teacher_id
       }, {
-        student_id: req.body.student_id
+        student_id: details.student_id
       }]
     },{
       status:"Scheduled"
@@ -100,7 +100,7 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
 
   let classUpdateResponse=await  Class.updateMany({
     student_id:details.student_id,
-    teacher_id:req.user._id,
+    teacher_id:details.teacher_id,
     class_type:"Trial",
     "subject.name":details.subject.name
   },{
@@ -120,7 +120,7 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
   let classDetails= await Class.find({$and:[{
     start_time:req.body.start_time,
 },{$or:[{
-    teacher_id:req.user._id
+    teacher_id:details.teacher_id
 },{
     student_id:details.student_id
 }]},{

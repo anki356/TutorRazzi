@@ -2,7 +2,7 @@ import express from 'express'
 import { acceptClassRequest, getClassDetails, getPastClasses, getRescheduledClasses, getTasks, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, markTaskDone, rescheduleClass, reviewTeacher, setReminder, uploadHomework } from '../../../controllers/Website/Class/Class.js'
 import { authVerify } from '../../../controllers/Website/Auth/Auth.js'
 import { body, param } from 'express-validator'
-import { reviewClass } from '../../../controllers/Student/Class/Class.js'
+import { reviewClass } from '../../../controllers/Website/Class/Class.js'
 import validationError from '../../../middleware/validationError.js'
 import { getHomeworks } from '../../../controllers/Website/Class/Class.js'
 const router=express.Router()

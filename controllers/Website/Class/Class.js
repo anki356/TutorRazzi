@@ -257,7 +257,7 @@ teacher_id:classDetails.teacher_id
 
 
 
-    res.json(responseObj(true, {classDetails:classDetails,teacherResponse:teacherResponse,ratingsResponse:classRatingsResponse?classRatingsResponse.rating:0,teacherRatings:teacherRatings?teacherRatings.rating:0}, "Class Details successfully fetched"))
+    res.json(responseObj(true, {classDetails:classDetails,teacherResponse:teacherResponse,ratingsResponse:classRatingsResponse?classRatingsResponse.rating:null,teacherRatings:teacherRatings?teacherRatings.rating:null}, "Class Details successfully fetched"))
 }
 const getHomeworks=async(req,res)=>{
   let homeworkResponse=await HomeWork.find({
@@ -503,14 +503,12 @@ const getRescheduledClasses=async(req,res,next)=>{
   }
 
   const reviewClass = async (req, res, next) => {
-   const parentResponse=await Student.findOne({
-    user_id:req.user._id
-   },{parent_id:1})
+  
     const reviewResponse = await Review.insertMany({
         class_id: req.body.class_id,
         message: req.body?.message,
         rating: req.body.ratings,
-        given_by:parentResponse.parent_id
+        given_by:req.user._id
     })
 
     res.json(responseObj(true, reviewResponse, "Review Created Successfully"))

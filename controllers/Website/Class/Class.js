@@ -35,7 +35,7 @@ const rescheduleClass=async(req,res,next)=>{
        throw new Error('This time slot has been already scheduled')  
       }
 
-const rescheduleClassResponse=await Class.updateOne({_id:req.params._id},{$set:{
+const rescheduleClassResponse=await Class.findOneAndUpdate({_id:req.params._id},{$set:{
   is_rescheduled:true,
   start_time:moment(req.body.start_time).format("YYYY-MM-DDTHH:mm:ss"),
   end_time:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss"),

@@ -292,7 +292,7 @@ let teacherReview=await Review.findOne({
 
 
 
-    res.json(responseObj(true, {classDetails:classDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherResponse:teacherResponse,classReview:classReview,teacherReview:teacherReview}, "Class Details successfully fetched"))
+    res.json(responseObj(true, {classDetails:classDetails,teacherResponse:teacherResponse,classReview:classReview,teacherReview:teacherReview}, "Class Details successfully fetched"))
 }
 const getHomeworks=async(req,res)=>{
   let homeworkResponse=await HomeWork.find({

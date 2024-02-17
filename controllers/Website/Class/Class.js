@@ -416,6 +416,13 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
       status: 'Scheduled'
     }
   })
+  const AcademicManangerResponse=await AcademicManager.findOne({
+    students:{
+         $elemMatch: {
+              $eq: req.user._id
+          }
+    }
+  })
   addNotifications(details.teacher_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" on "+moment(details.start_time).format("DD-MM-YYYY")+"at time "+moment(details.start_time).format("HH:mm:ss")+ " by student"+ req.user.name)
   
   addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" on "+moment(details.start_time).format("DD-MM-YYYY")+ "at time "+moment(details.start_time).format("HH:mm:ss")+ " by student"+ req.user.name)

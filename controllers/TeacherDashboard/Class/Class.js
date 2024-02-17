@@ -465,7 +465,7 @@ const setReminder = async (req, res, next) => {
     const studentDetails=await Student.findOne({
       user_id:details.student_id
     })
-    const AcademicManangerResponse=await AcademicMananger.findOne({
+    const AcademicManangerResponse=await AcademicManager.findOne({
       teachers:{
            $elemMatch: {
             $eq: req.user._id
@@ -798,7 +798,7 @@ throw new Error("Slot Already Booked")
   status:'Scheduled'
   }
 });
-const AcademicManangerResponse=await AcademicMananger.findOne({
+const AcademicManangerResponse=await AcademicManager.findOne({
   teachers:{
        $elemMatch: {
             $eq: req.user._id
@@ -905,7 +905,7 @@ $set:{
 status:'Scheduled'
 }
 });
-const AcademicManangerResponse=await AcademicMananger.findOne({
+const AcademicManangerResponse=await AcademicManager.findOne({
   teachers:{
        $elemMatch: {
             $eq: req.user._id

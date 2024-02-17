@@ -257,7 +257,7 @@ teacher_id:classDetails.teacher_id
 
 
 
-    res.json(responseObj(true, {classDetails:classDetails,teacherResponse:teacherResponse,teacherReview:teacherReview,ratingsResponse:classRatingsResponse?classRatingsResponse.rating:0,teacherRatings:teacherRatings?teacherRatings.rating:0}, "Class Details successfully fetched"))
+    res.json(responseObj(true, {classDetails:classDetails,teacherResponse:teacherResponse,ratingsResponse:classRatingsResponse?classRatingsResponse.rating:0,teacherRatings:teacherRatings?teacherRatings.rating:0}, "Class Details successfully fetched"))
 }
 const getHomeworks=async(req,res)=>{
   let homeworkResponse=await HomeWork.find({

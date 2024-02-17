@@ -116,9 +116,9 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
     }
   })
  
-  addNotifications(details.student_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" at time "+moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by Academic Manager")
+  addNotifications(details.student_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" on "+moment(details.start_time).format("DD-MM-YYYY")+ " at "+moment(classDetails.start_time).format("HH:mm:ss")+ " by Academic Manager")
   
-  addNotifications(details.teacher_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by Academic Manager")
+  addNotifications(details.teacher_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" on "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+moment(classDetails.start_time).format("HH:mm:ss")+" by Academic Manager")
 
   return res.json(responseObj(true, [],"Accepted Class Request"))
 }else{
@@ -153,9 +153,9 @@ status:'Scheduled'
 }
 });
 
-addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by Academic Manager")
+addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" on  "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+" at "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+ " by Academic Manager")
 
-addNotifications(rescheduleacceptResponse.teacher_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by Academic Manager")
+addNotifications(rescheduleacceptResponse.teacher_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" on "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+ " at "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+" by Academic Manager")
 
 return res.json(responseObj(true,[],"Accepted Rescheduled Request"))
 
@@ -189,8 +189,8 @@ const rescheduleClassResponse=await Class.updateOne({_id:req.params._id},{$set:{
   status:'Pending'
   }})
 
-  addNotifications(rescheduleClassResponse.student_id,"Class Rescheduled","Class of "+details.subject.name+" earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYYTHH:mm:ss"))
-  addNotifications(rescheduleClassResponse.teacher_id,"Class Rescheduled","Class of "+details.subject.name+" which was earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by academic manager ")
+  addNotifications(rescheduleClassResponse.student_id,"Class Rescheduled","Class of "+details.subject.name+" earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ " has been rescheduled for on  "+ moment(req.body.start_time).format("DD-MM-YYYY")+" at "+ moment(req.body.start_time).format("HH:mm:ss")+" by academic manager ")
+  addNotifications(rescheduleClassResponse.teacher_id,"Class Rescheduled","Class of "+details.subject.name+" which was earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ " has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYY")+" at "+ moment(req.body.start_time).format("HH:mm:ss")+" by academic manager ")
   res.json(responseObj(true,[],"Class Rescheduled"))
 
   
@@ -225,7 +225,7 @@ const addExtraClassQuote = async (req, res, next) => {
       payment_type:"Credit",
       quote_id:extraClassQuoteResponse[0]._id
   })
-addNotifications(req.body.student_id,"Extra Class Quotes added","Extra Class Quotes added for class_name"+req.body.class_name)
+addNotifications(req.body.student_id,"Extra Class Quotes added","Extra Class Quotes added for class_name "+req.body.class_name)
    return res.json(responseObj(true, {extraClassQuoteResponse,paymentResponse}, "Extra Class Quotes created"))
 }
 
@@ -446,7 +446,7 @@ const notifyTeacher=async(req,res)=>{
     const content=teacherResourceRequests(classDetails.student_id.name,details.message,classDetails.teacher_id.name,classDetails.subject.name,classDetails.grade.name)
     const teacherResponse=await User.findOne({_id:classDetails.teacher_id},{email:1})
     console.log(teacherResponse)
-    addNotifications(classDetails.teacher_id,"Resource Requested",`Resource Requested by ${classDetails.student_id.name}Resource:${details.message},Class Name:${classDetails.subject.name}`)
+    addNotifications(classDetails.teacher_id,"Resource Requested",`Resource Requested by ${classDetails.student_id.name}. Resource:${details.message}, Class Name:${classDetails.subject.name}`)
     await sendEmail(teacherResponse.email,"Resource Requested",content)
     return  res.json(responseObj(true,[],"Successfully Notified teacher"))
 }
@@ -473,7 +473,7 @@ const notifyStudent=async(req,res)=>{
     const content=homeworkEmail(classDetails.student_id.name,details.title,classDetails.teacher_id.name,classDetails.subject.name,classDetails.grade.name)
     const studentResponse=await User.findOne({_id:classDetails.student_id},{email:1})
     await sendEmail(studentResponse.email,"Home Work Pending",content)
-    addNotifications(classDetails.student_id,"Home Work Pending",`Homework: ${details.title} is given in Class Name:${classDetails.subject.name}  By ${classDetails.teacher_id.name} is pending.Kindly Upload the Solution`)
+    addNotifications(classDetails.student_id,"Home Work Pending",`Homework: ${details.title} is given in Class Name: ${classDetails.subject.name}  By ${classDetails.teacher_id.name} is pending.Kindly Upload the Solution`)
     return  res.json(responseObj(true,[],"Successfully Notified Student for the homework"))
 }
 
@@ -481,7 +481,7 @@ const resolveHomework=async(req,res)=>{
     const homeworkResponse=await HomeWork.findOneAndUpdate({
         _id:req.params.homework_id
     },{
-        $set:{status:'Resolve'}
+        $set:{status:'Resolved'}
     })
     if(homeworkResponse===null){
       return res.json(responseObj(false,null,"Incorrect homework Id"))
@@ -489,7 +489,7 @@ const resolveHomework=async(req,res)=>{
     const teacherDetails=await Class.findOne({
       _id:homeworkResponse.class_id
     })
-addNotifications(teacherDetails.teacher_id,"Home Work Mark Comleted","HomeWork with title "+homeworkResponse.title+ "has been marked completed by Academic Manager")
+addNotifications(teacherDetails.teacher_id,"Home Work Mark Comleted","HomeWork with title "+homeworkResponse.title+ " has been marked completed by Academic Manager")
     return res.json(responseObj(true,[],"Homework mark Completed"))
 }
 
@@ -979,7 +979,7 @@ const requestReUpload=async(req,res)=>{
   const studentDetails=await Class.findOne({
     _id:homeworkResponse.class_id
   })
-  addNotifications(studentDetails.student_id,"Request for Re Upload of Homework placed", "Request for Re Upload of Homework placed of Title"+ homeworkResponse.title)
+  addNotifications(studentDetails.student_id,"Request for Re Upload of Homework placed", "Request for Re Upload of Homework placed of Title "+ homeworkResponse.title)
   res.json(responseObj(true,[],"Request for Re Upload of Homework placed Successfully"))
 
 

@@ -868,9 +868,9 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
   // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
   
   
-    addNotifications(classDetails.student_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher"+ req.user.name)
+    addNotifications(classDetails.student_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher "+ req.user.name)
   
-    addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by teacher"+ req.user.name)
+    addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by teacher "+ req.user.name)
   
   
   return res.json(responseObj(true, null, "Accepted Class Request"))
@@ -917,9 +917,9 @@ const AcademicManangerResponse=await AcademicManager.findOne({
 // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
 
 
-  addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher "+ req.user.name)
+  addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ " by teacher "+ req.user.name)
 
-  addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher "+ req.user.name)
+  addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ " by teacher "+ req.user.name)
 
 return res.json(responseObj(true,null,"Accepted Rescheduled Request"))
 

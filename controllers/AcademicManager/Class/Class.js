@@ -181,13 +181,13 @@ const rescheduleClass=async(req,res,next)=>{
     _id:req.params._id
   })
   let classScheduled=await Class.find({
-    $and: [   { start_time:{$gte:details.start_time}},
+    $and: [   { start_time:{$gte:req.body.start_time}},
       {start_time:{
-        $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+        $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
       }},
-      {end_time:{$gte:details.start_time}},
+      {end_time:{$gte:req.body.start_time}},
       {end_time:{
-        $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+        $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
       }},{$or:[{
       teacher_id:details.teacher_id
   },{

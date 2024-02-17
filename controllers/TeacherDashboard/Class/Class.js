@@ -444,19 +444,19 @@ const setReminder = async (req, res, next) => {
       _id:req.params._id
     })
     let classScheduled=await Class.find({
-      $and: [   { start_time:{$gte:details.start_time}},
+      $and: [   { start_time:{$gte:req.body.start_time}},
         {start_time:{
-          $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+          $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
         }},
-        {end_time:{$gte:details.start_time}},
+        {end_time:{$gte:req.body.start_time}},
         {end_time:{
-          $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+          $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
         }},{$or:[{
         teacher_id:req.user._id
     },{
         student_id:details.student_id
     }]}]})
-  
+  console.log(classScheduled)
         if(classScheduled.length!==0){
          throw new Error('This time slot has been already scheduled')  
         }

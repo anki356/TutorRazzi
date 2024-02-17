@@ -45,7 +45,7 @@ param("home_work_id").notEmpty().withMessage("Invalid HomeWork Id")
 ]
 const classReviewValidationChain=[
     body('class_id').notEmpty().withMessage("Invalid Class"),
-    body('rating').notEmpty().isFloat({ min: 0, max: 5 }).withMessage("Must be between 0 and 5")
+    body('rating').notEmpty().isFloat({ min: 1, max: 5 }).withMessage("Must be between 1 and 5")
 ]
 router.patch("/accept-rescheduled-class/:_id",authVerify,acceptRescheduleValidationChain,validationError,acceptRescheduledClass)
 router.post("/review-class",authVerify,classReviewValidationChain,validationError,reviewClass)

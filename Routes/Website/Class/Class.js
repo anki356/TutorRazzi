@@ -1,5 +1,5 @@
 import express from 'express'
-import { acceptClassRequest, getClassDetails, getPastClasses, getRescheduledClasses, getTasks, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, markTaskDone, rescheduleClass, setReminder, uploadHomework } from '../../../controllers/Website/Class/Class.js'
+import { acceptClassRequest, getClassDetails, getPastClasses, getRescheduledClasses, getTasks, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, markTaskDone, rescheduleClass, reviewTeacher, setReminder, uploadHomework } from '../../../controllers/Website/Class/Class.js'
 import { authVerify } from '../../../controllers/Website/Auth/Auth.js'
 import { body, param } from 'express-validator'
 import { reviewClass } from '../../../controllers/Student/Class/Class.js'
@@ -14,9 +14,15 @@ router.get("/rescheduled-classes",authVerify,getRescheduledClasses)
 router.get("/trial-classes",authVerify,getTrialClasses)
 const classReviewValidationChain=[
     body('class_id').notEmpty().withMessage("Invalid Class"),
-    body('ratings').notEmpty().isFloat({ min: 0, max: 5 }).withMessage("Must be between 0 and 5")
+    body('ratings').notEmpty().isFloat({ min: 1, max: 5 }).withMessage("Must be between 1 and 5")
 ]
 router.post("/review-class",authVerify,classReviewValidationChain,validationError,reviewClass)
+const teacherReviewValidationChain=[
+    body('class_id').notEmpty().withMessage("Invalid Class"),
+    body('ratings').notEmpty().isFloat({ min: 1, max: 5 }).withMessage("Must be between 1 and 5"),
+    body('teacher_id').notEmpty().withMessage("Invalid Teacher")
+]
+router.post("/review-teacher",authVerify,teacherReviewValidationChain,validationError,reviewTeacher)
 const rescheduleValidationChain=[
     param('_id').notEmpty().withMessage("Invalid Class"),
     body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time"),

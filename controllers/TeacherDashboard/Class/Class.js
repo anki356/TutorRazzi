@@ -667,14 +667,7 @@ let taskResponse=await Task.find({
     })
     }
     else{
-  reviewResponse=await Review.updateOne({
-    _id:reviewResponse._id
-  },{
-    $set:{
-      message:req.body?.message,
-      rating:req.body.rating,
-    }
-  })
+      return res.json(responseObj(false,null,"You have already reviewed"))
     }
     const AcademicManangerResponse=await AcademicManager.findOne({
       teachers:{

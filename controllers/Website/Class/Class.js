@@ -288,19 +288,20 @@ start_time:1
  },{
   parent_id:1
  })
-let classReview=await Review.findOne({
+ let classRatingsResponse=await Review.findOne({
   class_id:req.query.class_id,
-  given_by:parentDetails.parent_id
+  given_by:classDetails.student_id,
+  teacher_id:null
 })
-let teacherReview=await Review.findOne({
-  class_id:req.query.class_id,
-  given_by:parentDetails.parent_id,
-  teacher_id:classDetails.teacher_id
+let teacherRatings=await Review.findOne({
+class_id:req.query.class_id,
+given_by:classDetails.student_id,
+teacher_id:classDetails.teacher_id
 })
 
 
 
-    res.json(responseObj(true, {classDetails:classDetails,teacherResponse:teacherResponse,classReview:classReview,teacherReview:teacherReview}, "Class Details successfully fetched"))
+    res.json(responseObj(true, {classDetails:classDetails,teacherResponse:teacherResponse,classReview:classReview,teacherReview:teacherReview,ratingsResponse:classRatingsResponse?classRatingsResponse.rating:0,teacherRatings:teacherRatings?teacherRatings.rating:0}, "Class Details successfully fetched"))
 }
 const getHomeworks=async(req,res)=>{
   let homeworkResponse=await HomeWork.find({
@@ -316,7 +317,30 @@ const getTasks=async(req,res)=>{
 })
 res.json(responseObj(true, {taskResponse:taskResponse}, "Task Details successfully fetched"))
 }
+const reviewTeacher = async (req, res, next) => {
+  let reviewResponse=await Review.findOne({
+    class_id:req.body.class_id,
+    given_by:req.user._id,
+    teacher_id:req.body.teacher_id
+  })
+  if(!reviewResponse){
+    reviewResponse = await Review.insertMany({
+      message: req.body.message?req.body.message:'',
+      rating: req.body.rating,
+      teacher_id: req.body.teacher_id,
+      class_id: req.body.class_id,
+      given_by:req.user._id
+  })
+  }
+  else{
+   return res.json(responseObj(false,null,"You have already reviewed"))
+  }
+   
+ 
+  return res.json(responseObj(true,reviewResponse,"Teacher Review Recorded"))
+  
 
+}
 const getUpcomingClassDetails=async(req,res)=>{
   let classDetails = {}
   classDetails = await Class.findOne({ _id: req.query.class_id,
@@ -622,4 +646,4 @@ addNotifications(teacherDetails.teacher_id,"Home work uploaded"," Home work uplo
 addNotifications(AcademicManangerResponse.user_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(teacherDetails.start_time).format("HH:mm:ss")+ " with name "+homeworkResponse.title )
    res.json(responseObj(true, [], "Home work uploaded"))
 }
-  export {setReminder,acceptClassRequest,rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass,markTaskDone,uploadHomework,getHomeworks,getTasks}
+  export {setReminder,acceptClassRequest,rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass,markTaskDone,reviewTeacher,uploadHomework,getHomeworks,getTasks}

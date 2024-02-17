@@ -58,8 +58,10 @@ const getUpcomingClasses=async(req,res,next)=>{
       populate:{
         path:'teacher_id',
         select:{'name':1}
-      }
-  
+      },
+  sort:{
+start_time:1
+  }
     }
     let query={$and:[
      { start_time :{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")}},

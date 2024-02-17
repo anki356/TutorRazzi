@@ -11,6 +11,8 @@ import Student from "../../../models/Student.js";
 import Reminder from "../../../models/Reminder.js";
 import AcademicManager from "../../../models/AcademicManager.js";
 import Document from "../../../models/Document.js";
+import unlinkFile from "../../../util/unlinkFile.js";
+import { addNotifications } from "../../../util/addNotification.js";
 const objectId=mongoose.Types.ObjectId
 const rescheduleClass=async(req,res,next)=>{
   let details=await Class.findOne({

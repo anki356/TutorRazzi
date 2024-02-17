@@ -18,21 +18,20 @@ const rescheduleClass=async(req,res,next)=>{
   let details=await Class.findOne({
     _id:req.params._id
   })
-  let classScheduled=await Class.find({$and:[{
-      start_time:{$gte:req.body.start_time},
-    start_time:{
-      $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
-    },
-    end_time:{$gte:req.body.start_time},
-    end_time:{
-      $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
-    },
-  },{$or:[{
-      teacher_id:details.teacher_id
+  let classScheduled=await Class.find({
+    $and: [   { start_time:{$gte:req.body.start_time}},
+      {start_time:{
+        $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+      }},
+      {end_time:{$gte:req.body.start_time}},
+      {end_time:{
+        $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+      }},{$or:[{
+      teacher_id:details.student_id
   },{
-      student_id:details.student_id
+      student_id:req.user._id
   }]}]})
-
+console.log(classScheduled, "Hello");
       if(classScheduled.length!==0){
        throw new Error('This time slot has been already scheduled')  
       }
@@ -53,7 +52,7 @@ const rescheduleClassResponse=await Class.findOneAndUpdate({_id:req.params._id},
 })
   addNotifications(rescheduleClassResponse.teacher_id,"Class Rescheduled","Class of "+details.subject.name+" which was earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by student "+req.user.name )
   addNotifications(AcademicManangerResponse.user_id,"Class Rescheduled","Class of "+details.subject.name+" which was earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by student "+req.user.name )
-  res.json(responseObj(true,[],null))
+  res.json(responseObj(true,null,"Rescheduled"))
 
 }
 const getUpcomingClasses=async(req,res,next)=>{
@@ -303,7 +302,7 @@ teacher_id:classDetails.teacher_id
 
 
 
-    res.json(responseObj(true, {classDetails:classDetails,teacherResponse:teacherResponse,classReview:classReview,teacherReview:teacherReview,ratingsResponse:classRatingsResponse?classRatingsResponse.rating:0,teacherRatings:teacherRatings?teacherRatings.rating:0}, "Class Details successfully fetched"))
+    res.json(responseObj(true, {classDetails:classDetails,teacherResponse:teacherResponse,teacherReview:teacherReview,ratingsResponse:classRatingsResponse?classRatingsResponse.rating:0,teacherRatings:teacherRatings?teacherRatings.rating:0}, "Class Details successfully fetched"))
 }
 const getHomeworks=async(req,res)=>{
   let homeworkResponse=await HomeWork.find({
@@ -417,11 +416,11 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
       status: 'Scheduled'
     }
   })
-  addNotifications(classDetails.teacher_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" on "+moment(classDetails.start_time).format("DD-MM-YYYY")+"at time "+moment(classDetails.start_time).format("HH:mm:ss")+ " by student"+ req.user.name)
+  addNotifications(details.teacher_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" on "+moment(details.start_time).format("DD-MM-YYYY")+"at time "+moment(details.start_time).format("HH:mm:ss")+ " by student"+ req.user.name)
   
-  addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" on "+moment(classDetails.start_time).format("DD-MM-YYYY")+ "at time "+moment(classDetails.start_time).format("HH:mm:ss")+ " by student"+ req.user.name)
+  addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" on "+moment(details.start_time).format("DD-MM-YYYY")+ "at time "+moment(details.start_time).format("HH:mm:ss")+ " by student"+ req.user.name)
 
-  return res.json(responseObj(true, null, "Acceped Class Request"))
+  return res.json(responseObj(true, null, "Accepted Class Request"))
 }else{
   let classDetails= await Class.find({
     $and: [   { start_time:{$gte:details.start_time}},

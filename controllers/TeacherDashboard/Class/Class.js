@@ -434,7 +434,7 @@ const scheduleClass = async (req, res, next) => {
 const setReminder = async (req, res, next) => {
     const reminderResponse = await Reminder.insertMany({
       class_id: req.body.class_id,
-      user_id:req.user._d
+      user_id:req.user._id
     })
     res.json(responseObj(true, reminderResponse, null))
   }

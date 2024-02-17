@@ -494,4 +494,12 @@ const getRescheduledClasses=async(req,res,next)=>{
 
     res.json(responseObj(true, reviewResponse, "Review Created Successfully"))
 }
-  export {acceptClassRequest,rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass}
+const setReminder = async (req, res, next) => {
+  const reminderResponse = await Reminder.insertMany({
+    class_id: req.body.class_id,
+    user_id:req.user._id
+  })
+  res.json(responseObj(true, reminderResponse, null))
+}
+
+  export {setReminder,acceptClassRequest,rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass}

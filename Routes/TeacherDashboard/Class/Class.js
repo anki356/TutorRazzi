@@ -52,7 +52,7 @@ router.post("/review-class",authVerify,classReviewValidationChain,validationErro
 router.post("/homework",authVerify,taskValidation,validationError,addHomework)
 router.post("/task",authVerify,taskValidation,validationError,addTask)
 router.patch("/notes/:_id", authVerify, notesValidation, validationError, addNotesToClass)
-router.post("/reminder", authVerify,  validationError, setReminder)
+router.post("/reminder", authVerify, setReminder)
 router.patch("/reschedule-class/:_id", authVerify, rescheduleValidationChain, validationError, rescheduleClass)
 router.get("/class-details", authVerify, classDetailsValidationChain, validationError, getClassDetails)
 router.post("/join-class",authVerify,validationError,joinClass)

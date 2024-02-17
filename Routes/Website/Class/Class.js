@@ -1,5 +1,5 @@
 import express from 'express'
-import { acceptClassRequest, getClassDetails, getPastClasses, getRescheduledClasses, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, rescheduleClass } from '../../../controllers/Website/Class/Class.js'
+import { acceptClassRequest, getClassDetails, getPastClasses, getRescheduledClasses, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, rescheduleClass, setReminder } from '../../../controllers/Website/Class/Class.js'
 import { authVerify } from '../../../controllers/Website/Auth/Auth.js'
 import { body, param } from 'express-validator'
 import { reviewClass } from '../../../controllers/Student/Class/Class.js'
@@ -25,6 +25,7 @@ const acceptRescheduleValidationChain=[
     param('_id').notEmpty().withMessage("Invalid Class"),
    
 ]
+router.post("/reminder", authVerify, setReminder)
 router.patch("/accept-class/:_id",authVerify,acceptRescheduleValidationChain,validationError,acceptClassRequest)
 
 

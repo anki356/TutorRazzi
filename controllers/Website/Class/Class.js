@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import Parent from "../../../models/Parent.js";
 import Student from "../../../models/Student.js";
 import Reminder from "../../../models/Reminder.js";
+import AcademicManager from "../../../models/AcademicManager.js";
 const objectId=mongoose.Types.ObjectId
 const rescheduleClass=async(req,res,next)=>{
   let details=await Class.findOne({
@@ -526,5 +527,68 @@ const setReminder = async (req, res, next) => {
   })
   res.json(responseObj(true, reminderResponse, null))
 }
-
-  export {setReminder,acceptClassRequest,rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass}
+const markTaskDone = async (req, res, next) => {
+  let taskResponse=await Task.findOneAndUpdate({
+   _id:req.params._id
+  },{
+   $set:{
+       status:"Done"
+   }
+  })
+  if(taskResponse===null){
+    return res.json(responseObj(false,null,"Invalid Task Id"))
+  }
+  const teacherDetails=await Class.findOne({
+   _id:taskResponse.class_id
+})
+const AcademicManangerResponse=await AcademicMananger.findOne({
+   students:{
+        $elemMatch: {
+           $eq: req.user._id
+       }
+   }
+})
+addNotifications(teacherDetails.teacher_id,"Task marked Done"," Task has been marked as done given to "+req.user.name+ " in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ "with name "+taskResponse.title)
+addNotifications(AcademicManangerResponse.user_id,"Task marked Done"," Task has been marked as done given to "+req.user.name+ " in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ " with name "+taskResponse.title)
+   res.json(responseObj(true, [], "Task Marked Done"))
+  
+}
+const uploadHomework = async (req, res, next) => {
+   let documentResponse = await Document.create({
+       name: req.files[0].filename
+   })
+let homeworkResponse=await HomeWork.findOne({
+   _id:req.params._id
+})
+if(homeworkResponse===null){
+  return res.json(responseObj(false,null,"Invalid Homework Id"))
+}
+if(homeworkResponse.answer_document_id!==null&&homeworkResponse.answer_document_id!==undefined ){
+ let  documentTobeDeleted=await Document.findOne(
+       {_id:homeworkResponse.answer_document_id}
+   )
+ unlinkFile(documentTobeDeleted.name)  
+}
+  homeworkResponse=await HomeWork.findOneAndUpdate({
+   _id:req.params._id
+ },{
+   $set:{
+       status:"Resolved",
+       answer_document_id:documentResponse._id
+   }
+ })
+ const teacherDetails=await Class.findOne({
+   _id:homeworkResponse.class_id
+})
+const AcademicManangerResponse=await AcademicManager.findOne({
+   students:{
+        $elemMatch: {
+           $eq: req.user._id
+       }
+   }
+})
+addNotifications(teacherDetails.teacher_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ " with name "+homeworkResponse.title )
+addNotifications(AcademicManangerResponse.user_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ " with name "+homeworkResponse.title )
+   res.json(responseObj(true, [], "Home work uploaded"))
+}
+  export {setReminder,acceptClassRequest,rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass,markTaskDone,uploadHomework}

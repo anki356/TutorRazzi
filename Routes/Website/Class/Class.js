@@ -1,5 +1,5 @@
 import express from 'express'
-import { acceptClassRequest, getClassDetails, getPastClasses, getRescheduledClasses, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, rescheduleClass, setReminder } from '../../../controllers/Website/Class/Class.js'
+import { acceptClassRequest, getClassDetails, getPastClasses, getRescheduledClasses, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, markTaskDone, rescheduleClass, setReminder, uploadHomework } from '../../../controllers/Website/Class/Class.js'
 import { authVerify } from '../../../controllers/Website/Auth/Auth.js'
 import { body, param } from 'express-validator'
 import { reviewClass } from '../../../controllers/Student/Class/Class.js'
@@ -20,6 +20,13 @@ const rescheduleValidationChain=[
     param('_id').notEmpty().withMessage("Invalid Class"),
     body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time"),
     ]
+    
+const homeworkValidationChain=[
+
+    param('_id').notEmpty().withMessage("Invalid Homework Id "),
+    ]
+    router.patch("/mark-task-done/:_id",authVerify,markTaskDone)
+    router.patch("/upload-homework/:_id",authVerify,homeworkValidationChain,validationError,uploadHomework)
 router.patch("/reschedule-class/:_id",authVerify,rescheduleValidationChain,validationError,rescheduleClass)
 const acceptRescheduleValidationChain=[
     param('_id').notEmpty().withMessage("Invalid Class"),

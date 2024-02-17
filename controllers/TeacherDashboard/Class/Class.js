@@ -614,7 +614,7 @@ let taskResponse=await Task.find({
                   class_id:req.body.class_id
        }
      )
-     const AcademicManangerResponse=await AcademicMananger.findOne({
+     const AcademicManangerResponse=await AcademicManager.findOne({
       teachers:{
            $elemMatch: {
             $eq: req.user._id

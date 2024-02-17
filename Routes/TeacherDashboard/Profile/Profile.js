@@ -77,5 +77,5 @@ router.get("/subject-by-curriculum",authVerify,getSubjectCurriculum)
 router.get("/curriculums",authVerify,getAllCurriculums)
 router.post("/upload-testimonial-complete",authVerify,uploadTestimonialCompleteValidation,validationError,uploadTestimonialComplete)
 
-router.get("/teacher-testimonials",getTestimonialsOfTeacher)
+router.get("/teacher-testimonials",authVerify,getTestimonialsOfTeacher)
 export default router

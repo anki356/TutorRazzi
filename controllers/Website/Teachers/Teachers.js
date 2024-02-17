@@ -319,7 +319,7 @@ const requestTrialClass = async (req, res, next) => {
     let classResponse = await Class.findOne({
         student_id: req.user._id,
         "subject.name": req.body.subject ,
-        status: 'Done'
+        
     })
     let studentResponse=await Student.findOne({
         user_id:req.user._id

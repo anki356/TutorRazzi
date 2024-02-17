@@ -1,5 +1,5 @@
 import express from 'express'
-import { getClassDetails, getPastClasses, getRescheduledClasses, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, rescheduleClass } from '../../../controllers/Website/Class/Class.js'
+import { acceptClassRequest, getClassDetails, getPastClasses, getRescheduledClasses, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, rescheduleClass } from '../../../controllers/Website/Class/Class.js'
 import { authVerify } from '../../../controllers/Website/Auth/Auth.js'
 import { body, param } from 'express-validator'
 import { reviewClass } from '../../../controllers/Student/Class/Class.js'
@@ -21,5 +21,11 @@ const rescheduleValidationChain=[
     body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time"),
     ]
 router.patch("/reschedule-class/:_id",authVerify,rescheduleValidationChain,validationError,rescheduleClass)
+const acceptRescheduleValidationChain=[
+    param('_id').notEmpty().withMessage("Invalid Class"),
+   
+]
+router.patch("/accept-class/:_id",authVerify,acceptRescheduleValidationChain,validationError,acceptClassRequest)
+
 
 export default router

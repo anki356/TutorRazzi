@@ -494,4 +494,4 @@ const getRescheduledClasses=async(req,res,next)=>{
 
     res.json(responseObj(true, reviewResponse, "Review Created Successfully"))
 }
-  export {rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass}
+  export {acceptClassRequest,rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass}

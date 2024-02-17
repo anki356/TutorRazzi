@@ -325,7 +325,7 @@ const requestTrialClass = async (req, res, next) => {
         user_id:req.user._id
     })
     if (classResponse) {
-        throw new Error("Subject Trial Class already done")
+        throw new Error("Subject Trial Class already Requested or Done")
 
 
 

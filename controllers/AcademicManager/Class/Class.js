@@ -446,7 +446,7 @@ const notifyTeacher=async(req,res)=>{
     const content=teacherResourceRequests(classDetails.student_id.name,details.message,classDetails.teacher_id.name,classDetails.subject.name,classDetails.grade.name)
     const teacherResponse=await User.findOne({_id:classDetails.teacher_id},{email:1})
     console.log(teacherResponse)
-    addNotifications(classDetails.teacher_id,"Resource Requested",content)
+    addNotifications(classDetails.teacher_id,"Resource Requested",`Resource Requested by ${classDetails.student_id.name}Resource:${details.message},Class Name:${classDetails.subject.name}`)
     await sendEmail(teacherResponse.email,"Resource Requested",content)
     return  res.json(responseObj(true,[],"Successfully Notified teacher"))
 }
@@ -473,7 +473,7 @@ const notifyStudent=async(req,res)=>{
     const content=homeworkEmail(classDetails.student_id.name,details.title,classDetails.teacher_id.name,classDetails.subject.name,classDetails.grade.name)
     const studentResponse=await User.findOne({_id:classDetails.student_id},{email:1})
     await sendEmail(studentResponse.email,"Home Work Pending",content)
-    addNotifications(classDetails.student_id,"Home Work Pending",content)
+    addNotifications(classDetails.student_id,"Home Work Pending",`Homework: ${details.title} is given in Class Name:${classDetails.subject.name}  By ${classDetails.teacher_id.name} is pending.Kindly Upload the Solution`)
     return  res.json(responseObj(true,[],"Successfully Notified Student for the homework"))
 }
 

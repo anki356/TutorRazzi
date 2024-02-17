@@ -868,9 +868,9 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
   // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
   
   
-    addNotifications(classDetails.student_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" on "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+moment(classDetails.start_time).format("HH:mm:ss")+  " by teacher "+ req.user.name)
+    addNotifications(details.student_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" on "+moment(details.start_time).format("DD-MM-YYYY")+" at "+moment(details.start_time).format("HH:mm:ss")+  " by teacher "+ req.user.name)
   
-    addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+moment(classDetails.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
+    addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" at time "+moment(details.start_time).format("DD-MM-YYYY")+" at "+moment(details.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
   
   
   return res.json(responseObj(true, null, "Accepted Class Request"))

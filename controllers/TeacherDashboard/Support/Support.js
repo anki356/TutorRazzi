@@ -133,7 +133,7 @@ const saveResponse=async(req,res)=>{
         user_id:req.user._id,
         support_id:req.body.support_id,
         response:req.body?.response?req.body.response:null,
-        response_document:req.files[0].filename,
+        response_document:req.files?.length>0?req.files[0].filename:null,
         is_sender:true,
 
     })

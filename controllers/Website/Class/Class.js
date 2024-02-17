@@ -10,6 +10,7 @@ import Parent from "../../../models/Parent.js";
 import Student from "../../../models/Student.js";
 import Reminder from "../../../models/Reminder.js";
 import AcademicManager from "../../../models/AcademicManager.js";
+import Document from "../../../models/Document.js";
 const objectId=mongoose.Types.ObjectId
 const rescheduleClass=async(req,res,next)=>{
   let details=await Class.findOne({

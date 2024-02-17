@@ -37,7 +37,7 @@ const getUserProfile=async(req,res)=>{
     },{
       subject_curriculum:1
     })
-    const testimonialResponse=await Testimonial.find({teacher_id:req.user._id})
+   
  const bank_details=await Teacher.findOne({
   user_id:req.user._id
  },{
@@ -46,9 +46,18 @@ ifsc_code:1,
 account_number: 1,
  })
  
-    return res.json(responseObj(true,{profile_image:profile_image_details.profile_image_url,education_details:education_details.degree,experience_details:experience_details.exp_details,teacherPersonalDetails:teacherPersonalDetails,testimonialResponse:testimonialResponse,subject_curriculums:subject_curriculums.subject_curriculum,bank_details},"User Details"))
+    return res.json(responseObj(true,{profile_image:profile_image_details.profile_image_url,education_details:education_details.degree,experience_details:experience_details.exp_details,teacherPersonalDetails:teacherPersonalDetails,subject_curriculums:subject_curriculums.subject_curriculum,bank_details},"User Details"))
 }
-
+const getTestimonialsOfTeacher=async(req,res)=>{
+   let query={teacher_id:req.user._id}
+   let options={
+       limit:req.query.limit,
+       page:req.query.page
+   }
+   Testimonial.paginate(query,options,(err,result)=>{
+       return res.json(responseObj(true,result,"Testimonials"))
+   })
+}
 const editProfile=async(req,res)=>{
     
       if(req.body.name){
@@ -406,4 +415,4 @@ let is_complete=teacherDetails!==null
 return  res.json(responseObj(true,{teacherResponse:teacherDetails,is_complete:is_complete,testimonial:testimonial,is_testimonial:testimonial!==null},"Teacher Profile Completed Successfully"))
   
  }
-export {uploadTestimonialComplete,getSubjectCurriculum,editTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum,getAllCurriculums}
+export {uploadTestimonialComplete,getSubjectCurriculum,editTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum,getAllCurriculums,getTestimonialsOfTeacher}

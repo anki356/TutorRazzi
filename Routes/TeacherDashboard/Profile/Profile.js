@@ -1,6 +1,6 @@
 import express from 'express'
 import { authVerify } from '../../../controllers/TeacherDashboard/Auth/Auth.js'
-import { addDegreeDetail, addExpDetail, addSubjectCurriculum, completeProfile, deleteDegreeDetail, deleteExpDetail, deleteSubjectCurriculum, deleteTestimonial, editTestimonial, editDegreeDetails, editExpDetails, editPhoto, editProfile, editSubjectCurriculum, getUserProfile, uploadTestimonial, getSubjectCurriculum, getAllCurriculums, uploadTestimonialComplete } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
+import { addDegreeDetail, addExpDetail, addSubjectCurriculum, completeProfile, deleteDegreeDetail, deleteExpDetail, deleteSubjectCurriculum, deleteTestimonial, editTestimonial, editDegreeDetails, editExpDetails, editPhoto, editProfile, editSubjectCurriculum, getUserProfile, uploadTestimonial, getSubjectCurriculum, getAllCurriculums, uploadTestimonialComplete, getTestimonialsOfTeacher } from '../../../controllers/TeacherDashboard/Profile/Profile.js'
 import { body } from 'express-validator'
 import validationError from '../../../middleware/validationError.js'
 import upload from '../../../util/upload.js'
@@ -77,4 +77,5 @@ router.get("/subject-by-curriculum",authVerify,getSubjectCurriculum)
 router.get("/curriculums",authVerify,getAllCurriculums)
 router.post("/upload-testimonial-complete",authVerify,uploadTestimonialCompleteValidation,validationError,uploadTestimonialComplete)
 
+router.get("/teacher-testimonials",getTestimonialsOfTeacher)
 export default router

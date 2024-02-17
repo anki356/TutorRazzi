@@ -297,6 +297,8 @@ let teacherReview=await Review.findOne({
 const getHomeworks=async(req,res)=>{
   let homeworkResponse=await HomeWork.find({
     class_id:req.query.class_id
+}).populate({
+  path:"answer_document_id"
 })
 res.json(responseObj(true, {homeworkResponse:homeworkResponse}, "HomeWork Details successfully fetched"))
 }

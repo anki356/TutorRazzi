@@ -115,7 +115,12 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
       status: 'Scheduled'
     }
   })
-  return res.json(responseObj(true, [], null))
+ 
+  addNotifications(details.student_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" at time "+moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by Academic Manager")
+  
+  addNotifications(details.teacher_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by Academic Manager")
+
+  return res.json(responseObj(true, [],"Accepted Class Request"))
 }else{
   let classDetails= await Class.find({$and:[{
     start_time:req.body.start_time,
@@ -147,6 +152,11 @@ $set:{
 status:'Scheduled'
 }
 });
+
+addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by Academic Manager")
+
+addNotifications(rescheduleacceptResponse.teacher_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by Academic Manager")
+
 return res.json(responseObj(true,[],"Accepted Rescheduled Request"))
 
 }
@@ -178,7 +188,12 @@ const rescheduleClassResponse=await Class.updateOne({_id:req.params._id},{$set:{
   rescheduled_by:'academic_manager',
   status:'Pending'
   }})
-  res.json(responseObj(true,[],null))
+
+  addNotifications(rescheduleClassResponse.student_id,"Class Rescheduled","Class of "+details.subject.name+" earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYYTHH:mm:ss"))
+  addNotifications(rescheduleClassResponse.teacher_id,"Class Rescheduled","Class of "+details.subject.name+" which was earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by academic manager ")
+  res.json(responseObj(true,[],"Class Rescheduled"))
+
+  
 
 }
 

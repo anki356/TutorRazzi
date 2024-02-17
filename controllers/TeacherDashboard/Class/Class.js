@@ -14,6 +14,7 @@ import Teacher from "../../../models/Teacher.js"
 import mongoose from "mongoose"
 import Attendance from "../../../models/Attendance.js"
 import { addNotifications } from "../../../util/addNotification.js"
+import AcademicManager from "../../../models/AcademicManager.js"
 const ObjectId=mongoose.Types.ObjectId
 const getUpcomingClasses = async (req, res, next) => {
   
@@ -855,7 +856,7 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
       status: 'Scheduled'
     }
   })
-  const AcademicManangerResponse=await AcademicMananger.findOne({
+  const AcademicManangerResponse=await AcademicManager.findOne({
     teachers:{
          $elemMatch: {
             $eq: req.user._id
@@ -872,7 +873,7 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
     addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by teacher"+ req.user.name)
   
   
-  return res.json(responseObj(true, [], null))
+  return res.json(responseObj(true, null, "Accepted Class Request"))
 }else{
   let classDetails= await Class.find({$and:[{
     start_time:req.body.start_time,
@@ -916,11 +917,11 @@ const AcademicManangerResponse=await AcademicMananger.findOne({
 // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
 
 
-  addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher"+ req.user.name)
+  addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher "+ req.user.name)
 
-  addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher"+ req.user.name)
+  addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by teacher "+ req.user.name)
 
-return res.json(responseObj(true,[],"Accepted Rescheduled Request"))
+return res.json(responseObj(true,null,"Accepted Rescheduled Request"))
 
 }
   

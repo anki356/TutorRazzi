@@ -33,6 +33,15 @@ const rescheduleClassResponse=await Class.updateOne({_id:req.params._id},{$set:{
   rescheduled_by:'student',
   status:'Pending'
   }})
+  const AcademicManangerResponse=await AcademicMananger.findOne({
+    students:{
+         $elemMatch: {
+          $eq: req.user._id
+      }
+    }
+})
+  addNotifications(rescheduleClassResponse.teacher_id,"Class Rescheduled","Class of "+details.subject.name+" which was earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by student "+req.user.name )
+  addNotifications(AcademicManangerResponse.user_id,"Class Rescheduled","Class of "+details.subject.name+" which was earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by student "+req.user.name )
   res.json(responseObj(true,[],null))
 
 }
@@ -356,7 +365,11 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
       status: 'Scheduled'
     }
   })
-  return res.json(responseObj(true, [], null))
+  addNotifications(classDetails.teacher_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by student"+ req.user.name)
+  
+  addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Class Request of subject "+classDetails.subject.name+" at time "+moment(classDetails.start_time).format("DD-MM-YYYYTHH:mm:ss")+"by student"+ req.user.name)
+
+  return res.json(responseObj(true, null, "Acceped Class Request"))
 }else{
   let classDetails= await Class.find({$and:[{
     start_time:req.body.start_time,
@@ -388,6 +401,18 @@ $set:{
 status:'Scheduled'
 }
 });
+const AcademicManangerResponse=await AcademicMananger.findOne({
+  students:{
+       $elemMatch: {
+            $eq: req.user._id
+        }
+  }
+})
+addNotifications(rescheduleacceptResponse.teacher_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by student "+ req.user.name)
+
+addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "by student "+ req.user.name)
+
+
 return res.json(responseObj(true,[],"Accepted Rescheduled Request"))
 
 }

@@ -249,7 +249,7 @@ const getUpcomingClasses=async(req,res,next)=>{
     let classDetails = {}
     classDetails = await Class.findOne({ _id: req.query.class_id ,end_time:{
       $lte:moment().format("YYYY-MM-DDTHH:mm:ss")
-    }}, { teacher_id:1,start_time: 1, end_time: 1, description: 1, grade: 1, subject_id: 1, notes: 1,  materials: 1,student_id:1  }).populate({
+    }}, { teacher_id:1,start_time: 1, end_time: 1, description: 1, grade: 1, subject: 1, notes: 1,  materials: 1,student_id:1  }).populate({
         path: 'teacher_id', select: {
             profile_image: 1, name: 1
         }
@@ -293,7 +293,7 @@ const getUpcomingClassDetails=async(req,res)=>{
     start_time:{
       $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
     }
-  }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject_id: 1, teacher_id: 1, notes: 1,materials:1 }).populate({
+  }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,materials:1 }).populate({
     path: 'teacher_id', select: {
      name: 1,profile_image:1
     }

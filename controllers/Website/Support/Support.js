@@ -52,7 +52,8 @@ const getAllTickets=async(req,res)=>{
             "description": 1,
             "responseLength": 1,
             "user_id":1 ,// Include responseLength field
-            "status":1
+            "status":1,
+            "ticket_id":1
           }
         }
       ]);

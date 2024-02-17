@@ -548,8 +548,8 @@ const AcademicManangerResponse=await AcademicMananger.findOne({
        }
    }
 })
-addNotifications(teacherDetails.teacher_id,"Task marked Done"," Task has been marked as done given to "+req.user.name+ " in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ "with name "+taskResponse.title)
-addNotifications(AcademicManangerResponse.user_id,"Task marked Done"," Task has been marked as done given to "+req.user.name+ " in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ " with name "+taskResponse.title)
+addNotifications(teacherDetails.teacher_id,"Task marked Done"," Task has been marked as done given to "+req.user.name+ " in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm:ss" )+ "with name "+taskResponse.title)
+addNotifications(AcademicManangerResponse.user_id,"Task marked Done"," Task has been marked as done given to "+req.user.name+ " in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm:ss" )+ " with name "+taskResponse.title)
    res.json(responseObj(true, [], "Task Marked Done"))
   
 }
@@ -587,8 +587,8 @@ const AcademicManangerResponse=await AcademicManager.findOne({
        }
    }
 })
-addNotifications(teacherDetails.teacher_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ " with name "+homeworkResponse.title )
-addNotifications(AcademicManangerResponse.user_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ " with name "+homeworkResponse.title )
+addNotifications(teacherDetails.teacher_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm:ss" )+ " with name "+homeworkResponse.title )
+addNotifications(AcademicManangerResponse.user_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm:ss")+ " with name "+homeworkResponse.title )
    res.json(responseObj(true, [], "Home work uploaded"))
 }
   export {setReminder,acceptClassRequest,rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass,markTaskDone,uploadHomework}

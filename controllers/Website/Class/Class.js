@@ -287,14 +287,22 @@ let teacherReview=await Review.findOne({
   given_by:parentDetails.parent_id,
   teacher_id:classDetails.teacher_id
 })
-let homeworkResponse=await HomeWork.find({
-    class_id:req.query.class_id
-})
-let taskResponse=await Task.find({
-    class_id:req.query.class_id
-})
+
+
 
     res.json(responseObj(true, {classDetails:classDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherResponse:teacherResponse,classReview:classReview,teacherReview:teacherReview}, "Class Details successfully fetched"))
+}
+const getHomeworks=async(req,res)=>{
+  let homeworkResponse=await HomeWork.find({
+    class_id:req.query.class_id
+})
+res.json(responseObj(true, {homeworkResponse:homeworkResponse}, "HomeWork Details successfully fetched"))
+}
+const getTasks=async(req,res)=>{
+  let taskResponse=await Task.find({
+    class_id:req.query.class_id
+})
+res.json(responseObj(true, {taskResponse:taskResponse}, "Task Details successfully fetched"))
 }
 
 const getUpcomingClassDetails=async(req,res)=>{
@@ -591,4 +599,4 @@ addNotifications(teacherDetails.teacher_id,"Home work uploaded"," Home work uplo
 addNotifications(AcademicManangerResponse.user_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(teacherDetails.start_time).format("HH:mm:ss")+ " with name "+homeworkResponse.title )
    res.json(responseObj(true, [], "Home work uploaded"))
 }
-  export {setReminder,acceptClassRequest,rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass,markTaskDone,uploadHomework}
+  export {setReminder,acceptClassRequest,rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass,markTaskDone,uploadHomework,getHomeworks,getTasks}

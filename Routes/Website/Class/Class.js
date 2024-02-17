@@ -1,9 +1,10 @@
 import express from 'express'
-import { acceptClassRequest, getClassDetails, getPastClasses, getRescheduledClasses, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, markTaskDone, rescheduleClass, setReminder, uploadHomework } from '../../../controllers/Website/Class/Class.js'
+import { acceptClassRequest, getClassDetails, getPastClasses, getRescheduledClasses, getTasks, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, markTaskDone, rescheduleClass, setReminder, uploadHomework } from '../../../controllers/Website/Class/Class.js'
 import { authVerify } from '../../../controllers/Website/Auth/Auth.js'
 import { body, param } from 'express-validator'
 import { reviewClass } from '../../../controllers/Student/Class/Class.js'
 import validationError from '../../../middleware/validationError.js'
+import { getHomework } from '../../../controllers/Website/Profile/Profile.js'
 const router=express.Router()
 router.get("/get-upcoming-classes",authVerify,getUpcomingClasses)
 router.get("/get-past-classes",authVerify,getPastClasses)
@@ -20,7 +21,9 @@ const rescheduleValidationChain=[
     param('_id').notEmpty().withMessage("Invalid Class"),
     body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time"),
     ]
-    
+
+    router.get("/homework",authVerify,getHomework)
+    router.get("/task",authVerify,getTasks)    
 const homeworkValidationChain=[
 
     param('_id').notEmpty().withMessage("Invalid Homework Id "),

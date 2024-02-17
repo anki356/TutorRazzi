@@ -55,7 +55,7 @@ const requestTrialClass = async (req, res, next) => {
 
 
     });
-    const AcademicManangerResponse=await AcademicMananger.findOne({
+    const AcademicManangerResponse=await AcademicManager.findOne({
         students:{
              $elemMatch: {
             $eq: req.user._id

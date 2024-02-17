@@ -16,6 +16,7 @@ import { addNotifications } from "../../../util/addNotification.js"
 
 import { paymentAcknowledgement } from "../../../util/EmailFormats/paymentAcknowledgement.js"
 import { paymentReceiptAcknowlegement } from "../../../util/EmailFormats/paymentReceiptAcknowlegement.js"
+import AcademicManager from "../../../models/AcademicManager.js"
 const payQuote = async (req, res, next) => {
     
     const quoteResponse = await Quote.findOneAndUpdate({_id:req.params._id},{$set:{
@@ -103,7 +104,7 @@ else{
      count=await Payment.countDocuments()
    console.log(teacherResponse)
       addNotifications(teacherResponse.user_id._id,'Payment Received',markdownContent)   
-      const AcademicManangerResponse=await AcademicMananger.findOne({
+      const AcademicManangerResponse=await AcademicManager.findOne({
         students:{
              $elemMatch: {
             $eq: req.user._id

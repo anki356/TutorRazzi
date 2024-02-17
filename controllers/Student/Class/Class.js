@@ -23,6 +23,7 @@ import Reminder from "../../../models/Reminder.js"
 import { addNotifications } from "../../../util/addNotification.js"
 import User from "../../../models/User.js"
 import Report from "../../../models/Report.js"
+import AcademicManager from "../../../models/AcademicManager.js"
 
 const dislikeClass = async (req, res, next) => {
 
@@ -34,7 +35,7 @@ const dislikeClass = async (req, res, next) => {
         response: "Disliked",
         reason_disliking: req.body.reason
     }})
-    const AcademicManangerResponse=await AcademicMananger.findOne({
+    const AcademicManangerResponse=await AcademicManager.findOne({
         students:{
              $elemMatch: {
             $eq: req.user._id
@@ -57,7 +58,7 @@ const likeClass = async (req, res, next) => {
       
         response: "Liked",
     }})
-    const AcademicManangerResponse=await AcademicMananger.findOne({
+    const AcademicManangerResponse=await AcademicManager.findOne({
         students:{
              $elemMatch: {
             $eq: req.user._id
@@ -80,7 +81,7 @@ const requestExtraclass = async (req, res, next) => {
 
     })
     res.json(responseObj(true, extraClassRequestResponse, "Request for Extra Class Created Successfully"))
-    const AcademicManangerResponse=await AcademicMananger.findOne({
+    const AcademicManangerResponse=await AcademicManager.findOne({
         students:{
              $elemMatch: {
             $eq: req.user._id
@@ -126,7 +127,7 @@ const requestTrialClass = async (req, res, next) => {
 
 
     });
-    const AcademicManangerResponse=await AcademicMananger.findOne({
+    const AcademicManangerResponse=await AcademicManager.findOne({
         students:{
              $elemMatch: {
             $eq: req.user._id
@@ -223,7 +224,7 @@ const scheduleClass = async (req, res, next) => {
             }
         })
     }
-    const AcademicManangerResponse=await AcademicMananger.findOne({
+    const AcademicManangerResponse=await AcademicManager.findOne({
         students:{
              $elemMatch: {
             $eq: req.user._id
@@ -270,7 +271,7 @@ const rescheduleClass = async (req, res, next) => {
             status: 'Pending'
         }
     })
-    const AcademicManangerResponse=await AcademicMananger.findOne({
+    const AcademicManangerResponse=await AcademicManager.findOne({
         students:{
              $elemMatch: {
             $eq: req.user._id
@@ -353,7 +354,7 @@ const teacherResponse=await User.findOne({
     sendEmail(teacherResponse.email, "Resource Reqested", adminHtmlContent, null)
     let class_name=classResponse.name!==null&&classResponse.name!==undefined?classResponse.name:classResponse.subject.name+" of " +classResponse.grade.name
 
-    const AcademicManangerResponse=await AcademicMananger.findOne({
+    const AcademicManangerResponse=await AcademicManager.findOne({
         students:{
              $elemMatch: {
             $eq: req.user._id
@@ -604,7 +605,7 @@ let classDetails=await Class.findOne({
             status: 'Scheduled'
         }
     });
-    const AcademicManangerResponse=await AcademicMananger.findOne({
+    const AcademicManangerResponse=await AcademicManager.findOne({
         students:{
              $elemMatch: {
             $eq: req.user._id
@@ -631,7 +632,7 @@ const markTaskDone = async (req, res, next) => {
    const teacherDetails=await Class.findOne({
     _id:taskResponse.class_id
 })
-const AcademicManangerResponse=await AcademicMananger.findOne({
+const AcademicManangerResponse=await AcademicManager.findOne({
     students:{
          $elemMatch: {
             $eq: req.user._id
@@ -667,7 +668,7 @@ if(homeworkResponse.answer_document_id!==null&&homeworkResponse.answer_document_
   const teacherDetails=await Class.findOne({
     _id:homeworkResponse.class_id
 })
-const AcademicManangerResponse=await AcademicMananger.findOne({
+const AcademicManangerResponse=await AcademicManager.findOne({
     students:{
          $elemMatch: {
             $eq: req.user._id

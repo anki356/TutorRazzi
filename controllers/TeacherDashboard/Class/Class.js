@@ -676,7 +676,7 @@ let taskResponse=await Task.find({
     }
   })
     }
-    const AcademicManangerResponse=await AcademicMananger.findOne({
+    const AcademicManangerResponse=await AcademicManager.findOne({
       teachers:{
            $elemMatch: {
             $eq: req.user._id
@@ -755,7 +755,7 @@ const resolveResourceRequests=async(req,res)=>{
           status:'Resolved'
       }
   })
-  const AcademicManangerResponse=await AcademicMananger.findOne({
+  const AcademicManangerResponse=await AcademicManager.findOne({
     teachers:{
          $elemMatch: {
             $eq: req.user._id

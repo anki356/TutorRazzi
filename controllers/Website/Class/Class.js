@@ -433,7 +433,7 @@ $set:{
 status:'Scheduled'
 }
 });
-const AcademicManangerResponse=await AcademicMananger.findOne({
+const AcademicManangerResponse=await AcademicManager.findOne({
   students:{
        $elemMatch: {
             $eq: req.user._id
@@ -572,7 +572,7 @@ const markTaskDone = async (req, res, next) => {
   const teacherDetails=await Class.findOne({
    _id:taskResponse.class_id
 })
-const AcademicManangerResponse=await AcademicMananger.findOne({
+const AcademicManangerResponse=await AcademicManager.findOne({
    students:{
         $elemMatch: {
            $eq: req.user._id

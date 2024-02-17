@@ -1,7 +1,7 @@
 import express from 'express'
-import { getClassDetails, getPastClasses, getRescheduledClasses, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses } from '../../../controllers/Website/Class/Class.js'
+import { getClassDetails, getPastClasses, getRescheduledClasses, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, rescheduleClass } from '../../../controllers/Website/Class/Class.js'
 import { authVerify } from '../../../controllers/Website/Auth/Auth.js'
-import { body } from 'express-validator'
+import { body, param } from 'express-validator'
 import { reviewClass } from '../../../controllers/Student/Class/Class.js'
 import validationError from '../../../middleware/validationError.js'
 const router=express.Router()
@@ -16,4 +16,10 @@ const classReviewValidationChain=[
     body('ratings').notEmpty().isFloat({ min: 0, max: 5 }).withMessage("Must be between 0 and 5")
 ]
 router.post("/review-class",authVerify,classReviewValidationChain,validationError,reviewClass)
+const rescheduleValidationChain=[
+    param('_id').notEmpty().withMessage("Invalid Class"),
+    body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time"),
+    ]
+router.patch("/reschedule-class/:_id",authVerify,rescheduleValidationChain,validationError,rescheduleClass)
+
 export default router

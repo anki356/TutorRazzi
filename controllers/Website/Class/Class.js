@@ -10,6 +10,32 @@ import Parent from "../../../models/Parent.js";
 import Student from "../../../models/Student.js";
 import Reminder from "../../../models/Reminder.js";
 const objectId=mongoose.Types.ObjectId
+const rescheduleClass=async(req,res,next)=>{
+  let details=await Class.findOne({
+    _id:req.params._id
+  })
+  let classScheduled=await Class.find({$and:[{
+      start_time:req.body.start_time,
+  },{$or:[{
+      teacher_id:details.teacher_id
+  },{
+      student_id:details.student_id
+  }]}]})
+
+      if(classScheduled.length!==0){
+       throw new Error('This time slot has been already scheduled')  
+      }
+
+const rescheduleClassResponse=await Class.updateOne({_id:req.params._id},{$set:{
+  is_rescheduled:true,
+  start_time:moment(req.body.start_time).format("YYYY-MM-DDTHH:mm:ss"),
+  end_time:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss"),
+  rescheduled_by:'student',
+  status:'Pending'
+  }})
+  res.json(responseObj(true,[],null))
+
+}
 const getUpcomingClasses=async(req,res,next)=>{
   
   
@@ -392,4 +418,4 @@ const getRescheduledClasses=async(req,res,next)=>{
 
     res.json(responseObj(true, reviewResponse, "Review Created Successfully"))
 }
-  export {getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass}
+  export {rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass}

@@ -13,6 +13,7 @@ dotenv.config({ path: `.env.${process.env.NODE_ENV?.trim()}` });
 
 
 const router=express.Router()
+app.use(upload.any())
  app.use(
     express.json({  limit: "500mb" })
   );
@@ -44,7 +45,7 @@ app.use("/api/",TeacherDashboardRouter)
 app.use("/api/",WebsiteRouter)
 app.use("/api/",AuthRouter)
 
-app.use(upload.any())
+
 app.use(errorHandlerMiddleware);
 
 app.set('view engine', 'ejs');

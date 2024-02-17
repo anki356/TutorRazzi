@@ -13,6 +13,7 @@ import AcademicManager from "../../../models/AcademicManager.js";
 import Document from "../../../models/Document.js";
 import unlinkFile from "../../../util/unlinkFile.js";
 import { addNotifications } from "../../../util/addNotification.js";
+import User from "../../../models/User.js";
 const objectId=mongoose.Types.ObjectId
 const rescheduleClass=async(req,res,next)=>{
   let details=await Class.findOne({
@@ -84,37 +85,37 @@ start_time:1
      
     }
     if(req.query.search){
+      let student_ids=await User.find({
+        name:{
+          $regex: req.query.search, $options: 'i' 
+        }
+        })
+        let teacher_ids=await User.find({
+          name:{
+            $regex: req.query.search, $options: 'i'
+          }
+        })
+      
       query={$and:[
         { start_time :{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")}},
        
-         {student_id:req.user._id},
+        {student_id:{$in:academicManagerResponse.students}},
+        {teacher_id:{$in:academicManagerResponse.teachers}},
      
        
          {status:'Scheduled'},{
           $or:
-            [
-              { "subject.name":{
-                 $regex:req.query.search,
-                 $options:'i'
-               }}, { "curriculum.name":{
-              
-                $regex:req.query.search,
-                $options:'i'
-              }},
-              { "grade.name":{
-                  
-                $regex:req.query.search,
-                $options:'i'
-              }},
-             { name:{
-                $regex:req.query.search,
-                $options:'i'
-              }}
+          [
+         
+            { "subject.name": { $regex: req.query.search, $options: 'i' } },
+            {"name":  {$regex: req.query.search, $options: 'i' }
              
-       
-       
-             ]
-          
+            },
+            {"student_id":{
+              $in:student_ids.map((data)=>data._id)
+            }},
+            {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+          ]
          }
        ]
      
@@ -445,7 +446,7 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
   status:"Scheduled"
 }]})
 if(classDetails.length!==0){
-throw new Error("Slot Already Booked")
+throw new Error("Slot Already Booked.Kindly Reschedule")
    
 }
 let classResponse=await Class.findOne(

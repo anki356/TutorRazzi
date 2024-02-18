@@ -571,7 +571,8 @@ if(homeworkResponse.answer_document_id!==null&&homeworkResponse.answer_document_
  },{
    $set:{
        status:"Resolved",
-       answer_document_id:documentResponse._id
+       answer_document_id:documentResponse._id,
+       is_reupload:false
    }
  })
  const teacherDetails=await Class.findOne({

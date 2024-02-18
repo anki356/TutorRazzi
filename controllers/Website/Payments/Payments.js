@@ -154,7 +154,10 @@ else{
 
 const getPaymentDetails=async(req,res)=>{
 const paymentDetails=await Payment.findOne({_id:req.query.payment_id}).populate({path:"class_id",populate:{
-    "name":1,"_id":1
+    path:'teacher_id',
+    select:{
+        name:1,_id:1
+    }
 
 }}).populate({
     path:"quote_id",populate:[{

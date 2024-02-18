@@ -24,7 +24,11 @@ const getAllPayments=async(req,res)=>{
             path:"class_id",
             select:{
                 name:1,
-                subject:1
+                subject:1,
+                teacher_id:1
+            },
+            populate:{
+                path:"teacher_id"
             }
         }
     }

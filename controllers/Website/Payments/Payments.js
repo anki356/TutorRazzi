@@ -47,30 +47,19 @@ let getAllQuotes=async(req,res)=>{
         $match:query
     },{
         $lookup:{
-          from:"classes" ,
-          localField:"_id" ,
-          foreignField:"quote_id",
-          as:'classes'
-        }
-    },{
-        $lookup:{
             from:"users" ,
             localField:"teacher_id" ,
             foreignField:"_id",
             as:'users'
           }
     },{
-       $addFields:{
-        class: {$arrayElemAt: ["$classes", 1] }
-       } 
-    },{
         $project:{
-           "class.details":1,
+           "description":1,
             class_count:1,
             amount:1,
             "users.name":1,
             "users.profile_image":1,
-           "class.name":1
+           "class_name":1
 
         }
     }

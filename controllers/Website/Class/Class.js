@@ -101,9 +101,9 @@ start_time:1
         {"name":  {$regex: req.query.search, $options: 'i' }
          
         },
-        {"student_id":{
-          $in:student_ids.map((data)=>data._id)
-        }},
+        // {"student_id":{
+        //   $in:student_ids.map((data)=>data._id)
+        // }},
         {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
       ];
     }
@@ -156,9 +156,9 @@ start_time:1
         {"name":  {$regex: req.query.search, $options: 'i' }
          
         },
-        {"student_id":{
-          $in:student_ids.map((data)=>data._id)
-        }},
+        // {"student_id":{
+        //   $in:student_ids.map((data)=>data._id)
+        // }},
         {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
       ];
     }
@@ -200,9 +200,9 @@ start_time:1
         {"name":  {$regex: req.query.search, $options: 'i' }
          
         },
-        {"student_id":{
-          $in:student_ids.map((data)=>data._id)
-        }},
+        // {"student_id":{
+        //   $in:student_ids.map((data)=>data._id)
+        // }},
         {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
       ];
     }
@@ -486,9 +486,9 @@ const getRescheduledClasses=async(req,res,next)=>{
             {"name":  {$regex: req.query.search, $options: 'i' }
              
             },
-            {"student_id":{
-              $in:student_ids.map((data)=>data._id)
-            }},
+            // {"student_id":{
+            //   $in:student_ids.map((data)=>data._id)
+            // }},
             {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
           ];
         }
@@ -547,6 +547,7 @@ addNotifications(AcademicManangerResponse.user_id,"Task marked Done"," Task has 
   
 }
 const uploadHomework = async (req, res, next) => {
+  console.log(req.files)
   if(!req.files){
     return res.json(responseObj(false,null,"No File Found"))
   }

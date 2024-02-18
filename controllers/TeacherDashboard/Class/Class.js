@@ -71,7 +71,7 @@ const getUpcomingClasses = async (req, res, next) => {
           {"student_id":{
             $in:student_ids.map((data)=>data._id)
           }},
-          {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+          // {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
         ]
        }
      ]
@@ -151,7 +151,7 @@ const getPastClasses = async (req, res, next) => {
           {"student_id":{
             $in:student_ids.map((data)=>data._id)
           }},
-          {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+          // {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
         ]
       }
     ]}
@@ -222,7 +222,7 @@ const getRescheduledClasses = async (req, res, next) => {
       {"student_id":{
         $in:student_ids.map((data)=>data._id)
       }},
-      {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+      // {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
     ];
   }
   if(req.query.date){
@@ -277,7 +277,7 @@ const getTrialClassesRequests = async (req, res, next) => {
       {"student_id":{
         $in:student_ids.map((data)=>data._id)
       }},
-      {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+      // {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
     ];
   }
   if(req.query.date){

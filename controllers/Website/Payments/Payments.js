@@ -153,8 +153,22 @@ else{
 }
 
 const getPaymentDetails=async(req,res)=>{
-const paymentDetails=await Payment.findOne({_id:req.query.payment_id}).populate({path:"class_id"})
-return res.json(responseObj(true,paymentDetails,"Payment Details"))
+const paymentDetails=await Payment.findOne({_id:req.query.payment_id}).populate({path:"class_id"}).populate({
+    path:"quote_id",populate:[{
+        path:"teacher_id",select:{
+            "name":1,"profile_image":1,"_id":1
+        }
+    },{
+        path:"student_id",select:{
+            "name":1,"profile_image":1,"_id":1
+        } 
+    }]
+})
+let payments=await Payment.find({})
+let paymentID=payments.findIndex((data)=>{
+    return data._id===req.query.payment_id
+})
+return res.json(responseObj(true,{paymentDetails:paymentDetails,paymentID:paymentID},"Payment Details"))
 }
 
 const rejectQuote=async(req,res)=>{

@@ -37,19 +37,46 @@ let getAllQuotes=async(req,res)=>{
         student_id:req.user._id,
         status:"Pending"
     }
-    console.log(req.user._id)
+   let pipeline=await Quote.aggregate([
+    {
+        $match:query
+    },{
+        $lookup:{
+          from:"classes" ,
+          localField:"_id" ,
+          foreignField:"quote_id",
+          as:'classes'
+        }
+    },{
+        $lookup:{
+            from:"users" ,
+            localField:"teacher_id" ,
+            foreignField:"_id",
+            as:'users'
+          }
+    },{
+       $addFields:{
+        class: {$arrayElemAt: ["$classes", 1] }
+       } 
+    },{
+        $project:{
+           "class.details":1,
+            class_count:1,
+            amount:1,
+            "users.name":1,
+            "users.profile_image":1,
+           "class.name":1
+
+        }
+    }
+   ])
     let options={
         limit:req.query.limit,
         page:req.query.page,
-        populate:{
-            path:"teacher_id",
-            select:{
-                name:1,profile_image:1
-            }
-        }
+       
       
     }
-    Quote.paginate(query,options,(err,result)=>{
+    Quote.aggregatePaginate(pipeline,options,(err,result)=>{
        
         return res.json(responseObj(true,result,"Quotes of Student are"))
     })

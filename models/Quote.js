@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import SubjectCurriculumGrade from "./SubjectCurriculumGrade.js";
 import moment from "moment";
 import mongoosePaginate from "mongoose-paginate-v2";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
+import aggregatePaginate from "mongoose-aggregate-paginate/lib/mongoose-aggregate-paginate.js";
 const QuoteSchema = new mongoose.Schema({
     class_count: {
         type: Number,
@@ -78,4 +80,5 @@ QuoteSchema.virtual('is_edit').get(function(){
         return this.status==='Pending';
     }
 })
+QuoteSchema.plugin(aggregatePaginate)
 export default mongoose.model("Quote", QuoteSchema)

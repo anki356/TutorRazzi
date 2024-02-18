@@ -547,7 +547,7 @@ addNotifications(AcademicManangerResponse.user_id,"Task marked Done"," Task has 
   
 }
 const uploadHomework = async (req, res, next) => {
-  console.log(req.files)
+
   if(!req.files){
     return res.json(responseObj(false,null,"No File Found"))
   }

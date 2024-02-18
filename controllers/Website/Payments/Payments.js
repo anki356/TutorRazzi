@@ -9,7 +9,8 @@ import { paymentReceiptAcknowlegement } from "../../../util/EmailFormats/payment
 import { generatePDF } from "../../../util/generatedFile.js"
 import { responseObj } from "../../../util/response.js"
 import sendEmail from "../../../util/sendEmail.js"
-
+import mongoose from "mongoose"
+const ObjectId=mongoose.Types.ObjectId
 const getAllPayments=async(req,res)=>{
     let query={
         sender_id:req.user._id,
@@ -34,7 +35,7 @@ const getAllPayments=async(req,res)=>{
 
 let getAllQuotes=async(req,res)=>{
     let query={
-        student_id:req.user._id,
+        student_id:new ObjectId(req.user._id),
         status:"Pending"
     }
    let pipeline= Quote.aggregate([

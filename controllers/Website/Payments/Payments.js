@@ -166,7 +166,7 @@ const paymentDetails=await Payment.findOne({_id:req.query.payment_id}).populate(
 })
 let payments=await Payment.find({})
 let paymentID=payments.findIndex((data)=>{
-    return data._id===req.query.payment_id
+    return data._id==req.query.payment_id
 })
 return res.json(responseObj(true,{paymentDetails:paymentDetails,paymentID:paymentID+1},"Payment Details"))
 }

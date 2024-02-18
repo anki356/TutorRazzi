@@ -37,7 +37,7 @@ let getAllQuotes=async(req,res)=>{
         student_id:req.user._id,
         status:"Pending"
     }
-   let pipeline=await Quote.aggregate([
+   let pipeline= Quote.aggregate([
     {
         $match:query
     },{

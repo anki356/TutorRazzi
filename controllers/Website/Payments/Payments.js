@@ -185,6 +185,6 @@ const rejectQuote=async(req,res)=>{
             status:"Rejected"
         }
     })
-    return res.json(responseObj(true,[],"Payment Rejected"))
+    return res.json(responseObj(true,[],"Quote Rejected"))
 }
 export  {getAllPayments,getAllQuotes,payQuote,getPaymentDetails,rejectQuote}

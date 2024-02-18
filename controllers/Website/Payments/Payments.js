@@ -9,8 +9,7 @@ import { paymentReceiptAcknowlegement } from "../../../util/EmailFormats/payment
 import { generatePDF } from "../../../util/generatedFile.js"
 import { responseObj } from "../../../util/response.js"
 import sendEmail from "../../../util/sendEmail.js"
-import mongoose from "mongoose"
-const ObjectId=mongoose.Types.ObjectId
+
 const getAllPayments=async(req,res)=>{
     let query={
         sender_id:req.user._id,
@@ -20,17 +19,18 @@ const getAllPayments=async(req,res)=>{
     let options={
         limit:req.query.limit,
         page:req.query.page,
-        populate:{
-            path:"class_id",
-            select:{
-                name:1,
-                subject:1,
-                teacher_id:1
-            },
-            populate:{
-                path:"teacher_id"
-            }
-        }
+        populate:[{
+path:'quote_id',
+select:{
+"subject_curriculum_grade.subject":1
+},populate:{
+    path:"teacher_id",
+    select:{
+        name:1
+    }
+}
+            }]
+        
     }
    Payment.paginate(query,options,(err,result)=>{
     return res.json(responseObj(true,result,"All payments"))
@@ -39,38 +39,22 @@ const getAllPayments=async(req,res)=>{
 
 let getAllQuotes=async(req,res)=>{
     let query={
-        student_id:new ObjectId(req.user._id),
+        student_id:req.user._id,
         status:"Pending"
     }
-   let pipeline= Quote.aggregate([
-    {
-        $match:query
-    },{
-        $lookup:{
-            from:"users" ,
-            localField:"teacher_id" ,
-            foreignField:"_id",
-            as:'users'
-          }
-    },{
-        $project:{
-           "description":1,
-            class_count:1,
-            amount:1,
-            "users.name":1,
-            "users.profile_image":1,
-           "class_name":1
-
-        }
-    }
-   ])
+  
     let options={
         limit:req.query.limit,
         page:req.query.page,
-       
+        populate:{
+            path:"teacher_id",
+            select:{
+                name:1,profile_image:1
+            }
+        }
       
     }
-    Quote.aggregatePaginate(pipeline,options,(err,result)=>{
+    Quote.paginate(query,options,(err,result)=>{
        
         return res.json(responseObj(true,result,"Quotes of Student are"))
     })

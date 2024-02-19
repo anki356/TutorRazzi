@@ -1,4 +1,6 @@
 import AcademicManager from "../../../models/AcademicManager.js"
+import Student from "../../../models/Student.js"
+import Teacher from "../../../models/Teacher.js"
 import User from "../../../models/User.js"
 import { responseObj } from "../../../util/response.js"
 
@@ -8,12 +10,22 @@ const getProfileDetails=async(req,res)=>{
     let profileDetails=null
 profileDetails=await AcademicManager.findOne({
     user_id:req.user._id
-}).populate({
-    path:"students"
-}).populate({
-    path:"teachers"
 })
-return res.json(responseObj(true,{userDetails:userDetails,profileDetails:profileDetails},"User profile Details"))
+const studentsDetails=await Student.find({
+    user_id:{
+        $in :profileDetails.students
+    }
+},{
+    "preferred_name":1,"curriculum":1
+})
+const teachersDetails=await Teacher.find({
+    user_id:{
+        $in :profileDetails.teachers
+    }
+},{
+    "preferred_name":1,"curriculum":1
+})
+return res.json(responseObj(true,{userDetails:userDetails,profileDetails:profileDetails,studentsDetails:studentsDetails,teachersDetails:teachersDetails},"User profile Details"))
 }
 
 const editProfileDetails=async(req,res)=>{

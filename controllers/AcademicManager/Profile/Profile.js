@@ -7,6 +7,10 @@ const getProfileDetails=async(req,res)=>{
     let profileDetails=null
 profileDetails=await AcademicManager.findOne({
     user_id:req.user._id
+}).populate({
+    path:"students"
+}).populate({
+    path:"teachers"
 })
 return res.json(responseObj(true,{userDetails:userDetails,profileDetails:profileDetails},"User profile Details"))
 }

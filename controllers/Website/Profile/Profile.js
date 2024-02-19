@@ -32,7 +32,16 @@ const userDetails=await User.findOneAndUpdate({
 },{
     $set:{...req.body}
 })
-
+if(req.files?.length>0){
+unlinkFile(userDetails.profile_image)
+  await User.updateMany({
+    _id:req.user._id
+  },{
+    $set:{
+      profile_image:req.files[0].filename
+    }
+  })
+}
 if(userDetails.role==='parent'){
     await Parent.updateOne({
         user_id:req.user._id

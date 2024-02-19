@@ -39,7 +39,7 @@ const AcademicManagerSchema =
         
         
         dob: {
-            type: mongoose.SchemaTypes.Date,
+            type: String,
             
 
         },

@@ -17,14 +17,24 @@ const studentsDetails=await Student.find({
     }
 },{
     "preferred_name":1,"curriculum":1
-})
+}).populate({
+    path:"user_id",
+    select:{
+        "profile_image":1
+    }
+}).limit(4)
 const teachersDetails=await Teacher.find({
     user_id:{
         $in :profileDetails.teachers
     }
 },{
     "preferred_name":1,"curriculum":1
-})
+}).populate({
+    path:"user_id",
+    select:{
+        "profile_image":1
+    }
+}).limit(4)
 return res.json(responseObj(true,{userDetails:userDetails,profileDetails:profileDetails,studentsDetails:studentsDetails,teachersDetails:teachersDetails},"User profile Details"))
 }
 

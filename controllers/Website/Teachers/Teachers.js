@@ -153,7 +153,8 @@ $addFields:{
     organization:{$ifNull: [
         { $arrayElemAt: ["$exp_details.organization", 0] },
         null  // Value to use if the array or its first element is null
-      ]}
+      ]},
+      totalExp: { $sum: "$exp_details.exp" }
 }
     },
 
@@ -166,13 +167,18 @@ $addFields:{
             averageRating: {
                 $avg: "$reviews.rating"
             },
-exp:1,
+            totalExp:1,
 organization:1,
 qualification:1,
 no_of_reviews:{
     $size:"$reviews"
 }
 
+        }
+    },
+    {
+        $match:{
+            totalExp:req.query.exp
         }
     },
     {

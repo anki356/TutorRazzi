@@ -203,7 +203,7 @@ const rejectQuote=async(req,res)=>{
 const getQuoteDetails=async(req,res)=>{
     let quoteDetails=await Quote.findOne({
         _id:req.query.quote_id
-    },{"subect_curriculum_grade.subject.name":1,"class_count":1,"amount":1,"description":1}).populate({
+    },{"subject_curriculum_grade.subject.name":1,"class_count":1,"amount":1,"description":1,"class_name":1}).populate({
         path:"teacher_id",select:{
             "name":1,"profile_image":1
         }

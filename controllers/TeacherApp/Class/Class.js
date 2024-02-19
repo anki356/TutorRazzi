@@ -84,7 +84,7 @@ const scheduleClass = async (req, res, next) => {
 
 const getClassDetails = async (req, res, next) => {
   let classDetails = {}
-  classDetails = await Class.findOne({ _id: req.query.class_id }, { start_time: 1, end_time: 1, description: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,  materials: 1, recordings: 1,class_type:1 }).populate({
+  classDetails = await Class.findOne({ _id: req.query.class_id,$lte:moment().format("YYYY-MM-DDTHH:mm:ss") }, { start_time: 1, end_time: 1, description: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,  materials: 1, recordings: 1,class_type:1 }).populate({
     path: 'teacher_id', select: {
      name: 1,profile_image:1
     }
@@ -575,7 +575,7 @@ const getClassesBasedOnDate=async (req,res)=>{
 }
 const getUpcomingClassDetails=async(req,res)=>{
   let classDetails = {}
-  classDetails = await Class.findOne({ _id: req.query.class_id }, { start_time: 1, end_time: 1, details: 1, grade: 1,  teacher_id: 1, notes: 1,student_id:1,subject:1 })
+  classDetails = await Class.findOne({ _id: req.query.class_id,$gte:moment().format("YYYY-MM-DDTHH:mm:ss") }, { start_time: 1, end_time: 1, details: 1, grade: 1,  teacher_id: 1, notes: 1,student_id:1,subject:1 })
   if(classDetails===null){
     throw new Error("Incorrct Class Id")
   }

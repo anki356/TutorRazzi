@@ -3,6 +3,7 @@ import Student from "../../../models/Student.js"
 import Teacher from "../../../models/Teacher.js"
 import User from "../../../models/User.js"
 import { responseObj } from "../../../util/response.js"
+import unlinkFile from "../../../util/unlinkFile.js"
 
 const getProfileDetails=async(req,res)=>{
     let user_id=req.user._id

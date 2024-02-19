@@ -64,7 +64,7 @@ const getTotalPendingHomeworks=async (req,res)=>{
 class_id:{
     $in:classResponse.map((data)=>data._id),
 
-},status:{$in:["pending",'ReUpload']}
+},status:{$in:["Pending"]}
 })
     return  res.json(responseObj(true,homeworks,"Total Pending Homework"))
 }

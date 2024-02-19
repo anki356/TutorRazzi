@@ -103,7 +103,7 @@ else{
             let markdownContent =paymentReceiptAcknowlegement(teacherResponse.preferred_name,req.body.net_amount)
      count=await Payment.countDocuments()
    console.log(teacherResponse)
-      addNotifications(teacherResponse.user_id._id,'Payment Received',markdownContent)   
+      addNotifications(teacherResponse.user_id._id,'Payment Received',`You Have received payment of ${req.body.net_amount*95/100} made on ${moment().format("DD-MM-YYYY")}.`)   
       const AcademicManangerResponse=await AcademicManager.findOne({
         students:{
              $elemMatch: {

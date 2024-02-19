@@ -9,6 +9,8 @@ import { paymentReceiptAcknowlegement } from "../../../util/EmailFormats/payment
 import { generatePDF } from "../../../util/generatedFile.js"
 import { responseObj } from "../../../util/response.js"
 import sendEmail from "../../../util/sendEmail.js"
+import { addNotifications } from "../../../util/addNotification.js"
+import AcademicManager from "../../../models/AcademicManager.js"
 
 const getAllPayments=async(req,res)=>{
     let query={
@@ -147,9 +149,19 @@ else{
    console.log(teacherResponse)
          
             sendEmail(teacherResponse.user_id.email,'Payment Received',markdownContent)
-      
+
+            addNotifications(teacherResponse.user_id._id,'Payment Received',`You Have received payment of ${req.body.net_amount*95/100} made on ${moment().format("DD-MM-YYYY")}.`)   
+            const AcademicManangerResponse=await AcademicManager.findOne({
+              students:{
+                   $elemMatch: {
+                  $eq: req.user._id
+              }
+              }
+          })
+          addNotifications(AcademicManangerResponse.user_id,'Payment Received',"Payment received by "+req.user.name+" for class "+ quoteResponse.class_name)
+            
          
-             return  res.json(responseObj(true, {classInsertResponse,paymentStudentResponse}, 'Quote Payment Done'))
+             return  res.json(responseObj(true, {classInsertResponse:classInsertResponse}, 'Quote Payment Done'))
 }
 
 const getPaymentDetails=async(req,res)=>{

@@ -5,3 +5,4 @@ const router=express.Router()
 router.get("/profile",authVerify,getProfileDetails)
 router.patch("/profile",authVerify,editProfileDetails)
 router.patch("/photo",authVerify,editPhoto)
+export default router

@@ -574,7 +574,7 @@ const getClassesBasedOnDate=async (req,res)=>{
 }
 const getUpcomingClassDetails=async(req,res)=>{
   let classDetails = {}
-  classDetails = await Class.findOne({ _id: req.query.class_id }, { start_time: 1, end_time: 1, details: 1, grade: 1,  teacher_id: 1, notes: 1,student_id:1 })
+  classDetails = await Class.findOne({ _id: req.query.class_id }, { start_time: 1, end_time: 1, details: 1, grade: 1,  teacher_id: 1, notes: 1,student_id:1,subject:1 })
   if(classDetails===null){
     throw new Error("Incorrct Class Id")
   }

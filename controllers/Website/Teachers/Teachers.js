@@ -62,23 +62,30 @@ const getGreatTeachers=async(req,res)=>{
 
 }
 const getSubjects=async(req,res)=>{
-    const subjects=await Teacher.aggregate([ { $match: { user_id:new ObjectId(req.query.teacher_id )} },
-        { $unwind: "$subject_curriculum" }, // Unwind the subject_curriculum array
-        {
-          $group: {
-            _id: "$subject_curriculum.curriculum", // Group by the curriculum field within each subject_curriculum object
-            // _id: "$user_id" , // Preserve the teacher's user_id
-            // curriculum_name: { $first: "$subject_curriculum.curriculum" }, // Preserve the curriculum name
-            subject_name: { $addToSet: "$subject_curriculum.subject" }
-             // Collect unique subjects for each curriculum
-          }
-        }
-    ])
+    let subjects
+    if(req.query.teacher_id){
+         subjects=await Teacher.aggregate([ { $match: { user_id:new ObjectId(req.query.teacher_id )} },
+            { $unwind: "$subject_curriculum" }, // Unwind the subject_curriculum array
+            {
+              $group: {
+                _id: "$subject_curriculum.curriculum", // Group by the curriculum field within each subject_curriculum object
+                // _id: "$user_id" , // Preserve the teacher's user_id
+                // curriculum_name: { $first: "$subject_curriculum.curriculum" }, // Preserve the curriculum name
+                subject_name: { $addToSet: "$subject_curriculum.subject" }
+                 // Collect unique subjects for each curriculum
+              }
+            }
+        ])
+    }else{
+        subjects=await Subject.find({})
+    }
+    
 return res.json(responseObj(true,subjects,"All Subjects"))
 }
 const getCurriculums=async(req,res)=>{
-
-    const curriculums=await Teacher.aggregate([ { $match: { user_id:new ObjectId(req.query.teacher_id )} },
+    let curriculums
+if(req.query.teacher_id){
+     curriculums=await Teacher.aggregate([ { $match: { user_id:new ObjectId(req.query.teacher_id )} },
         { $unwind: "$subject_curriculum" }, // Unwind the subject_curriculum array
         {
           $group: {
@@ -88,7 +95,11 @@ const getCurriculums=async(req,res)=>{
              // Collect unique subjects for each curriculum
           }
         }
-    ])
+    ])   
+}
+   else{
+curriculums=await Curriculum.find({})
+   }
     
     return res.json(responseObj(true,curriculums,"All Curriculums"))
 }

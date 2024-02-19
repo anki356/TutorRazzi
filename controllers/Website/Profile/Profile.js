@@ -50,10 +50,13 @@ if(userDetails.role==='parent'){
     })
 }
 else if(userDetails.role==='student'){
+  req.body.subjects=req.body.subjects.map((data)=>{
+    return {name:data}
+  })
     await Student.updateOne({
         user_id:req.user._id
     },{
-        $set:{...req.body,preferred_name:req.body.name}
+        $set:{...req.body,preferred_name:req.body.name,"grade.name":req.body.grade,"curriculum.name":curriculum}
     })
  
 }

@@ -407,7 +407,15 @@ const getReviewList=async(req,res)=>{
     })
 }
 const postReview=async(req,res)=>{
-    const reviewResponse=await Review.create({
+    const reviewResponse=await Review.findOne({
+teacher_id:req.body.teacher_id,
+class_id:null,
+given_by:req.user._id
+    })
+    if(reviewResponse!==null){
+        return res.json(responseObj(false,null,"Review Already Recorded"))
+    }
+    await Review.create({
         message: req.body.message?req.body.message:null,
         rating: req.body.rating,
         teacher_id: req.body.teacher_id,

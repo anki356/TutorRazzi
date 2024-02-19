@@ -15,6 +15,7 @@ import User from "../../../models/User.js"
 import { ObjectId } from "bson"
 import { addNotifications } from "../../../util/addNotification.js"
 import AcademicManager from "../../../models/AcademicManager.js"
+import SubjectCurriculum from "../../../models/SubjectCurriculum.js"
 const objectId=mongoose.Types.ObjectId
 const getGreatTeachers=async(req,res)=>{
    
@@ -64,7 +65,10 @@ const getGreatTeachers=async(req,res)=>{
 const getSubjects=async(req,res)=>{
     let subjects
     if(req.query.teacher_id){
-         subjects=await Teacher.aggregate([ { $match: { user_id:new ObjectId(req.query.teacher_id )} },
+        const subjectDetails=await SubjectCurriculum.find({
+            curriculum:req.query.curriculum_name
+        })
+         subjects=await Teacher.aggregate([ { $match: { user_id:new ObjectId(req.query.teacher_id ), "subject_curriculum.subject": subjectDetails.subject} },
             { $unwind: "$subject_curriculum" }, // Unwind the subject_curriculum array
             {
               $group: {
@@ -77,7 +81,7 @@ const getSubjects=async(req,res)=>{
             }
         ])
     }else{
-        subjects=await Subject.find({})
+        subjects=await SubjectCurriculum.find({ curriculum:req.query.curriculum_name})
     }
     
 return res.json(responseObj(true,subjects,"All Subjects"))

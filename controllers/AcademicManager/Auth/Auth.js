@@ -8,6 +8,8 @@ import sendEmail from "../../../util/sendEmail.js";
 import {newUserEmail} from "../../../util/EmailFormats/newUserEmail.js"
 import {  changePasswordEmail } from "../../../util/EmailFormats/changePasswordEmail.js";
 import { sendMailAsync } from "../../../util/emailTransport.js";
+import crypto from 'crypto'
+
 const ObjectId=mongoose.Types.ObjectId
 
 const SignUp = async (req, res) => {

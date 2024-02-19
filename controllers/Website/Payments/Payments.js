@@ -100,8 +100,8 @@ const payQuote = async (req, res, next) => {
         
         amount:req.body.amount,
         net_amount:req.body.net_amount,
-        tax:req.body.tax,
-        other_deductions:req.body.other_deductions,
+        tax:req.body?.tax,
+        other_deductions:req.body?.other_deductions,
         status:"Paid",
         trx_ref_no:req.body.trx_ref_no,
         class_id:classInsertResponse.map((data)=>data._id)

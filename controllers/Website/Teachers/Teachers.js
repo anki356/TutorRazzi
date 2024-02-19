@@ -115,10 +115,10 @@ const getGreatTeachersList=async(req,res)=>{
     let query={
 
     }
-    let querySecond
+    let querySecond={}
     if (req.query.exp){
         querySecond={
-            exp:req.query.ex
+            totalExp:Number(req.query.exp)
         }
     }
     
@@ -199,7 +199,7 @@ let options={
     page:req.query.page
 }
   Teacher.aggregatePaginate(teacherResponse,options,(err,result)=>{
-
+console.log(err)
       return res.json(responseObj(true,result,"Teacher List"))
   })
 

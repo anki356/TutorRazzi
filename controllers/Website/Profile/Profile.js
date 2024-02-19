@@ -32,7 +32,7 @@ const userDetails=await User.findOneAndUpdate({
 },{
     $set:{...req.body}
 })
-if(req.files){
+if(req.files?.length>0){
 unlinkFile(userDetails.profile_image)
   await User.updateMany({
     _id:req.user._id

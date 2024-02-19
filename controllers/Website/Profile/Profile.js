@@ -46,14 +46,14 @@ if(userDetails.role==='parent'){
     await Parent.updateOne({
         user_id:req.user._id
     },{
-        $set:{...req.body}
+        $set:{...req.body,preferred_name:req.body.name}
     })
 }
 else if(userDetails.role==='student'){
     await Student.updateOne({
         user_id:req.user._id
     },{
-        $set:{...req.body}
+        $set:{...req.body,preferred_name:req.body.name}
     })
  
 }

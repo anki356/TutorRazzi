@@ -6,7 +6,9 @@ import { responseObj } from "../../../util/response.js"
 
 const getProfileDetails=async(req,res)=>{
     let user_id=req.user._id
-    let userDetails=await User.findOne({_id:user_id})
+    let userDetails=await User.findOne({_id:user_id},{
+        "name":1,"profile_image":1,"email":1,"mobile_number":1
+    })
     let profileDetails=null
 profileDetails=await AcademicManager.findOne({
     user_id:req.user._id

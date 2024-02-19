@@ -23,10 +23,7 @@ const AcademicManagerSchema =
             ref: 'User',
             required:true
         },
-        exp_details: {
-            type: [ExpDetail.schema],
-    
-        },
+      
         city: {
             type: String,
             
@@ -40,10 +37,7 @@ const AcademicManagerSchema =
             
         },
         
-        degree: {
-            type: [DegreeDetail.schema],
-            
-        },
+        
         dob: {
             type: mongoose.SchemaTypes.Date,
             
@@ -54,11 +48,7 @@ const AcademicManagerSchema =
             enum: ["Female", "Male"],
            
         },
-        exp: {
-            type: Number,
-           
-
-        },
+        
         address: {
             type: String,
            

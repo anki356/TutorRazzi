@@ -282,6 +282,8 @@ const overallPerformance = async (req, res, next) => {
     }
   ])
   let weeklyPaymentResponseArray = []
+  const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
   for (let i = 0; i < 7; i++) {
 
 
@@ -319,16 +321,17 @@ const overallPerformance = async (req, res, next) => {
         }
       }
     ])
+
     if (weeklyPaymentResponse.length > 0) {
 
       weeklyPaymentResponseArray.push({
-        date: moment().startOf('week').set('h', 0).set('m', 0).set('s', 0).add(i, 'd').format("YYYY-MM-DDTHH:mm:ss"),
+        day: weekdays[i],
         totalEarnings: weeklyPaymentResponse[0].totalEarnings
       })
     }
     else {
       weeklyPaymentResponseArray.push({
-        date: moment().startOf('week').set('h', 0).set('m', 0).set('s', 0).add(i, 'd').format("YYYY-MM-DDTHH:mm:ss"),
+        day:weekdays[i] ,
         totalEarnings: 0
       })
     }

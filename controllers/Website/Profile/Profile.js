@@ -50,7 +50,7 @@ if(userDetails.role==='parent'){
     })
 }
 else if(userDetails.role==='student'){
-  req.body.subjects=req.body.subjects.map((data)=>{
+  req.body.subjects=JSON.parse(req.body.subjects).map((data)=>{
     return {name:data}
   })
     await Student.updateOne({

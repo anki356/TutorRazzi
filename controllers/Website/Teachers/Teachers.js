@@ -334,7 +334,16 @@ else{
         return res.json(responseObj(true,{reviews:reviews,reviewCategorization:reviewArray}))   
 }
 const requestTrialClass = async (req, res, next) => {
-   
+    const AcademicManangerResponse=await AcademicManager.findOne({
+        students:{
+             $elemMatch: {
+            $eq: req.user._id
+        }
+        }
+    })
+    if(AcademicManangerResponse!==null){
+
+    
     let classResponseArray = []
     let classResponse = await Class.findOne({
         student_id: req.user._id,
@@ -371,20 +380,16 @@ const requestTrialClass = async (req, res, next) => {
 
 
     });
-    const AcademicManangerResponse=await AcademicManager.findOne({
-        students:{
-             $elemMatch: {
-            $eq: req.user._id
-        }
-        }
-    })
+   
     const teacherResponse=await Teacher.findOne({
         user_id:req.body.teacher_id
     })
     addNotifications(AcademicManangerResponse.user_id,"New Trial Class Requested","New Trial Class Requested By "+ req.user.name+" by teacher "+teacherResponse.preferred_name+" of subject "+req.body.subject)
     addNotifications(req.body.teacher_id,"New Trial Class Requested","New Trial Class Requested By "+ req.user.name+" of subject "+req.body.subject)
     res.json(responseObj(true, classResponseArray, "Trial Class request created Successfully"))
-
+    }else{
+        return res.json(responseObj(false, null,"Academic Manager is not assigned to you"))
+    }
 
 
 

@@ -56,11 +56,11 @@ else if(userDetails.role==='student'){
     await Student.updateOne({
         user_id:req.user._id
     },{
-        $set:{...req.body,preferred_name:req.body.name,"grade.name":req.body.grade,"curriculum.name":curriculum}
+        $set:{...req.body,preferred_name:req.body.name,"grade":{name:req.body.grade},"curriculum":{name:req.body.curriculum}}
     })
  
 }
-res.json(responseObj(true,[],"profile Edited Successfully"))
+res.json(responseObj(true,null,"profile Edited Successfully"))
 }
 const getHomework=async(req,res,next)=>{
  

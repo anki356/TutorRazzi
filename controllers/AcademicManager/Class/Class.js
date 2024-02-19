@@ -336,7 +336,7 @@ const getRescheduledClasses=async (req, res) => {
             }
         }],
         select:{
-          name:1,subject:1,start_time:1,status:1, class_type:1,rescheduled_by:1
+          "name":1,"subject":1,start_time:1,status:1, class_type:1,rescheduled_by:1
         }
     }
 
@@ -414,8 +414,9 @@ const getResourceRequests=async(req,res)=>{
     ]
       }
       if(req.query.date){
-        query["createdAt"]=moment(req.query.date).format("YYYY-MM-DD")
+        query["createdAt"]={$gte:moment(req.query.date).format("YYYY-MM-DD"),$lte:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")}
       }
+      console.log(query)
    let options={
     limit:req.query.limit,
     page:req.query.page,
@@ -542,6 +543,10 @@ const getHomeworks=async(req,res)=>{
           }
         }
       ]
+    }
+    if(req.query.date){
+      query["createdAt"]={$gte:moment(req.query.date).format("YYYY-MM-DD"),$lte:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")}
+
     }
     let options={
 limit:req.query.limit,

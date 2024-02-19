@@ -5,7 +5,7 @@ import mongoosePaginate from 'mongoose-paginate-v2'
 const UserSchema = new mongoose.Schema({
     profile_image: {
         type: String,
-
+default:null
     },
     email: {
         type: String,

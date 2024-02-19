@@ -144,6 +144,19 @@ throw new Error("Class ID Is incorrect")
 
   res.json(responseObj(true, [], "Notes Added Successfully"))
 }
+const addOtherInfo=async(req,res)=>{
+  const other_information=await Class.findOneAndUpdate({
+    _id:req.body.class_id
+  },{
+    $set:{
+      other_information:req.body.other_information
+    }
+  })
+  if(other_information===null){
+return res.json(responseObj(false,null,"Class Not Valid"))
+  }
+  return res.json(responseObj(true,null,"Other Information added"))
+}
 const addTask = async (req, res, next) => {
   let classDetails=await Class.findOne({
     _id:req.body.class_id
@@ -611,4 +624,4 @@ const getUpcomingClassDetails=async(req,res)=>{
   res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,teacherDetails:teacherDetails }, null))
 }
 
-export {getUpcomingClassDetails,scheduleClass,resolveResourceRequests, requestReUpload,getClassesBasedOnDate,reviewClass,setReminder,uploadClassMaterial, acceptRescheduledClass,getClassDetails, addTask, rescheduleClass, getRescheduledClasses, addHomework, addNotesToClass, joinClass, leaveClass, getPastClasses }
+export {getUpcomingClassDetails,scheduleClass,resolveResourceRequests, requestReUpload,getClassesBasedOnDate,reviewClass,setReminder,uploadClassMaterial, acceptRescheduledClass,getClassDetails, addTask, rescheduleClass, getRescheduledClasses, addHomework, addNotesToClass, joinClass, leaveClass, getPastClasses,addOtherInfo }

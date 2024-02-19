@@ -102,7 +102,9 @@ required:true
         default:()=> moment().format("YYYY-MM-DDTHH:mm"),
         required: false
     },
-
+other_information:{
+    type:String
+}
    
 },{
      

@@ -1,6 +1,6 @@
 import express from 'express'
 import { authVerify } from '../../../controllers/Website/Auth/Auth.js'
-import { getAllPayments, getAllQuotes, getPaymentDetails, payQuote, rejectQuote } from '../../../controllers/Website/Payments/Payments.js'
+import { getAllPayments, getAllQuotes, getPaymentDetails, getQuoteDetails, payQuote, rejectQuote } from '../../../controllers/Website/Payments/Payments.js'
 import { body, param } from 'express-validator'
 import validationError from '../../../middleware/validationError.js'
 const router=express.Router()
@@ -16,5 +16,6 @@ const paymentValidation=[
 ]
 router.patch("/pay-quote/:_id",authVerify,paymentValidation,validationError,payQuote)
 router.patch("/reject-quote/:_id",authVerify,rejectQuote)
+router.get("/quote",authVerify,getQuoteDetails)
 
 export default router

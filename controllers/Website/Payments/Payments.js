@@ -187,4 +187,15 @@ const rejectQuote=async(req,res)=>{
     })
     return res.json(responseObj(true,[],"Quote Rejected"))
 }
-export  {getAllPayments,getAllQuotes,payQuote,getPaymentDetails,rejectQuote}
+
+const getQuoteDetails=async(req,res)=>{
+    let quoteDetails=await Quote.findOne({
+        _id:req.query.quote_id
+    },{"subect_curriculum_grade.subject.name":1,"class_count":1,"amount":1,"description":1}).populate({
+        path:"teacher_id",select:{
+            "name":1,"profile_image":1
+        }
+    })
+return res.json(responseObj(true,quoteDetails,"Quote Details"))
+}
+export  {getAllPayments,getAllQuotes,payQuote,getPaymentDetails,rejectQuote,getQuoteDetails}

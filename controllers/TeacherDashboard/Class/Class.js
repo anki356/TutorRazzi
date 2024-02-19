@@ -136,7 +136,7 @@ const getPastClasses = async (req, res, next) => {
     query={$and:[
       {
   
-        start_time :{$lt:format("YYYY-MM-DDTHH:mm:ss")},
+        start_time :{$lt:moment().format("YYYY-MM-DDTHH:mm:ss")},
       },   { teacher_id: req.user._id },
 
       {

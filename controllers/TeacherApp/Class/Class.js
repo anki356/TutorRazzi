@@ -13,6 +13,7 @@ import Student from "../../../models/Student.js"
 import ResourceRequest from "../../../models/ResourceRequest.js"
 import Teacher from "../../../models/Teacher.js"
 import { getExtraClassQuotes } from "../../Student/Class/Class.js"
+import Review from "../../../models/Review.js"
 const setReminder = async (req, res, next) => {
   const reminderResponse = await Reminder.insertMany({
     class_id: req.body.class_id,
@@ -83,7 +84,7 @@ const scheduleClass = async (req, res, next) => {
 
 const getClassDetails = async (req, res, next) => {
   let classDetails = {}
-  classDetails = await Class.findOne({ _id: new ObjectId(req.query.class_id) }, { start_time: 1, end_time: 1, description: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,  materials: 1, recordings: 1,class_type:1 }).populate({
+  classDetails = await Class.findOne({ _id: req.query.class_id }, { start_time: 1, end_time: 1, description: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,  materials: 1, recordings: 1,class_type:1 }).populate({
     path: 'teacher_id', select: {
      name: 1,profile_image:1
     }

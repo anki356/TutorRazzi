@@ -1,5 +1,6 @@
 import AcademicManager from "../../../models/AcademicManager.js"
 import User from "../../../models/User.js"
+import { responseObj } from "../../../util/response.js"
 
 const getProfileDetails=async(req,res)=>{
     let user_id=req.user._id

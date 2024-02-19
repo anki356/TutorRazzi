@@ -68,7 +68,7 @@ const getSubjects=async(req,res)=>{
         const subjectDetails=await SubjectCurriculum.find({
             curriculum:req.query.curriculum_name
         })
-         subjects=await Teacher.aggregate([ { $match: { user_id:new ObjectId(req.query.teacher_id ), "subject_curriculum.subject": subjectDetails.subject} },
+         subjects=await Teacher.aggregate([ { $match: { user_id:new ObjectId(req.query.teacher_id ), "subject_curriculum.subject": {$in:subjectDetails.map((data)=>data.subject)}} },
             { $unwind: "$subject_curriculum" }, // Unwind the subject_curriculum array
             {
               $group: {

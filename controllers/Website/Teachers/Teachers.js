@@ -255,7 +255,7 @@ const getReviewDetails=async(req,res)=>{
     let reviews = await Review.aggregate([
         {
             $match:{teacher_id:new objectId(teacher_id),
-            class_id:null
+          
             
             }
         },
@@ -288,7 +288,7 @@ const getReviewDetails=async(req,res)=>{
         let reviewCategorization=await Review.aggregate([
             {
                 $match:{teacher_id:new objectId(teacher_id),
-                class_id:null
+              
                 }
             },
             {
@@ -392,7 +392,7 @@ const requestTrialClass = async (req, res, next) => {
 const getReviewList=async(req,res)=>{
     let query={
         teacher_id:req.query.teacher_id,
-       class_id:null
+      
 
     }
     let options={

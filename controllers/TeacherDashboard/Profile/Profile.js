@@ -362,23 +362,33 @@ rest.exp=rest.end_year!==undefined&&rest.end_year!==null&& rest.end_year!==''?Nu
   return res.json(responseObj(true,null,"Exp Details Added")) 
  }
  const editPhoto=async(req,res)=>{
-  const userDetails=await User.findOne({
-    _id:req.user._id
-  })
-  if(userDetails.profile_image){
-  await  unlinkFile(userDetails.profile_image)
+   const userDetails=await User.findOne({
+      _id:req.user._id
+    })
+   if(req.files?.length>0){
+      if(userDetails.profile_image){
+         await  unlinkFile(userDetails.profile_image)
+         }
+        await User.updateMany({
+          _id:req.user._id
+        },{
+          $set:{
+            profile_image:req.files[0].filename
+          }
+        })
+
+        const teacherResponse=await Teacher.findOne({
+         user_id:req.user._id
+       }).populate({
+        path:"user_id"
+       })
+        return res.json(responseObj(true,teacherResponse,"Photo edited")) 
+      }
+  else{
+   return res.json(responseObj(false,null,"Please give photo"))
   }
-  await User.updateOne(
-    {_id:req.user._id},{
-      $set:{profile_image:req.files[0].filename}
-    }
-  )
-  const teacherResponse=await Teacher.findOne({
-   user_id:req.user._id
- }).populate({
-  path:"user_id"
- })
-  return res.json(responseObj(true,teacherResponse,"Photo edited")) 
+  
+  
  }
  const getAllCurriculums=async (req,res)=>{
   const curriculums=await Curriculum.find({})

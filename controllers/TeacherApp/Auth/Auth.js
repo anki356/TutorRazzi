@@ -42,9 +42,13 @@ const SignIn=async(req,res,next)=>{
         throw new Error("Invalid credentials, Try again.");
     }
     const token = user.signJWT();
+    const isTeacher=await Teacher.findOne({
+        user_id:user._id
+    })
     res.json(responseObj(true,{
         access_token:token,
-        user:user
+        user:user,
+        isTeacher:isTeacher
         
     },"Successful Login") )
 }

@@ -49,7 +49,7 @@ const SignIn=async(req,res,next)=>{
     res.json(responseObj(true,{
         access_token:token,
         user:user,
-        isTeacher:isTeacher
+        isTeacher:isTeacher!==null
         
     },"Successful Login") )
 }

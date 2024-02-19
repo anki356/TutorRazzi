@@ -8,6 +8,7 @@ import Testimonial from "./Testimonial.js";
 import mongoosePaginate from "mongoose-paginate-v2";
 import Subject from "./Subject.js";
 import Curriculum from "./Curriculum.js";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 const TeacherSchema = new mongoose.Schema({
   
     bio: {
@@ -116,6 +117,6 @@ this.exp_details.forEach((data)=>{
 
 
 TeacherSchema.plugin(mongoosePaginate)
-
+TeacherSchema.plugin(mongooseAggregatePaginate)
 
 export default mongoose.model("Teacher", TeacherSchema)

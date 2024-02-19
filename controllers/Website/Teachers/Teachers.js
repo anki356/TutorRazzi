@@ -115,7 +115,12 @@ const getGreatTeachersList=async(req,res)=>{
     let query={
 
     }
-    
+    let querySecond
+    if (req.query.exp){
+        querySecond={
+            exp:req.query.ex
+        }
+    }
     
    if(req.query.subject&&req.query.curriculum&&req.query.grade){
     
@@ -128,7 +133,7 @@ const getGreatTeachersList=async(req,res)=>{
     };
    }
   
-   let teacherResponse = await Teacher.aggregate([
+   let teacherResponse = Teacher.aggregate([
       {
         $match:query
       } ,
@@ -163,23 +168,23 @@ $addFields:{
             user_id: 1,
             "preferred_name": 1,
             "users.profile_image":1,
-            subject_curriculum_grade:1,
+            // subject_curriculum_grade:1,
             averageRating: {
                 $avg: "$reviews.rating"
             },
             totalExp:1,
-organization:1,
-qualification:1,
+// organization:1,
+// qualification:1,
 no_of_reviews:{
     $size:"$reviews"
-}
+},
+city:1,
+country:1
 
         }
     },
     {
-        $match:{
-            totalExp:req.query.exp
-        }
+        $match:querySecond
     },
     {
         $sort: { averageRating: -1 }, 
@@ -193,9 +198,9 @@ let options={
     limit:req.query.limit,
     page:req.query.page
 }
-  Teacher.paginate(query,options,(err,result)=>{
+  Teacher.aggregatePaginate(teacherResponse,options,(err,result)=>{
 
-      return res.json(responseObj(true,{teacherResponse:teacherResponse,result:result},"Teacher List"))
+      return res.json(responseObj(true,result,"Teacher List"))
   })
 
 }

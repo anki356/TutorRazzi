@@ -7,6 +7,7 @@ import { responseObj } from "../../../util/response.js";
 import sendEmail from "../../../util/sendEmail.js";
 import {newUserEmail} from "../../../util/EmailFormats/newUserEmail.js"
 import {  changePasswordEmail } from "../../../util/EmailFormats/changePasswordEmail.js";
+import Teacher from "../../../models/Teacher.js";
 const ObjectId=mongoose.Types.ObjectId
 
 const SignUp = async (req, res) => {

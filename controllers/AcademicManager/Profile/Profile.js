@@ -61,4 +61,17 @@ const editPhoto=async(req,res)=>{
    
    
   }
-export {getProfileDetails,editProfileDetails,editPhoto}
+  const deletePhoto=async(req,res)=>{
+    const userDetails=await User.findOneAndUpdate({
+        _id:req.user._id
+      },{
+        $set:{
+            profile_image:null
+        }
+      })
+      if(userDetails.profile_image){
+        await  unlinkFile(userDetails.profile_image)
+        }
+return res.json(responseObj(true,null,"Photo deleted"))
+  }
+export {getProfileDetails,editProfileDetails,editPhoto,deletePhoto}

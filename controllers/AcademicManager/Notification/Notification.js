@@ -6,7 +6,7 @@ const getNotifications=async(req,res)=>{
   let query={
     user_id:req.user._id,
     createdAt:{
-      $gte:moment().subtract(1,"M").format("YYYY-MM-DDTHH:mm:ss"),
+      $gte:moment().subtract(1,'month').format("YYYY-MM-DDTHH:mm:ss"),
       $lte:moment().format("YYYY-MM-DDTHH:mm:ss")
     }
   }

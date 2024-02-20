@@ -518,10 +518,11 @@ let taskResponse=await Task.find({
         }
       }
   })
+  const classDetails=await Class.findOne({_id:req.body.class_id})
   
-  
-    addNotifications(AcademicManangerResponse.user_id,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
+    addNotifications(AcademicManangerResponse.user_id,"Task Added", "A Task has been added by "+req.user.name+" of title "+ req.body.title+" in class scheduled on "+moment(classDetails.start_time).format("ll") +" at "+ moment(classDetails.start_time).format("HH:mm") )
     
+    addNotifications(classDetails.student_id,"Task Added", "A Task has been added by "+req.user.name+" of title "+ req.body.title+" in class scheduled on "+moment(classDetails.start_time).format("ll")+" at "+ moment(classDetails.start_time).format("HH:mm") )
     res.json(responseObj(true, taskResponse, "Task Created Successfully"))
   }
   const addHomework = async (req, res, next) => {

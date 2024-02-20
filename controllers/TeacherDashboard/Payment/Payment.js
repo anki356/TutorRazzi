@@ -94,9 +94,9 @@ class_id:{$in:classResponse.map((data)=>data._id)}
        sort:{
            createdAt:-1
        },
-       populate:[{
-        path:'sender_id'
-       },{path:'class_id'}]
+       populate:[{path:'quote_id',select:{
+        'subject_curriculum_grade.subject':1
+       }}]
    }
    
 Payment.paginate(query,options,(err,paymentResponse)=>{

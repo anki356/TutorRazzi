@@ -33,19 +33,20 @@ const getQuotes=async (req,res,next)=>{
                 from:"classes",
                 localField:"_id",
                 foreignField:"quote_id",
-                as:"classes"
+                as:"classes",
+                pipeline:[
+                    {
+                        $match: {
+                            "classes.scheduled": true,
+                            $expr: { $eq: [{ $size: "$classes" }, 1] }
+                        }
+                    },
+                ]
             }
         },
-        {
-            $unwind: "$classes"
-        },
+        
         // Filter classes that are scheduled and where there's just one class left
-        {
-            $match: {
-                "classes.scheduled": true,
-                $expr: { $eq: [{ $size: "$classes" }, 1] }
-            }
-        },
+        
         // Project a new field with the due date
         {
             $project: {

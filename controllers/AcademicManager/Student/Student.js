@@ -141,7 +141,11 @@ const getStudentClassList=async(req,res)=>{
     let array=[]
     let quotes=await Quote.find(query,{
         'subject_curriculum_grade':1,"class_count":1,"schedule_status":1,"due_date_class_id":1
-    }).limit(limit).skip((page-1)*limit)
+    }).limit(limit).skip((page-1)*limit).populate({
+        path:"due_date_class_id",select:{
+            "end_time":1
+        }
+    })
     console.log(quotes)
     
     for (let data of quotes) {

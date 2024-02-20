@@ -65,6 +65,14 @@ QuoteSchema.virtual('subject_name').get(function(){
         return this.subject_curriculum_grade.subject;
     }
 })
+QuoteSchema.virtual('due_date').get(function(){
+    if(this.due_date_class_id!==null&& typeof(this.due_date_class_id)==='object'){
+        return this.due_date_class_id.end_time;
+    }
+    else{
+        return null
+    }
+})
 QuoteSchema.virtual('grade_name').get(function(){
     if(this.subject_curriculum_grade){
 

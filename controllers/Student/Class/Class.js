@@ -220,7 +220,8 @@ const scheduleClass = async (req, res, next) => {
     if (!statusArray.includes('pending')) {
         await Quote.findByIdAndUpdate(scheduleClassResponse.quote_id, {
             $set: {
-                schedule_status: 'done'
+                schedule_status: 'done',
+                due_date_class_id:req.params._id
             }
         })
     }

@@ -48,6 +48,9 @@ const QuoteSchema = new mongoose.Schema({
     },
     class_name:{
         type:String
+    },
+    due_date_class_id:{
+        type:mongoose.SchemaTypes.ObjectId 
     }
 }, {
   

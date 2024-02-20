@@ -61,18 +61,22 @@ let last_payment=await Payment.find({
 }).sort({
     createdAt:-1
 }).limit(1)
-const classDetails=await Class.find({
-    class_type:"Non Trial",
-    status:"Scheduled",
-    start_time:{
-        $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
+const quotes=await Quote.find({
+    schedule_status:'done',
+    due_date_class_id:{
+        $ne:null
     }
 })
-let isShow=false
+let show=false
+let classDetails=await Class.find({
+    _id:{
+        $in:quotes.map((data)=>data.due_date_class_id)
+    }
+})
 if(classDetails.length===1&& moment(classDetails[0].end_time).diff(moment(),'d')<3){
-isShow=true
+   show=true 
 }
-    return res.json(responseObj(true,{"studentResponse":studentResponse,"no_of_classes":no_of_classes,"last_payment":last_payment[0].net_amount,isShow:isShow},"Student Data"))
+    return res.json(responseObj(true,{"studentResponse":studentResponse,"no_of_classes":no_of_classes,"last_payment":last_payment[0].net_amount},"Student Data"))
 }
 const getBundleDetails=async(req,res)=>{
     const purchased_date=await Payment.findOne({
@@ -91,21 +95,34 @@ const getBundleDetails=async(req,res)=>{
     })
     const subject=bundles[0].subject.name
     const curriculum=bundles[0].curriculum.name
-    const quoteResponse=await Quote.findOne({
-        _id:req.query.quote_id,
-        schedule_status:"done"
-    })
     const classRemaining=await Class.find({
         quote_id:req.query.quote_id,
+        $or:[
+            {
+status:"Pending",
+start_time:null,
+
+            },{
 status:"Scheduled",
 start_time:{
     $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
-
-            
 }
+            }
+        ] 
+    })
+    const quoteResponse=await Quote.findOne({
+        _id:req.query.quote_id
+    })
+    let classDetails=await Class.findOne({
+       _id:quoteResponse?.due_date_class_id,
+       status:"Scheduled",
+       start_time:{
+           $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
+       }
+
     })
 let show=false
-    if(quoteResponse!==null&&classRemaining.length===1&&moment(classRemaining[0].end_time).diff(moment(),'d')<3){
+    if(classDetails!==null&&moment(classDetails.end_time).diff(moment(),'d')<3){
 show=true
     }
     return res.json(responseObj(true,{bundles:bundles,curriculum:curriculum,show:show,classRemaining:classRemaining.length,subject:subject,teacher_name:teacher_name.name,purchased_date:purchased_date.payment_date}))

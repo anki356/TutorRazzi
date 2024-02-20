@@ -22,56 +22,21 @@ const getQuotes=async (req,res,next)=>{
     let options={
         limit:req.query.limit,
         page:req.query.page,
-       
-    }
-    let pipeline=Quote.aggregate([
-        {$match:{
-            student_id:new ObjectId(req.query.student_id)
-        }},
-        {
-            $lookup:{
-                from:"classes",
-                localField:"_id",
-                foreignField:"quote_id",
-                
-               
-                as:"classes",
-            }
+        select:{
+            "class_count":1,"schedule_status":1,"subject_curriculum_grade.subject":1
         },
-        {
-            $unwind: "$classes"
-        },
-        // Group by quote to find the count of scheduled classes
-        {
-            $group: {
-                _id: "$_id",
-                class_schedule_count: { $sum: { $cond: { if: { $eq: ["$classes.status", "Scheduled"] }, then: 1, else: 0 } } },
-                schedule_status: { $first: "$schedule_status" },
-                due_date: { $first: { $cond: [ { $and: [ { $eq: ["$class_schedule_count", 1] }, { $eq: ["$schedule_status", "done"] } ] }, "$classes.end_time", null ] } },
-                subject: { $first: "$subject_curriculum_grade.subject" },
-                class_count:{
-                    $first:"$class_count"
-                }
-            }
-        },
-        // Filter documents where there's only one scheduled class left and quote status is "done"
-     
-        
-        // Filter classes that are scheduled and where there's just one class left
-        
-        // Project a new field with the due date
-        {
-            $project: {
-                _id: 0,
-                due_date: 1,
-                class_count:1,
-                "subject":1,
-                "schedule_status":1
+        populate:{
+            path:"due_date_class_id",
+            select:{
+                "end_time":1
             }
         }
-
-    ])
-    Quote.aggregatePaginate(pipeline,options,(err,pendingClassQuotes)=>{
+       
+    }
+   let query={
+    student_id:req.query.student_id
+   }
+    Quote.paginate(query,options,(err,pendingClassQuotes)=>{
 if(pendingClassQuotes.docs.length===0){
     res.json(responseObj(false,[],"No Class quotes found"))
    

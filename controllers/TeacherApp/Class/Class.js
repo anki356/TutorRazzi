@@ -193,29 +193,44 @@ const rescheduleClass=async(req,res,next)=>{
   let details=await Class.findOne({
     _id:req.params._id
   })
-  if(details===null){
-    throw new Error("No Class Found")
-  }
-  let classScheduled=await Class.find({$and:[{
-      start_time:req.body.start_time,
-  },{$or:[{
+  let classScheduled=await Class.find({
+    $and: [   { start_time:{$gte:req.body.start_time}},
+      {start_time:{
+        $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+      }},
+      {end_time:{$gte:req.body.start_time}},
+      {end_time:{
+        $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+      }},{$or:[{
       teacher_id:req.user._id
   },{
       student_id:details.student_id
   }]}]})
-
+console.log(classScheduled)
       if(classScheduled.length!==0){
        throw new Error('This time slot has been already scheduled')  
       }
 
-const rescheduleClassResponse=await Class.updateOne({_id:new ObjectId(req.params._id)},{$set:{
+const rescheduleClassResponse=await Class.findOneAndUpdate({_id:req.params._id},{$set:{
   is_rescheduled:true,
   start_time:moment(req.body.start_time).format("YYYY-MM-DDTHH:mm:ss"),
   end_time:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss"),
-  rescheduled_by:"teacher",
+  rescheduled_by:'teacher',
   status:'Pending'
   }})
-  res.json(responseObj(true,[],"Class Rescheduled Successfully"))
+  const studentDetails=await Student.findOne({
+    user_id:details.student_id
+  })
+  const AcademicManangerResponse=await AcademicManager.findOne({
+    teachers:{
+         $elemMatch: {
+          $eq: req.user._id
+      }
+    }
+})
+  addNotifications(rescheduleClassResponse.student_id,"Class Rescheduled","Class of student "+studentDetails.preferred_name+" and teacher "+req.user.name+" which was earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "has been rescheduled for on  "+ moment(req.body.start_time).format("DD-MM-YYYY")+" at "+ moment(req.body.start_time).format("HH:mm:ss"))
+  addNotifications(AcademicManangerResponse.user_id,"Class Rescheduled","Class of student "+studentDetails.preferred_name+" and teacher "+req.user.name+" which was earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ "has been rescheduled for on "+ moment(req.body.start_time).format("DD-MM-YYYY")+" at "+ moment(req.body.start_time).format("HH:mm:ss"))
+  res.json(responseObj(true,[],"Class Rescheduled"))
 
 }
 const getPastClasses = async (req, res, next) => {

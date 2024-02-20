@@ -170,9 +170,10 @@ const getUpcomingClasses = async (req, res, next) => {
     page: Number(req.query.page),
     populate:[{
       path:'student_id'
-    },{
-      path:"teacher_id"
-    }]
+    }],
+    select:{
+      "subject":1,"name":1,"start_time":1,"end_time":1
+    }
   }
   let query = {
     $and: [
@@ -519,9 +520,10 @@ const getTrialClasses = async (req, res, next) => {
     page: Number(req.query.page),
     populate:[{
       path:'student_id'
-    },{
-      path:"teacher_id"
-    }]
+    }],
+    select:{
+      "subject":1,"name":1,"start_time":1,"end_time":1
+    }
   }
   Class.paginate(query, options, (err, result) => {
    

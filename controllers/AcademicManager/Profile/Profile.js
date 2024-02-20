@@ -96,7 +96,15 @@ const editPhoto=async(req,res)=>{
       })
       if(userDetails.profile_image){
         await  unlinkFile(userDetails.profile_image)
+        
+        const teacherResponse=await AcademicManager.findOne({
+            user_id:req.user._id
+          }).populate({
+           path:"user_id"
+          })
+return res.json(responseObj(true,teacherResponse,"Photo deleted"))
+        }else{
+            return res.json(responseObj(false,null,"No Photo Found"))
         }
-return res.json(responseObj(true,null,"Photo deleted"))
   }
 export {getProfileDetails,editProfileDetails,editPhoto,deletePhoto}

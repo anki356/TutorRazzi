@@ -4,6 +4,7 @@ import { responseObj } from "../../../util/response.js"
 import Class from "../../../models/Class.js"
 import Quote from "../../../models/Quote.js"
 import Exam from "../../../models/Exam.js"
+import User from "../../../models/User.js"
 const ObjectId=mongoose.Types.ObjectId
 const getBasicDetails=async (req,res,next)=>{
     const studentResponse=await Student.findOne({user_id:new ObjectId(req.query.student_id) },{preferred_name:1,user_id:1,parent_id:1,city:1,state:1,country:1,grade:1,school:1,curriculum:1,subjects:1}).populate({path:'user_id',select:{
@@ -64,8 +65,7 @@ const getScheduledClasses=async (req,res,next)=>{
         select:{
             start_time:1,
             subject:1,
-            curriculum:1,
-            grade:1
+           
 
         },
         sort:{
@@ -74,39 +74,34 @@ const getScheduledClasses=async (req,res,next)=>{
     }
 let query={status:'Scheduled',
 student_id:new ObjectId(req.query.student_id)}
-if(req.query.search){
-    query={
-        $and:[{
-            status:'Scheduled',
-        },{
-            student_id:new ObjectId(req.query.student_id)
-        },{$or: [
-            { "subject.name":{
-              
-               $regex:req.query.search,
-               $options:'i'
-             }}
-           , { "curriculum.name":{
-              
-            $regex:req.query.search,
-            $options:'i'
-          }},
-          { "grade.name":{
-              
-            $regex:req.query.search,
-            $options:'i'
-          }}
-        
+
+if(req.query.search) {
+    let student_ids=await User.find({
+      name:{
+        $regex: req.query.search, $options: 'i' 
+      }
+      })
+      
+    query["$or"] = [
      
-     
-           ]}]
-    }
-}
+      { "subject.name": { $regex: req.query.search, $options: 'i' } },
+      {"name":  {$regex: req.query.search, $options: 'i' }
+       
+      },
+      {"student_id":{
+        $in:student_ids.map((data)=>data._id)
+      }},
+      
+    ];
+  }
+
     Class.paginate(query,options,(err,scheduledClasses)=>{
+       
 if(scheduledClasses.docs.length===0){
-    res.json(responseObj(true,[],"No Classes Found"))
+  return  res.json(responseObj(true,[],"No Classes Found"))
 }
-        res.json(responseObj(true,scheduledClasses,null))
+
+      return  res.json(responseObj(true,scheduledClasses,null))
     })
     
 }

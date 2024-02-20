@@ -3,7 +3,6 @@ import Class from "../../../models/Class.js"
 import Payment from "../../../models/Payment.js"
 import Wallet from "../../../models/Wallet.js"
 import { responseObj } from "../../../util/response.js"
-import Student from "../../../models/Student.js"
 
 const getPaymentWeekly=async(req,res)=>{
     const classes=await Class.find({teacher_id:req.user._id},{_id:1})
@@ -95,9 +94,9 @@ class_id:{$in:classResponse.map((data)=>data._id)}
        sort:{
            createdAt:-1
        },
-       populate:[{path:'quote_id',select:{
-        'subject_curriculum_grade.subject':1
-       }}]
+       populate:[{
+        path:'sender_id'
+       },{path:'class_id'}]
    }
    
 Payment.paginate(query,options,(err,paymentResponse)=>{
@@ -149,20 +148,8 @@ const getPaymentDetails=async(req,res,next)=>{
        path:'teacher_id',select:{
            name:1
        }
-   }]}).populate({
-    path:'quote_id'
-   })
-   const studentDetails=await Student.findOne({
-user_id:payment.quote_id.student_id
-   },{
-    "grade":1,"curriculum":1,"school":1
-   }).populate({
-    path:"user_id",
-    select:{
-        "name":1,"profile_image":1
-    }
-   })
-   res.json(responseObj(true,{payment:payment,studentDetails:studentDetails},null))
+   }]})
+   res.json(responseObj(true,payment,null))
 }
 
 const withdraw=async (req,res,next)=>{

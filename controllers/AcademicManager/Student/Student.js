@@ -125,7 +125,7 @@ let show=false
     if(classDetails!==null&&moment(classDetails.end_time).diff(moment(),'d')<3){
 show=true
     }
-    return res.json(responseObj(true,{bundles:bundles,curriculum:curriculum,show:show,classRemaining:classRemaining.length,subject:subject,teacher_name:teacher_name.name,purchased_date:purchased_date.payment_date}))
+    return res.json(responseObj(true,{bundles:bundles,curriculum:curriculum,show:show,classRemaining:classRemaining.length,subject:subject,teacher_name:teacher_name.name,purchased_date:purchased_date.payment_date,teacher_id:bundles[0].teacher_id}))
 }
 const getStudentClassList=async(req,res)=>{
     let query={

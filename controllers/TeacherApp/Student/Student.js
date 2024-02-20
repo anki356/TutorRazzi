@@ -22,15 +22,43 @@ const getQuotes=async (req,res,next)=>{
     let options={
         limit:req.query.limit,
         page:req.query.page,
-        populate:{
-            path:'student_id',select:{
-                "name":1,
-        
+       
+    }
+    let pipeline=Quote.aggregate([
+        {$match:{
+            student_id:new ObjectId(req.query.student_id)
+        }},
+        {
+            $lookup:{
+                from:"classes",
+                localField:"_id",
+                foreignField:"quote_id",
+                as:"classes"
+            }
+        },
+        {
+            $unwind: "$classes"
+        },
+        // Filter classes that are scheduled and where there's just one class left
+        {
+            $match: {
+                "classes.scheduled": true,
+                $expr: { $eq: [{ $size: "$classes" }, 1] }
+            }
+        },
+        // Project a new field with the due date
+        {
+            $project: {
+                _id: 0,
+                due_date: "$classes.start_time",
+                class_count:1,
+                "subject_curriculum.grade.subject":1,
+                "schedule_status":1
             }
         }
-    }
-    Quote.paginate({
-        student_id:new ObjectId(req.query.student_id)},options,(err,pendingClassQuotes)=>{
+
+    ])
+    Quote.aggregatePaginate(pipeline,options,(err,pendingClassQuotes)=>{
 if(pendingClassQuotes.docs.length===0){
     res.json(responseObj(false,[],"No Class quotes found"))
    

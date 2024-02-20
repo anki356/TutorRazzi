@@ -76,7 +76,7 @@ let classDetails=await Class.find({
 if(classDetails.length===1&& moment(classDetails[0].end_time).diff(moment(),'d')<3){
    show=true 
 }
-    return res.json(responseObj(true,{"studentResponse":studentResponse,"no_of_classes":no_of_classes,"last_payment":last_payment[0].net_amount},"Student Data"))
+    return res.json(responseObj(true,{"studentResponse":studentResponse,"no_of_classes":no_of_classes,"last_payment":last_payment[0].net_amount,show:show},"Student Data"))
 }
 const getBundleDetails=async(req,res)=>{
     const purchased_date=await Payment.findOne({

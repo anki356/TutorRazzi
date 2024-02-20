@@ -32,4 +32,14 @@ const getNotificationDetails=async(req,res)=>{
 //   await  Notification.deleteOne({user_id:req.user._id,_id:req.body.notification_id})
 //     return res.json(responseObj(true,[],"Notifications Cleared"))
 // }
-export {getNotifications,getNotificationDetails}
+const markAllRead=async(req,res)=>{
+  await Notification.updateMany({
+    user_id:req.user._id
+  },{
+    $set:{
+      is_read:true
+    }
+  })
+  return res.json(responseObj(true,null,"All Notifications marked read"))
+}
+export {getNotifications,getNotificationDetails,markAllRead}

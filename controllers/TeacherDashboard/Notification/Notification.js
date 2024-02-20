@@ -1,14 +1,45 @@
+import moment from "moment"
 import Notification from "../../../models/Notification.js"
 import { responseObj } from "../../../util/response.js"
 
 const getNotifications=async(req,res)=>{
-    const notifications=await Notification.find({user_id:req.user._id})
+  let query={
+    user_id:req.user._id,
+    createdAt:{
+      $gte:moment().subtract(1,'month').format("YYYY-MM-DDTHH:mm:ss"),
+      $lte:moment().format("YYYY-MM-DDTHH:mm:ss")
+    }
+  }
+  if(req.query.is_read){
+    query.is_read=req.query.is_read
+  }
+    const notifications=await Notification.find(query).sort({
+      createdAt:-1
+    })
     return res.json(responseObj(true,notifications,"Notifications"))
 }
-const clearNotification=async (req,res)=>{
-  await  Notification.deleteMany({user_id:req.user._id})
-    return res.json(responseObj(true,[],"Notifications Cleared"))
+const getNotificationDetails=async(req,res)=>{
+  const notificatioDetails=await Notification.findOneAndUpdate({
+    _id:req.query.id
+  },{
+    $set:{
+      is_read:true
+    }
+  })
+  return res.json(responseObj(true,notificatioDetails,"Notification Details"))
 }
-
-
-export {getNotifications,clearNotification}
+// const clearNotification=async (req,res)=>{
+//   await  Notification.deleteOne({user_id:req.user._id,_id:req.body.notification_id})
+//     return res.json(responseObj(true,[],"Notifications Cleared"))
+// }
+const markAllRead=async(req,res)=>{
+  await Notification.updateMany({
+    user_id:req.user._id
+  },{
+    $set:{
+      is_read:true
+    }
+  })
+  return res.json(responseObj(true,null,"All Notifications marked read"))
+}
+export {getNotifications,getNotificationDetails,markAllRead}

@@ -50,7 +50,8 @@ const QuoteSchema = new mongoose.Schema({
         type:String
     },
     due_date_class_id:{
-        type:mongoose.SchemaTypes.ObjectId 
+        type:mongoose.SchemaTypes.ObjectId ,
+        ref:"Class"
     }
 }, {
   

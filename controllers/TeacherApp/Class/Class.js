@@ -181,9 +181,9 @@ const addTask = async (req, res, next) => {
 })
 // const classDetails=await Class.findOne({_id:req.body.class_id})
 
-  addNotifications(AcademicManangerResponse.user_id,"Task Added", "A Task has been added by "+req.user.name+" of title "+ req.body.title+" in class scheduled on "+moment(classDetails.start_time).format("DD-MM-YYYY") +" at "+ moment(classDetails.start_time).format("HH:mm") )
+  addNotifications(AcademicManangerResponse.user_id,"Task Added", "A Task has been added by "+req.user.name+" of title "+ req.body.title+" in class done on "+moment(classDetails.start_time).format("DD-MM-YYYY") +" at "+ moment(classDetails.start_time).format("HH:mm") )
   
-  addNotifications(classDetails.student_id,"Task Added", "A Task has been added by "+req.user.name+" of title "+ req.body.title+" in class scheduled on "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+ moment(classDetails.start_time).format("HH:mm") )
+  addNotifications(classDetails.student_id,"Task Added", "A Task has been added by "+req.user.name+" of title "+ req.body.title+" in class done on "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+ moment(classDetails.start_time).format("HH:mm") )
 
   
   res.json(responseObj(true, taskResponse, "Task Created Successfully"))
@@ -416,6 +416,8 @@ const uploadClassMaterial=async (req,res,next)=>{
   ClassMaterials.materials.push({name:req.files[0].filename})
   let classResponse=await Class.updateOne({
     _id : req.params._id},{$set:{ materials:ClassMaterials.materials}});
+    addNotifications(classDetails.student_id,"Class Material Uploaded", "Material for class on "+moment(classDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(classDetails.end_time).format("HH:mm")+ " of subject "+classDetails.subject.name+ " has been uploaded")
+   
   res.json(responseObj(true,[],"Class Materials Uploaded Successfully"))
 }
 const reviewClass=async(req,res,next)=>{
@@ -531,9 +533,9 @@ const addHomework = async (req, res, next) => {
 
 // const classDetails=await Class.findOne({_id:req.body.class_id})
 
-  addNotifications(AcademicManangerResponse.user_id,"Home Work Added", "A Homework has been added by "+req.user.name+" of title "+ req.body.title+" in class scheduled on "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+ moment(classDetails.start_time).format("HH:mm") +" of subject "+ classDetails.subject.name)
+  addNotifications(AcademicManangerResponse.user_id,"Home Work Added", "A Homework has been added by "+req.user.name+" of title "+ req.body.title+" in class done on "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+ moment(classDetails.start_time).format("HH:mm") +" of subject "+ classDetails.subject.name)
   
-  addNotifications(classDetails.student_id,"Home Work Added", "A Homework has been added by "+req.user.name+" of title "+ req.body.title+" in class scheduled on "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+ moment(classDetails.start_time).format("HH:mm")+" of subject "+ classDetails.subject.name )
+  addNotifications(classDetails.student_id,"Home Work Added", "A Homework has been added by "+req.user.name+" of title "+ req.body.title+" in class done on "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+ moment(classDetails.start_time).format("HH:mm")+" of subject "+ classDetails.subject.name )
   
   
   res.json(responseObj(true, homeworkResponse, null))

@@ -167,17 +167,11 @@ const getUpcomingClasses = async (req, res, next) => {
   
   let options = {
     limit: req.query.limit ? Number(req.query.limit) : 5,
-    page: Number(req.query.page)||1,
+    page: Number(req.query.page),
     populate:[{
-      path:'student_id',
-      select:{
-        name:1
-      }
+      path:'student_id'
     },{
-      path:'teacher_id',
-      select:{
-        name:1
-      } 
+      path:"teacher_id"
     }]
   }
   let query = {
@@ -192,59 +186,50 @@ const getUpcomingClasses = async (req, res, next) => {
 
 
   }
-  if (req.query.search) {
-    query = {
-      $and: [
-        { start_time: { $gte: moment().format("YYYY-MM-DDTHH:mm:ss") } },
-
-        { teacher_id: req.user._id },
-
-
-        { status: 'Scheduled' }, {
-          $or:
-            [
-              {
-                "subject.name": {
-                  $regex: req.query.search,
-                  $options: 'i'
-                }
-              }, {
-                "curriculum.name": {
-
-                  $regex: req.query.search,
-                  $options: 'i'
-                }
-              },
-              {
-                "grade.name": {
-
-                  $regex: req.query.search,
-                  $options: 'i'
-                }
-              } ,{
-                name: {
-      
-                  $regex: req.query.search,
-                  $options: 'i'
-                }
-              }
-
-
-
-            ]
-
-        },
+  if(req.query.search){
+    let student_ids=await User.find({
+      name:{
+        $regex: req.query.search, $options: 'i' 
+      }
+      })
+     
+    
+    query={$and:[
+      { start_time :{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")}},
+     
+     
+      { teacher_id: req.user._id },
+   
+     
+       {status:'Scheduled'},{
+        $or:
+        [
        
-      ]
-
-
-    }
+          { "subject.name": { $regex: req.query.search, $options: 'i' } },
+          {"name":  {$regex: req.query.search, $options: 'i' }
+           
+          },
+          {"student_id":{
+            $in:student_ids.map((data)=>data._id)
+          }},
+          // {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+        ]
+       }
+     ]
+   
+      
+     }
+  }
+  if(req.query.date){
+    query["$and"].push({
+      start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
+      end_time:{
+        $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+      }
+    })
   }
   
   Class.paginate(query, options, (err, results) => {
-    if(results.docs.length===0){
-      throw new Error("No CLaases Found")
-    }
     if (results) {
       res.json(responseObj(true, results, null))
     }
@@ -490,63 +475,56 @@ const getAllExams = async (req, res, next) => {
 const getTrialClasses = async (req, res, next) => {
   let query = {
     $and: [{
-      teacher_id: req.query.teacher_id,
+      teacher_id: req.user._id,
       class_type: 'Trial',
       start_time: {
-        "$gte": new Date()
-      }
+        "$gte": moment().format("YYYY-MM-DDTHH:mm:ss")
+      },
+      status: 'Pending'
     }]
   }
-  if (req.query.search) {
-    query = {
-      $and: [{
-        teacher_id: req.query.teacher_id,
-        class_type: 'Trial',
-        start_time: {
-          "$gte": new Date()
-        }, $or:
-          [
-            {
-              "subject.name": {
-                $regex: req.query.search,
-                $options: 'i'
-              }
-            }, {
-              "curriculum.name": {
-
-                $regex: req.query.search,
-                $options: 'i'
-              }
-            },
-            {
-              "grade.name": {
-
-                $regex: req.query.search,
-                $options: 'i'
-              }
-            }
-
-
-
-          ]
-
-      }]
-    }
+  if(req.query.search) {
+    let student_ids=await User.find({
+      name:{
+        $regex: req.query.search, $options: 'i' 
+      }
+      })
+      let teacher_ids=await User.find({
+        name:{
+          $regex: req.query.search, $options: 'i'
+        }
+      })
+    query["$or"] = [
+     
+      { "subject.name": { $regex: req.query.search, $options: 'i' } },
+      {"name":  {$regex: req.query.search, $options: 'i' }
+       
+      },
+      {"student_id":{
+        $in:student_ids.map((data)=>data._id)
+      }},
+      // {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+    ];
+  }
+  if(req.query.date){
+    query["$and"].push({
+      start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
+      end_time:{
+        $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+      }
+    })
   }
   let options = {
     limit: req.query.limit ? Number(req.query.limit) : 5,
     page: Number(req.query.page),
-    populate: {
-      path: "student_id",
-      select: {
-        full_name: 1
-      }
-    }
+    populate:[{
+      path:'student_id'
+    },{
+      path:"teacher_id"
+    }]
   }
   Class.paginate(query, options, (err, result) => {
-    if(result.docs.length===0){
-      return res.json(responseObj(false, [], "No Classes Found"))
-    }
+   
     res.json(responseObj(true, result, null))
   })
 }

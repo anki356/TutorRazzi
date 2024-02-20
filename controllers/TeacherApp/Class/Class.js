@@ -16,6 +16,7 @@ import { getExtraClassQuotes } from "../../Student/Class/Class.js"
 import Review from "../../../models/Review.js"
 import AcademicManager from "../../../models/AcademicManager.js"
 import { addNotifications } from "../../../util/addNotification.js"
+import User from "../../../models/User.js"
 const setReminder = async (req, res, next) => {
   const reminderResponse = await Reminder.insertMany({
     class_id: req.body.class_id,
@@ -223,9 +224,9 @@ const getPastClasses = async (req, res, next) => {
     $and: [
       {
 
-        start_time: { $lt: moment().format("YYYY-MM-DDTHH:mm:ss") },
+        start_time: { $lt:moment().format("YYYY-MM-DDTHH:mm:ss") },
       }, {
-        teacher_id: new ObjectId(req.user._id),
+        teacher_id: req.user._id,
 
       },
       {
@@ -237,71 +238,57 @@ const getPastClasses = async (req, res, next) => {
   let options = {
     limit: req.query.limit ? Number(req.query.limit) : 5,
     page: Number(req.query.page),
-   populate:{
-    "path":"student_id",
-    select:{
-      "name":1
-    }
-   }
+    populate:[{
+      path:'student_id'
+    },{
+      path:"teacher_id"
+    }]
   }
-  if (req.query.search) {
-    query = {
-      $and: [
-        {
-
-          start_time: { $lt: moment().format("YYYY-MM-DDTHH:mm:ss") },
-        }, {
-          teacher_id: new ObjectId(req.user._id),
-
-        },
-        {
-          status: 'Done'
-        }, {
-          $or: [
-            {
-              "subject.name": {
-
-                $regex: req.query.search,
-                $options: 'i'
-              }
-            }
-            , {
-              "curriculum.name": {
-
-                $regex: req.query.search,
-                $options: 'i'
-              }
-            },
-            {
-              "grade.name": {
-
-                $regex: req.query.search,
-                $options: 'i'
-              }
-            },
-            {
-              name: {
-    
-                $regex: req.query.search,
-                $options: 'i'
-              }
-            }
-
-
-
-          ]
-        },
-       
-      ]
-
-    }
-  }
+  if(req.query.search){
+    let student_ids=await User.find({
+      name:{
+        $regex: req.query.search, $options: 'i' 
+      }
+      })
+      let teacher_ids=await User.find({
+        name:{
+          $regex: req.query.search, $options: 'i'
+        }
+      })
+    query={$and:[
+      {
   
+        start_time :{$lt:moment().format("YYYY-MM-DDTHH:mm:ss")},
+      },   { teacher_id: req.user._id },
+
+      {
+        status:'Done'
+      },{
+        $or: [
+       
+          { "subject.name": { $regex: req.query.search, $options: 'i' } },
+          {"name":  {$regex: req.query.search, $options: 'i' }
+           
+          },
+          {"student_id":{
+            $in:student_ids.map((data)=>data._id)
+          }},
+          // {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+        ]
+      }
+    ]}
+    
+  }
+  if(req.query.date){
+    query["$and"].push({
+      start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
+      end_time:{
+        $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+      }
+    })
+  }
   Class.paginate(query, options, (err, result) => {
     if (result) {
-      if(result.docs.length===0){
-        return res.json(responseObj(false, result, "No Data found"))
-      }
       res.json(responseObj(true, result, null))
     }
     else {
@@ -315,18 +302,17 @@ const getRescheduledClasses = async (req, res, next) => {
   let options = {
     limit: req.query.limit ? Number(req.query.limit) : 5,
     page: Number(req.query.page),
-    populate:{
-      "path":"teacher_id",
-      select:{
-        "name":1
-      }
-    }
+    populate:[{
+      path:'student_id'
+    },{
+      path:"teacher_id"
+    }]
   }
   let query = {
     $and: [
       {
 
-        start_time: { $gte: moment().format("YYYY-MM-DDTHH:mm:ss") },
+        start_time: { $gte: moment().format("YYYY-MM-DDTHH:mm:ss")},
       }, {
         teacher_id: req.user._id,
 
@@ -337,64 +323,42 @@ const getRescheduledClasses = async (req, res, next) => {
         status: 'Pending'
       }]
   }
-  if (req.query.search) {
-    query = {
-      $and: [
-        {
-
-          start_time:  { $gte: moment().format("YYYY-MM-DDTHH:mm:ss") },
-        }, {
-          teacher_id: req.user._id,
-
-        },
-        {
-          is_rescheduled: true
-        }, {
-          status: 'Pending'
-        }, {
-          $or:
-            [
-              {
-                "subject.name": {
-                  $regex: req.query.search,
-                  $options: 'i'
-                }
-              }, {
-                "curriculum.name": {
-
-                  $regex: req.query.search,
-                  $options: 'i'
-                }
-              },
-              {
-                "grade.name": {
-
-                  $regex: req.query.search,
-                  $options: 'i'
-                }
-              },{
-                name:{
-                  $regex: req.query.search,
-                  $options: 'i'
-                }
-              }
-
-
-
-            ]
-
+  if(req.query.search) {
+    let student_ids=await User.find({
+      name:{
+        $regex: req.query.search, $options: 'i' 
+      }
+      })
+      let teacher_ids=await User.find({
+        name:{
+          $regex: req.query.search, $options: 'i'
         }
-      ]
-
-
-    }
+      })
+    query["$or"] = [
+     
+      { "subject.name": { $regex: req.query.search, $options: 'i' } },
+      {"name":  {$regex: req.query.search, $options: 'i' }
+       
+      },
+      {"student_id":{
+        $in:student_ids.map((data)=>data._id)
+      }},
+      // {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+    ];
+  }
+  if(req.query.date){
+    query["$and"].push({
+      start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
+      end_time:{
+        $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+      }
+    })
   }
   Class.paginate(query, options, (err, result) => {
+ 
     if (result) {
-      if(result.docs.length===0){
-        return res.json(responseObj(false, result, "No Data found"))
-      }
-      
+    
+    
       res.json(responseObj(true,result, null))
     }
     else {

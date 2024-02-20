@@ -33,17 +33,29 @@ const getQuotes=async (req,res,next)=>{
                 from:"classes",
                 localField:"_id",
                 foreignField:"quote_id",
+                
+               
                 as:"classes",
-                pipeline:[
-                    {
-                        $match: {
-                            "classes.scheduled": true,
-                            $expr: { $eq: [{ $size: "$classes" }, 1] }
-                        }
-                    },
-                ]
             }
         },
+        {
+            $unwind: "$classes"
+        },
+        // Group by quote to find the count of scheduled classes
+        {
+            $group: {
+                _id: "$_id",
+                class_schedule_count: { $sum: { $cond: { if: { $eq: ["$classes.status", "Scheduled"] }, then: 1, else: 0 } } },
+                schedule_status: { $first: "$schedule_status" },
+                due_date: { $first: { $cond: [ { $and: [ { $eq: ["$class_schedule_count", 1] }, { $eq: ["$schedule_status", "done"] } ] }, "$classes.end_time", null ] } },
+                subject: { $first: "$subject_curriculum_grade.subject" },
+                class_count:{
+                    $first:"$class_count"
+                }
+            }
+        },
+        // Filter documents where there's only one scheduled class left and quote status is "done"
+     
         
         // Filter classes that are scheduled and where there's just one class left
         
@@ -51,9 +63,9 @@ const getQuotes=async (req,res,next)=>{
         {
             $project: {
                 _id: 0,
-                due_date: "$classes.start_time",
+                due_date: 1,
                 class_count:1,
-                "subject_curriculum.grade.subject":1,
+                "subject":1,
                 "schedule_status":1
             }
         }

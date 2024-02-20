@@ -34,7 +34,8 @@ const getQuotes=async (req,res,next)=>{
        
     }
    let query={
-    student_id:req.query.student_id
+    student_id:req.query.student_id,
+    status:"Paid"
    }
     Quote.paginate(query,options,(err,pendingClassQuotes)=>{
 if(pendingClassQuotes.docs.length===0){

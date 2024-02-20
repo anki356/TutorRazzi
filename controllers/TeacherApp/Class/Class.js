@@ -14,6 +14,8 @@ import ResourceRequest from "../../../models/ResourceRequest.js"
 import Teacher from "../../../models/Teacher.js"
 import { getExtraClassQuotes } from "../../Student/Class/Class.js"
 import Review from "../../../models/Review.js"
+import AcademicManager from "../../../models/AcademicManager.js"
+import { addNotifications } from "../../../util/addNotification.js"
 const setReminder = async (req, res, next) => {
   const reminderResponse = await Reminder.insertMany({
     class_id: req.body.class_id,
@@ -170,9 +172,21 @@ const addTask = async (req, res, next) => {
     due_date: req.body.due_date,
   class_id:req.body.class_id})
 
+  const AcademicManangerResponse=await AcademicManager.findOne({
+    teachers:{
+         $elemMatch: {
+          $eq: req.user._id
+      }
+    }
+})
+// const classDetails=await Class.findOne({_id:req.body.class_id})
+
+  addNotifications(AcademicManangerResponse.user_id,"Task Added", "A Task has been added by "+req.user.name+" of title "+ req.body.title+" in class scheduled on "+moment(classDetails.start_time).format("DD-MM-YYYY") +" at "+ moment(classDetails.start_time).format("HH:mm") )
   
+  addNotifications(classDetails.student_id,"Task Added", "A Task has been added by "+req.user.name+" of title "+ req.body.title+" in class scheduled on "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+ moment(classDetails.start_time).format("HH:mm") )
+
   
-  res.json(responseObj(true, [], "Task Created Successfully"))
+  res.json(responseObj(true, taskResponse, "Task Created Successfully"))
 }
 const rescheduleClass=async(req,res,next)=>{
   let details=await Class.findOne({
@@ -507,7 +521,20 @@ const addHomework = async (req, res, next) => {
       class_id:req.body.class_id
     }
   )
-    
+  const AcademicManangerResponse=await AcademicManager.findOne({
+    teachers:{
+         $elemMatch: {
+          $eq: req.user._id
+      }
+    }
+})
+
+// const classDetails=await Class.findOne({_id:req.body.class_id})
+
+  addNotifications(AcademicManangerResponse.user_id,"Home Work Added", "A Homework has been added by "+req.user.name+" of title "+ req.body.title+" in class scheduled on "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+ moment(classDetails.start_time).format("HH:mm") +" of subject "+ classDetails.subject.name)
+  
+  addNotifications(classDetails.student_id,"Home Work Added", "A Homework has been added by "+req.user.name+" of title "+ req.body.title+" in class scheduled on "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+ moment(classDetails.start_time).format("HH:mm")+" of subject "+ classDetails.subject.name )
+  
   
   res.json(responseObj(true, homeworkResponse, null))
 }

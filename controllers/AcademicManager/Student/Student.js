@@ -140,16 +140,19 @@ const getStudentClassList=async(req,res)=>{
     
     let array=[]
     let quotes=await Quote.find(query,{
-        'subject_curriculum_grade':1,"class_count":1,"schedule_status":1
+        'subject_curriculum_grade':1,"class_count":1,"schedule_status":1,"due_date_class_id":1
     }).limit(limit).skip((page-1)*limit)
     console.log(quotes)
     
     for (let data of quotes) {
-        let classes = await Class.find({ quote_id: data._id, status: 'Scheduled' });
+        let classes = await Class.findOne({ _id:data?.due_date_class_id });
         let obj = data;
     
-        if (classes.length === 1) {
-            obj.due_date = classes[0].end_time;
+        if (classes!==null) {
+            obj.due_date = classes.end_time;
+        }
+        else{
+            obj.due_date=null
         }
         array.push(obj);
     }

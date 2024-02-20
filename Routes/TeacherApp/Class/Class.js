@@ -1,5 +1,5 @@
 import express from 'express'
-import { addTask, addHomework,joinClass,leaveClass, acceptRescheduledClass,getClassDetails, getRescheduledClasses, rescheduleClass, setReminder, addNotesToClass, getPastClasses, uploadClassMaterial, getClassesBasedOnDate, reviewClass, requestReUpload, scheduleClass, resolveResourceRequests, getUpcomingClassDetails, addOtherInfo } from '../../../controllers/TeacherApp/Class/Class.js'
+import { addTask, addHomework,joinClass,leaveClass, acceptRescheduledClass,getClassDetails, getRescheduledClasses, rescheduleClass, setReminder, addNotesToClass, getPastClasses, uploadClassMaterial, getClassesBasedOnDate, reviewClass, requestReUpload, scheduleClass, resolveResourceRequests, getUpcomingClassDetails, addOtherInfo, acceptClassRequest } from '../../../controllers/TeacherApp/Class/Class.js'
 import { authVerify } from '../../../controllers/TeacherApp/Auth/Auth.js'
 import upload from "../../../util/upload.js"
 import { body,param,query } from 'express-validator'
@@ -75,4 +75,6 @@ const scheduleClassValidation=[
 router.patch("/schedule-class/:_id",authVerify,scheduleClassValidation,validationError,scheduleClass)
 router.get("/upcoming-class-details",authVerify,getUpcomingClassDetails)
 router.post("/other-info",authVerify,addOtherInfo)
+router.patch("/accept-class/:_id",authVerify,acceptRescheduleValidationChain,validationError,acceptClassRequest)
+
 export default router

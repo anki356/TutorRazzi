@@ -608,7 +608,7 @@ if(req.query.parameter==='about'){
     }
   })
 }
-else if(req.query.parameter==='exp-details'){
+else if(req.query.parameter==='exp_details'){
   details=await Teacher.findOne({
     user_id:req.user._id
   },{

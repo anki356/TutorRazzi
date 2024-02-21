@@ -584,9 +584,7 @@ const getMyProfile = async (req, res, next) => {
       teacher_id:req.user._id
     })
   let totalClassesAttended=await Class.countDocuments({
-    end_time:{
-      $lte:moment().format("YYYY-MM-DDTHH:mm:ss")
-    },
+   status:'Done',
     teacher_id:req.user._id
   })
     res.json(responseObj(true, {teacherResponse:teacherResponse,ratings:reviews.length>0?reviews[0].averageRating.toFixed(2):0,progress:{classesScheduled:totalUpcomingClasses,totalClassesAttended:totalClassesAttended}}, null))

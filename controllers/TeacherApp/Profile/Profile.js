@@ -12,47 +12,25 @@ import unlinkFile from "../../../util/unlinkFile.js"
 import Testimonial from "../../../models/Testimonial.js"
 import Review from "../../../models/Review.js"
 const editProfile = async (req, res, next) => {
-//   if(req.body.delete_testimonials){
-//     const fileResponse=await Testimonial.find({
-//       _id: {$in: req.body.delete_images},
-//     },{
-//       name:1
-//     })
-// fileResponse.forEach((data)=>{
-//   unlinkFile(data.name)
-// })
-//     await Testimonial.deleteMany({_id:{$in:req.body.delete_testimonials}})
-//   }
-  if (req.files ) {
-    // let testimonialsResponse = await Testimonial.insertMany(
-    //   req.files.filter((data) => data.fieldname === "testimonials[]")
-    //     .map((data) => {
-    //       return { video: data.filename, teacher_id:req.user._id,student_id:req.body.student_id };
-    //     })
-    // )
-    let image=   req.files.filter((data) => data.fieldname === "photo")
-    if(image.length>0){
-      const imageResponse = await User.findOne({
-        _id: req.user._id
-      }, {
-        profile_image: 1
-      })
-      if (imageResponse.profile_image) {
-    
-        unlinkFile(imageResponse.profile_image)
-      }
-       await User.updateOne({
-        _id: req.user._id
-      }, {
-        $set: {
-          profile_image: image[0].filename
-        }
-      })
-    }
-   
-  
- 
+if(req.files?.length>0){
+  const imageResponse = await User.findOne({
+    _id: req.user._id
+  }, {
+    profile_image: 1
+  })
+  if (imageResponse.profile_image) {
+
+    unlinkFile(imageResponse.profile_image)
   }
+  const userResponse = await User.updateOne({
+    _id: req.user._id
+  }, {
+    $set: {
+      profile_image: req.files[0].filename
+    }
+  })
+}
+  
   const teacherResponse = await Teacher.findOneAndUpdate({
     user_id: req.user._id
   }, {
@@ -74,6 +52,7 @@ if(req.body.preferred_name){
   })
   res.json(responseObj(true, { teacherResponse, userResponse }, null))
 }
+
 const editPhoto = async (req, res, next) => {
   const imageResponse = await User.findOne({
     _id: req.user._id

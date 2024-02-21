@@ -328,7 +328,7 @@ const getRescheduledClasses = async (req, res, next) => {
       }
     }],
     select:{
-      "subject":1,"name":1,"start_time":1,"end_time":1
+      "subject":1,"name":1,"start_time":1,"end_time":1,"recheduled_by":1
     }
   }
   let query = {
@@ -342,8 +342,6 @@ const getRescheduledClasses = async (req, res, next) => {
       },
       {
         is_rescheduled: true
-      }, {
-        status: 'Pending'
       }]
   }
   if(req.query.search) {

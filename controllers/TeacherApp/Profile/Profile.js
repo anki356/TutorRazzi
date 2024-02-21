@@ -99,8 +99,7 @@ const getTrialClassesRequests = async (req, res, next) => {
       class_type: 'Trial',
       start_time: {
         $gte:new Date().toLocaleDateString()
-      },
-      status: 'Pending'
+      }
     }]
   }
   if (req.query.search) {
@@ -112,7 +111,7 @@ const getTrialClassesRequests = async (req, res, next) => {
           $gte: new Date().toLocaleDateString(),
 
         },
-        status: "Pending",
+        // status: "Pending",
         $or:
           [
             {
@@ -480,8 +479,8 @@ const getTrialClasses = async (req, res, next) => {
       class_type: 'Trial',
       start_time: {
         "$gte": moment().format("YYYY-MM-DDTHH:mm:ss")
-      },
-      status: 'Pending'
+      }
+      // status: 'Pending'
     }]
   }
   if(req.query.search) {
@@ -522,7 +521,7 @@ const getTrialClasses = async (req, res, next) => {
       path:'student_id'
     }],
     select:{
-      "subject":1,"name":1,"start_time":1,"end_time":1
+      "subject":1,"name":1,"start_time":1,"end_time":1,"status":1,"rescheduled_by":1,"is_rescheduled":1
     }
   }
   Class.paginate(query, options, (err, result) => {

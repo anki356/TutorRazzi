@@ -6,12 +6,43 @@ const ObjectId = mongoose.Types.ObjectId;
 import moment from "moment-timezone";
 import Class from "../../../models/Class.js"
 import Student from "../../../models/Student.js";
-const getWalletBalance=async(req,res,next)=>{
+const getStats=async(req,res,next)=>{
 
 const walletBalance=await Wallet.findOne({
     user_id:req.user._id
 },{amount:1})
-res.json(responseObj(true,walletBalance,null))
+const classResponse=await Class.find({teacher_id:req.user._id})
+    
+const total_earnings_response=await Payment.aggregate([
+    {
+        $match:{$and:[
+
+            {
+               class_id:{$in:classResponse.map((data)=>data._id)}
+            }
+            ,{
+                createdAt:{
+                    $gte:moment().startOf('week').subtract(1,'week').set('h',0).set('m',0).set('s',0).format("YYYY-MM-DDTHH:mm:ss"),
+                    $lte: moment().endOf('week').subtract(1,'week').add(1,'d').set('h',0).set('m',0).set('s',0).format("YYYY-MM-DDTHH:mm:ss")
+                }
+            }
+        ]
+        }
+      
+    }
+    ,
+    {
+        $group:{
+            _id:0,
+            totalEarnings:{
+$sum:"$net_amount"
+            }
+        }
+    }
+])
+const amountResponse=await Payment.find({sender_id:new ObjectId(req.user._id)},{amount:1}).sort({createdAt:-1}).limit(1)
+// res.json(responseObj(true,,null))
+res.json(responseObj(true,{walletBalance:walletBalance,total_earnings_response:total_earnings_response.length>0?total_earnings_response[0].totalEarnings*95/100:0,amountResponse:amountResponse.length>0?amountResponse[0].amount:0},null))
 }
 const withdraw=async (req,res,next)=>{
 const WalletResponse=await Wallet.findOneAndUpdate({
@@ -34,44 +65,7 @@ const PaymentResponse=await Payment.insertMany({
 })
 res.json(responseObj(true,{WalletResponse,PaymentResponse},null))
 }
-const lastWeekEarnings =async(req,res,next)=>{
-    const classResponse=await Class.find({teacher_id:req.user._id})
-    
-    const total_earnings_response=await Payment.aggregate([
-        {
-            $match:{$and:[
-  
-                {
-                   class_id:{$in:classResponse.map((data)=>data._id)}
-                }
-                ,{
-                    createdAt:{
-                        $gte:moment().startOf('week').subtract(1,'week').set('h',0).set('m',0).set('s',0).format("YYYY-MM-DDTHH:mm:ss"),
-                        $lte: moment().endOf('week').subtract(1,'week').add(1,'d').set('h',0).set('m',0).set('s',0).format("YYYY-MM-DDTHH:mm:ss")
-                    }
-                }
-            ]
-            }
-          
-        }
-        ,
-        {
-            $group:{
-                _id:0,
-                totalEarnings:{
-$sum:"$net_amount"
-                }
-            }
-        }
-    ])
-    console.log(total_earnings_response)
-    res.json(responseObj(true,total_earnings_response.length>0?total_earnings_response[0].totalEarnings*95/100:0,null))
-}
-const lastWithdrawl=async(req,res,next)=>{
 
-    const amountResponse=await Payment.find({sender_id:new ObjectId(req.user._id)},{amount:1}).sort({createdAt:-1}).limit(1)
-res.json(responseObj(true,amountResponse.length>0?amountResponse[0].amount:0,null))
-}
 const getStatement=async(req,res,next)=>{
     const classResponse=await Class.find({teacher_id:req.user._id})
     let query={
@@ -132,4 +126,4 @@ const getPaymentDetails=async(req,res,next)=>{
     })
     res.json(responseObj(true,{payment:payment,studentDetails:studentDetails},null))
  }
-export {getWalletBalance,withdraw,lastWeekEarnings,lastWithdrawl,getStatement,getPaymentDetails}
+export {getStats,withdraw,getStatement,getPaymentDetails}

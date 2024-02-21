@@ -50,9 +50,18 @@ if(req.body.preferred_name){
 
     }
   })
-  res.json(responseObj(true, { teacherResponse, userResponse }, null))
+  res.json(responseObj(true, { teacherResponse:teacherResponse, userResponse:userResponse }, null))
 }
-
+const editSubjectCurriculum=async(req,res)=>{
+  const teacherResponse = await Teacher.findOneAndUpdate({
+    user_id: req.user._id
+  }, {
+    $set: {
+      ...req.body
+    }
+  })
+  res.json(responseObj(true, { teacherResponse }, null))
+}
 const editPhoto = async (req, res, next) => {
   const imageResponse = await User.findOne({
     _id: req.user._id
@@ -617,4 +626,15 @@ else{
 }
 return res.json(responseObj(true,details,"Teacher Profile Details"))
 }
-export { getDetails,getTrialClassesRequests, editProfile, getUpcomingClasses, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain };
+const getAllCurriculums=async (req,res)=>{
+  const curriculums=await Curriculum.find({})
+  return res.json(responseObj(true,curriculums,"All Curriculums"))
+ }
+ const getSubjectCurriculum=async(req,res)=>{
+  const subject_curriculum=await SubjectCurriculum.find({
+     curriculum:req.query.curriculum
+  })
+  let subjects=subject_curriculum.map((data)=>data.subject)
+  return res.json(responseObj(true,subjects,"Subject Curriculum"))
+ }
+export {getAllCurriculums,getSubjectCurriculum,getDetails,getTrialClassesRequests, editProfile, getUpcomingClasses, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain,editSubjectCurriculum };

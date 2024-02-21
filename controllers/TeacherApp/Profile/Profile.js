@@ -147,12 +147,12 @@ const getTrialClassesRequests = async (req, res, next) => {
     populate:[{
       path:'student_id',
       select:{
-        name:1
+        "name":1
       }
     },{
       path:'teacher_id',
       select:{
-        name:1
+        "name":1
       }
     }]
   }

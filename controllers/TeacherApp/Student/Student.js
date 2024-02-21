@@ -7,11 +7,11 @@ import Exam from "../../../models/Exam.js"
 import User from "../../../models/User.js"
 const ObjectId=mongoose.Types.ObjectId
 const getBasicDetails=async (req,res,next)=>{
-    const studentResponse=await Student.findOne({user_id:new ObjectId(req.query.student_id) },{preferred_name:1,user_id:1,parent_id:1,city:1,state:1,country:1,grade:1,school:1,curriculum:1,subjects:1}).populate({path:'user_id',select:{
+    const studentResponse=await Student.findOne({user_id:new ObjectId(req.query.student_id) },{preferred_name:1,user_id:1,parent_id:1,grade:1,school:1,curriculum:1,subjects:1}).populate({path:'user_id',select:{
         email:1,mobile_number:1
     }}).populate({
         path:'parent_id',select:{
-            email:1,mobile_number:1
+            email:1,mobile_number:1,_id:0
         }
     })
     if(studentResponse===null){

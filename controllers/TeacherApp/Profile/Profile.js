@@ -589,7 +589,7 @@ const getMyProfile = async (req, res, next) => {
     },
     teacher_id:req.user._id
   })
-    res.json(responseObj(true, {teacherResponse:teacherResponse,ratings:reviews[0].averageRating,progress:{classesScheduled:totalUpcomingClasses,totalClassesAttended:totalClassesAttended}}, null))
+    res.json(responseObj(true, {teacherResponse:teacherResponse,ratings:reviews.length>0?reviews[0].averageRating:0,progress:{classesScheduled:totalUpcomingClasses,totalClassesAttended:totalClassesAttended}}, null))
   
  
 

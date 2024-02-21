@@ -84,15 +84,15 @@ const getPayments=async(req,res,next)=>{
        
 
            
-class_id:{$in:classResponse.map((data)=>data._id)}
-   
+class_id:{$in:classResponse.map((data)=>data._id)},
+   status:"Paid"
 
    }
    let options={
        limit:req.query.limit,
        page:req.query.page,
        sort:{
-           createdAt:-1
+           payment_date:-1
        },
        populate:[{
         path:'sender_id'

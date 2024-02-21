@@ -157,7 +157,7 @@ const getPaymentDetails=async(req,res,next)=>{
        }).populate({
         path:"user_id",
         select:{
-            "name":1,"profile_image":1
+            "name":1,"profile_image":1,"_id":1
         }
        })
        res.json(responseObj(true,{payment:payment,studentDetails:studentDetails},null))

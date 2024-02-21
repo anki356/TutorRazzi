@@ -834,7 +834,7 @@ throw new Error("Slot Already Booked")
 let classResponse=await Class.findOne(
 {_id:req.params._id,
 
-  rescheduled_by:req.user._id
+  rescheduled_by:'teacher'
 
 }
 )

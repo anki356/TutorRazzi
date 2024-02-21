@@ -547,7 +547,7 @@ const getMyProfile = async (req, res, next) => {
     })
     let reviews = await Review.aggregate([
         {
-            $match:{teacher_id:req.user._id
+            $match:{teacher_id:new ObjectId(req.user._id)
           
             
             }

@@ -104,9 +104,9 @@ const payQuote = async (req, res, next) => {
         other_deductions:req.body?.other_deductions,
         status:"Paid",
         trx_ref_no:req.body.trx_ref_no,
-        class_id:classInsertResponse.map((data)=>data._id)
-        
-       
+        class_id:classInsertResponse.map((data)=>data._id),
+        payment_date:moment().format("YYYY-MM-DD")
+    
     }})
 let teacherResponse=await Teacher.findOne({user_id:quoteResponse.teacher_id},{user_id:1,preferred_name:1}).populate({path:"user_id",select:{
     name:1,email:1}})

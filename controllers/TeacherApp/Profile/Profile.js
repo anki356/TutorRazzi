@@ -11,6 +11,8 @@ const ObjectId = mongoose.Types.ObjectId
 import unlinkFile from "../../../util/unlinkFile.js"
 import Testimonial from "../../../models/Testimonial.js"
 import Review from "../../../models/Review.js"
+import Curriculum from "../../../models/Curriculum.js"
+import SubjectCurriculum from "../../../models/SubjectCurriculum.js"
 const editProfile = async (req, res, next) => {
 if(req.files?.length>0){
   const imageResponse = await User.findOne({

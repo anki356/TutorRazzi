@@ -257,7 +257,10 @@ const getPastClasses = async (req, res, next) => {
     limit: req.query.limit ? Number(req.query.limit) : 5,
     page: Number(req.query.page),
     populate:[{
-      path:'student_id'
+      path:'student_id',
+      select:{
+        name:1
+      }
     }],
     select:{
       "subject":1,"name":1,"start_time":1,"end_time":1

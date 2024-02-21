@@ -651,10 +651,12 @@ const getAllCurriculums=async (req,res)=>{
 }
 const editExpDetails=async(req,res)=>{
   req.body.exp_details.forEach((data)=>{
+   
     if(data.end_year===undefined||data.end_year===null||data.end_year===''){
       data.exp=moment().year()-Number(data.start_year)
    }
    else if(Number(data.start_year)>moment().year()||Number(data.end_year)>moment().year()){
+   
     return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
  }
    else if(Number(data.end_year)>Number(data.start_year)){

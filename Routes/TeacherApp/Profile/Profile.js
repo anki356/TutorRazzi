@@ -1,7 +1,7 @@
 import express from 'express'
 const router = new express.Router()
 import upload from '../../../util/upload.js'
-import  {getTotalStudents, getTrialClassesRequests, getUpcomingClasses,overallPerformance,acceptTrialClassRequest, getTrialClasses, getMyProfile, editPhoto, editProfile, viewProfileMain, getDetails, editSubjectCurriculum, getSubjectCurriculum, getAllCurriculums} from "../../../controllers/TeacherApp/Profile/Profile.js"
+import  {getTotalStudents, getTrialClassesRequests, getUpcomingClasses,overallPerformance,acceptTrialClassRequest, getTrialClasses, getMyProfile, editPhoto, editProfile, viewProfileMain, getDetails, editSubjectCurriculum, getSubjectCurriculum, getAllCurriculums, editDegreeDetails, editExpDetails} from "../../../controllers/TeacherApp/Profile/Profile.js"
 import { authVerify } from '../../../controllers/TeacherApp/Auth/Auth.js'
 import validationError from '../../../middleware/validationError.js'
 import { body,param } from 'express-validator'
@@ -75,8 +75,8 @@ const exp_detail_validation=[
    
 ]
 router.patch("/subject-curriculum",authVerify,subject_curriculum_validation,validationError,editSubjectCurriculum)
-router.patch("/degree-details",authVerify,degree_details_validation,validationError,editSubjectCurriculum)
-router.patch("/exp-details",authVerify,exp_detail_validation,validationError,editSubjectCurriculum)
+router.patch("/degree-details",authVerify,degree_details_validation,validationError,editDegreeDetails)
+router.patch("/exp-details",authVerify,exp_detail_validation,validationError,editExpDetails)
 
 router.patch("/profile",authVerify,editProfileValidation,validationError,editProfile)
 export default router

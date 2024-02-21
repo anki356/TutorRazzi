@@ -159,7 +159,7 @@ user_id:req.user._id
     if(req.body.amount>WalletResponse.amount){
         return res.json(responseObj(false,"You cannot withdraw amount greater than your balance",null))
     }
-    if(req.body.amount=0){
+    if(req.body.amount===0){
         return res.json(responseObj(false,"You cannot withdraw 0 amount",null))
     }
     WalletResponse=await Wallet.findOneAndUpdate({

@@ -15,7 +15,7 @@ const DegreeDetailSchema=new mongoose.Schema({
     },
         college:{
 type:String,
-reuired:true
+required:true
         }, createdAt: {
             type: String,
             default:()=> moment().format("YYYY-MM-DDTHH:mm"),

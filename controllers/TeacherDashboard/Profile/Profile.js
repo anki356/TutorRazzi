@@ -104,9 +104,13 @@ const completeProfile=async(req,res)=>{
    else if(Number(data.end_year)>Number(data.start_year)){
       data.exp=Number(data.end_year)-Number(data.start_year)
    }
+   else if(Number(data.start_year)>moment().year()||Number(data.end_year)>moment().year()){
+      return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
+   }
    else{
       return res.json(responseObj(false ,null,"end_year should be greater than start_year"))
    }
+   
    
    
   })

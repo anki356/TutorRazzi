@@ -45,8 +45,38 @@ router.get("/trial-classes",authVerify,getTrialClasses)
 router.get("/my-profile",authVerify,getMyProfile)
 router.get("/view-main-profile",authVerify,viewProfileMain)
 router.get("/details",authVerify,getDetails)
+const degree_details_validation=[
+    body('degree').isArray().withMessage('Degree Details must be an array'),
 
+    // Custom validation for each subject in the array
+    body('degree.*.name')
+      .trim()
+      .notEmpty().withMessage('Degree Detail name is required'),
+      
+  
+    // Custom validation for each curriculum in the array
+    body('degree.*.start_year')
+      .trim()
+      .notEmpty().withMessage('Start Year is required') ,
+      body('degree.*.college')
+      .trim()
+      .notEmpty().withMessage('College is required')   
+]
+const exp_detail_validation=[
+    body('exp_details').isArray().withMessage('Exp Detail must be an array'),
+
+    // Custom validation for each subject in the array
+    body('exp_details.*.start_year')
+      .trim()
+      .notEmpty().withMessage('Start Year is required'),
+      
+  
+    // Custom validation for each curriculum in the array
+   
+]
 router.patch("/subject-curriculum",authVerify,subject_curriculum_validation,validationError,editSubjectCurriculum)
+router.patch("/degree-details",authVerify,degree_details_validation,validationError,editSubjectCurriculum)
+router.patch("/exp-details",authVerify,exp_detail_validation,validationError,editSubjectCurriculum)
 
 router.patch("/profile",authVerify,editProfileValidation,validationError,editProfile)
 export default router

@@ -639,4 +639,38 @@ const getAllCurriculums=async (req,res)=>{
   let subjects=subject_curriculum.map((data)=>data.subject)
   return res.json(responseObj(true,subjects,"Subject Curriculum"))
  }
-export {getAllCurriculums,getSubjectCurriculum,getDetails,getTrialClassesRequests, editProfile, getUpcomingClasses, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain,editSubjectCurriculum };
+ const editDegreeDetails=async(req,res)=>{
+  const teacherResponse = await Teacher.findOneAndUpdate({
+    user_id: req.user._id
+  }, {
+    $set: {
+      ...req.body
+    }
+  })
+  res.json(responseObj(true, { teacherResponse }, null))
+}
+const editExpDetails=async(req,res)=>{
+  req.body.exp_details.forEach((data)=>{
+    if(data.end_year===undefined||data.end_year===null||data.end_year===''){
+      data.exp=moment().year()-Number(data.start_year)
+   }
+   else if(Number(data.end_year)>Number(data.start_year)){
+      data.exp=Number(data.end_year)-Number(data.start_year)
+   }
+   else if(Number(data.start_year)>moment().year()||Number(data.end_year)>moment().year()){
+      return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
+   }
+   else{
+      return res.json(responseObj(false ,null,"end_year should be greater than start_year"))
+   }
+  })
+  const teacherResponse = await Teacher.findOneAndUpdate({
+    user_id: req.user._id
+  }, {
+    $set: {
+      ...req.body
+    }
+  })
+  res.json(responseObj(true, { teacherResponse }, null))
+}
+export {editDegreeDetails,editExpDetails,getAllCurriculums,getSubjectCurriculum,getDetails,getTrialClassesRequests, editProfile, getUpcomingClasses, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain,editSubjectCurriculum };

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import moment from "moment";
 import paginate from "mongoose-aggregate-paginate-v2";
-import Report from "./Report";
+import Report from "./Report.js";
 const MonthlyReportSchema=new mongoose.Schema({
     student_id:{
         type:mongoose.Schema.Types.ObjectId,

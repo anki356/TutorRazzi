@@ -73,14 +73,28 @@ PaymentSchema.virtual('class_count').get(function () {
     }
 })
 PaymentSchema.virtual('payment_date_string').get(function () {
-    if(this.payment_date!==undefined&&this.payment_date!==null){
-        return moment(this.payment_date).format("DD-MM-YYYY")
+    if(this.payment_date!==undefined&&this.payment_date!==null&& this.payment_type!==null&&this.createdAt!==null){
+        if(this.payment_type==='Credit'){
+
+            return moment(this.payment_date).format("DD-MM-YYYY")
+        }
+        else{
+            return moment(this.createdAt).format("DD-MM-YYYY")
+
+        }
     }
 })
 PaymentSchema.virtual('payment_time_string').get(function () {
-    if(this.payment_date!==undefined&&this.payment_date!==null){
-        return moment(this.payment_date).format("HH:mm:ss")
+    if(this.payment_date!==undefined&&this.payment_date!==null&& this.payment_type!==null&&this.createdAt!==null){
+        if(this.payment_type==='Credit'){
+
+            return moment(this.payment_date).format("HH:mm:ss")        }
+        else{
+            return moment(this.createdAt).format("HH:mm:ss")
+
+        }
     }
+   
 })
 
 

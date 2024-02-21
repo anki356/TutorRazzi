@@ -84,7 +84,10 @@ const getStatement=async(req,res,next)=>{
         },
         populate:[{path:'quote_id',select:{
          'subject_curriculum_grade.subject':1
-        }}]
+        }}],
+        select:{
+            "net_amount":1,"payment_type":1,"payment_date":1,"createdAt":1
+        }
     }
     
  Payment.paginate(query,options,(err,paymentResponse)=>{

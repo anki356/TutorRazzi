@@ -112,7 +112,21 @@ other_information:{
 })
 ClassSchema.set('toJSON', { virtuals: true });
 
-
+ClassSchema.virtual('start_date').get(function () {
+    if(this.start_time!==undefined&&this.start_time!==null){
+        return moment(this.start_time).format("DD-MM-YYYY")
+    }
+})
+ClassSchema.virtual('start_time_string').get(function () {
+    if(this.start_time!==undefined&&this.start_time!==null){
+        return moment(this.start_time).format("HH:mm:ss")
+    }
+})
+ClassSchema.virtual('end_time_string').get(function () {
+    if(this.end_time!==undefined&&this.end_time!==null){
+        return moment(this.end_time).format("HH:mm:ss")
+    }
+})
 ClassSchema.virtual('time_left').get(function () {
     if (this.status!==undefined&&this.status !=='Done'&&this.status!=='Cancelled'&&this.end_time!==undefined) {
         const end_time = moment(this.end_time);

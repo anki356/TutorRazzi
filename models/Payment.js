@@ -72,5 +72,16 @@ PaymentSchema.virtual('class_count').get(function () {
         return this.class_id.length
     }
 })
+PaymentSchema.virtual('payment_date_string').get(function () {
+    if(this.payment_date!==undefined&&this.payment_date!==null){
+        return moment(this.payment_date).format("DD-MM-YYYY")
+    }
+})
+PaymentSchema.virtual('payment_time_string').get(function () {
+    if(this.payment_date!==undefined&&this.payment_date!==null){
+        return moment(this.payment_date).format("HH:mm:ss")
+    }
+})
+
 
 export default mongoose.model("Payment", PaymentSchema)

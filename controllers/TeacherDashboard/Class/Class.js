@@ -510,6 +510,12 @@ let taskResponse=await Task.find({
     return   res.json(responseObj(true, {response,classResponse}, "Class Left"))
   }
   const addTask = async (req, res, next) => {
+    const classDetails=await Class.findOne({_id:req.body.class_id,end_time:{
+      $lte:moment().format("YYYY-MM-DDTHH:mm:ss")
+    }})
+    if(classDetails===null){
+      return res.json(responseObj(fasle,null,"Invalid Class Id"))
+    }
     let taskResponse = await Task.create({
       title: req.body.title,
       description: req.body.description,
@@ -522,7 +528,7 @@ let taskResponse=await Task.find({
         }
       }
   })
-  const classDetails=await Class.findOne({_id:req.body.class_id})
+  // const classDetails=await Class.findOne({_id:req.body.class_id})
   
     addNotifications(AcademicManangerResponse.user_id,"Task Added", "A Task has been added by "+req.user.name+" of title "+ req.body.title+" in class done on "+moment(classDetails.start_time).format("ll") +" at "+ moment(classDetails.start_time).format("HH:mm")+" of subject "+ classDetails.subject.name )
     
@@ -530,7 +536,12 @@ let taskResponse=await Task.find({
     res.json(responseObj(true, taskResponse, "Task Created Successfully"))
   }
   const addHomework = async (req, res, next) => {
-  
+    const classDetails=await Class.findOne({_id:req.body.class_id,end_time:{
+      $lte:moment().format("YYYY-MM-DDTHH:mm:ss")
+    }})
+    if(classDetails===null){
+      return res.json(responseObj(fasle,null,"Invalid Class Id"))
+    }
     let homeworkResponse=await HomeWork.create(
        {title: req.body.title,
          description: req.body.description,
@@ -546,7 +557,7 @@ let taskResponse=await Task.find({
       }
   })
   
-  const classDetails=await Class.findOne({_id:req.body.class_id})
+  // const classDetails=await Class.findOne({_id:req.body.class_id})
 
     addNotifications(AcademicManangerResponse.user_id,"Home Work Added", "A Homework has been added by "+req.user.name+" of title "+ req.body.title+" in class scheduled on "+moment(classDetails.start_time).format("DD-MM-YYYY")+" at "+ moment(classDetails.start_time).format("HH:mm") +" of subject "+ classDetails.subject.name)
     

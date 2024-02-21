@@ -162,7 +162,10 @@ return res.json(responseObj(false,null,"Class Not Valid"))
 }
 const addTask = async (req, res, next) => {
   let classDetails=await Class.findOne({
-    _id:req.body.class_id
+    _id : req.body.class_id,
+    end_time:{
+      $lte:moment().format("YYYY-MM-DDTHH:mm:ss")
+    }
   })
   if(classDetails===null){
     throw new Error("No class Found")
@@ -495,7 +498,10 @@ const leaveClass = async (req, res, next) => {
 }
 const addHomework = async (req, res, next) => {
   let classDetails=await Class.findOne({
-    _id : req.body.class_id
+    _id : req.body.class_id,
+    end_time:{
+      $lte:moment().format("YYYY-MM-DDTHH:mm:ss")
+    }
   })
   if(classDetails===null){
     throw new Error("Incorrect Class ID")

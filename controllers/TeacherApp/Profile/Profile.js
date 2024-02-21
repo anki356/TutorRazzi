@@ -10,6 +10,7 @@ import User from "../../../models/User.js"
 const ObjectId = mongoose.Types.ObjectId
 import unlinkFile from "../../../util/unlinkFile.js"
 import Testimonial from "../../../models/Testimonial.js"
+import Review from "../../../models/Review.js"
 const editProfile = async (req, res, next) => {
 //   if(req.body.delete_testimonials){
 //     const fileResponse=await Testimonial.find({
@@ -537,9 +538,58 @@ const getTrialClasses = async (req, res, next) => {
 const getMyProfile = async (req, res, next) => {
  
 
-    const teacherResponse = await Teacher.find({ user_id: req.user._id}).populate({ path: 'user_id' })
-    const testimonialResponse=await Testimonial.find({teacher_id:req.user._id})
-    res.json(responseObj(true, {teacherResponse:teacherResponse,testimonialResponse:testimonialResponse}, null))
+    const teacherResponse = await Teacher.find({ user_id: req.user._id},{
+      city:1,country:1
+    }).populate({ path: 'user_id' },{
+      select:{
+        name:1,profile_image:1
+      }
+    })
+    let reviews = await Review.aggregate([
+        {
+            $match:{teacher_id:req.user._id
+          
+            
+            }
+        },
+        {
+            $lookup: {
+                from: "teachers",
+                localField: "teacher_id",
+                foreignField: "user_id",
+                as: "teachers"
+            }
+        },
+        {
+            $group: {
+                _id: '$teacher_id', // Group reviews by teacher
+                averageRating: { $avg: '$rating' }, // Calculate the average rating for each teacher,
+               
+                // no_of_reviews:{$sum:1},
+                
+            },
+        },
+        {
+            $project:{
+                _id:1,
+                averageRating:1,
+                // no_of_reviews:1
+            }
+        }
+    ])
+    let totalUpcomingClasses=await Class.countDocuments({
+      start_time:{
+        $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
+      },
+      teacher_id:req.user._id
+    })
+  let totalClassesAttended=await Class.countDocuments({
+    end_time:{
+      $lte:moment().format("YYYY-MM-DDTHH:mm:ss")
+    },
+    teacher_id:req.user._id
+  })
+    res.json(responseObj(true, {teacherResponse:teacherResponse,ratings:reviews[0].averageRating,progress:{classesScheduled:totalUpcomingClasses,totalClassesAttended:totalClassesAttended}}, null))
   
  
 

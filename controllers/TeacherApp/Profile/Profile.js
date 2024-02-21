@@ -228,7 +228,9 @@ const getUpcomingClasses = async (req, res, next) => {
       }
     })
   }
-  
+  if(req.query.student_id){
+    query.student_id=req.query.student_id
+  }
   Class.paginate(query, options, (err, results) => {
     if (results) {
       res.json(responseObj(true, results, null))

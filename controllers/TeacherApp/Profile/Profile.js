@@ -654,12 +654,13 @@ const editExpDetails=async(req,res)=>{
     if(data.end_year===undefined||data.end_year===null||data.end_year===''){
       data.exp=moment().year()-Number(data.start_year)
    }
+   else if(Number(data.start_year)>moment().year()||Number(data.end_year)>moment().year()){
+    return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
+ }
    else if(Number(data.end_year)>Number(data.start_year)){
       data.exp=Number(data.end_year)-Number(data.start_year)
    }
-   else if(Number(data.start_year)>moment().year()||Number(data.end_year)>moment().year()){
-      return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
-   }
+   
    else{
       return res.json(responseObj(false ,null,"end_year should be greater than start_year"))
    }
@@ -671,6 +672,6 @@ const editExpDetails=async(req,res)=>{
       ...req.body
     }
   })
-  res.json(responseObj(true, { teacherResponse }, null))
+  return res.json(responseObj(true, { teacherResponse }, null))
 }
 export {editDegreeDetails,editExpDetails,getAllCurriculums,getSubjectCurriculum,getDetails,getTrialClassesRequests, editProfile, getUpcomingClasses, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain,editSubjectCurriculum };

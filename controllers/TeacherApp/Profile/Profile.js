@@ -606,4 +606,36 @@ const viewProfileMain=async(req,res)=>{
 return res.json(responseObj(true,mainDetails,"Profile Main Details"))
 
 }
-export { getTrialClassesRequests, editProfile, getUpcomingClasses, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain };
+const getDetails=async(req,res)=>{
+  let details
+if(req.query.parameter==='about'){
+  details=await Teacher.findOne({
+    user_id:req.user._id
+  },{
+    "preferred_name":1,"city":1,"state":1,"country":1,"degree":1,"subject_curriculum":1
+  }).populate({
+    path:"user_id",
+    select:{
+      "email":1,"mobile_number":1
+    }
+  })
+}
+else if(req.query.parameter==='exp-details'){
+  details=await Teacher.findOne({
+    user_id:req.user._id
+  },{
+    "exp_details":1
+  }) 
+
+}
+else if(req.query.parameter==='testimonials'){
+details=await Testimonial.find({
+  teacher_id:req.user._id
+})
+}
+else{
+  return res.json(responseObj(false,null,"Please Specify Parameter"))
+}
+return res.json(responseObj(true,details,"Teacher Profile Details"))
+}
+export { getDetails,getTrialClassesRequests, editProfile, getUpcomingClasses, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain };

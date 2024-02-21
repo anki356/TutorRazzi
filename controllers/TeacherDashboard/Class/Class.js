@@ -444,7 +444,8 @@ let taskResponse=await Task.find({
   
   let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id})
   let resource_requests=await ResourceRequest.find({
-    class_id:req.query.class_id
+    class_id:req.query.class_id,
+    status:'Pending'
   })
  let ratings=await Review.findOne({
   class_id:req.query.class_id,

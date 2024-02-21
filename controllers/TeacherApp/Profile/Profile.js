@@ -535,7 +535,7 @@ const getMyProfile = async (req, res, next) => {
 
     const teacherResponse = await Teacher.find({ user_id: req.user._id}).populate({ path: 'user_id' })
     const testimonialResponse=await Testimonial.find({teacher_id:req.user._id})
-    res.json(responseObj(true, {teacherResponse,testimonialResponse}, null))
+    res.json(responseObj(true, {teacherResponse:teacherResponse,testimonialResponse:testimonialResponse}, null))
   
  
 

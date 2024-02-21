@@ -20,8 +20,7 @@ const addSupport=async (req,res,next)=>{
         subject:req.body.title,
         description:req.body.description,
         status:"Pending",
-        document_id:req.files?.length>0?documentResponse._id:null,
-category:req.body.category
+        document_id:req.files?.length>0?documentResponse._id:null
     })
     await SupportResponses.create({
         support_id:supportResponse._id,

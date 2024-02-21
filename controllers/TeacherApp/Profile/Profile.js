@@ -540,7 +540,7 @@ const getMyProfile = async (req, res, next) => {
 
     const teacherResponse = await Teacher.find({ user_id: req.user._id},{
       city:1,country:1
-    }).populate({ path: 'user_id' },{
+    }).populate({ path: 'user_id' ,
       select:{
         name:1,profile_image:1
       }

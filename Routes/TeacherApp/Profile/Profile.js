@@ -1,7 +1,7 @@
 import express from 'express'
 const router = new express.Router()
 import upload from '../../../util/upload.js'
-import  {getTotalStudents, getTrialClassesRequests, getUpcomingClasses,overallPerformance,acceptTrialClassRequest, getTrialClasses, getMyProfile, editPhoto, editProfile} from "../../../controllers/TeacherApp/Profile/Profile.js"
+import  {getTotalStudents, getTrialClassesRequests, getUpcomingClasses,overallPerformance,acceptTrialClassRequest, getTrialClasses, getMyProfile, editPhoto, editProfile, viewProfileMain} from "../../../controllers/TeacherApp/Profile/Profile.js"
 import { authVerify } from '../../../controllers/TeacherApp/Auth/Auth.js'
 import validationError from '../../../middleware/validationError.js'
 import { body,param } from 'express-validator'
@@ -18,6 +18,7 @@ router.patch("/accept-trial-class/:_id",authVerify,acceptRescheduleValidationCha
 router.get("/get-all-exams",authVerify,getAllExams)
 router.get("/trial-classes",authVerify,getTrialClasses)
 router.get("/my-profile",authVerify,getMyProfile)
+router.get("/view-main-profile",authVerify,viewProfileMain)
 
 
 router.patch("/profile",authVerify,editProfile)

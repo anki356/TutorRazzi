@@ -595,4 +595,17 @@ const getMyProfile = async (req, res, next) => {
 
   
 }
-export { getTrialClassesRequests, editProfile, getUpcomingClasses, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto };
+const viewProfileMain=async(req,res)=>{
+  const mainDetails=await Teacher.findOne({
+    user_id:req.user._id
+  },{
+    "bio":1,"exp_details":1
+  }).populate({
+    path:"user_id",select:{
+      "name":1,"profile_image":1
+    }
+  })
+return res.json(responseObj(true,mainDetails,"Profile Main Details"))
+
+}
+export { getTrialClassesRequests, editProfile, getUpcomingClasses, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain };

@@ -42,7 +42,7 @@ $sum:"$net_amount"
 ])
 const amountResponse=await Payment.find({sender_id:new ObjectId(req.user._id)},{amount:1}).sort({createdAt:-1}).limit(1)
 // res.json(responseObj(true,,null))
-res.json(responseObj(true,{walletBalance:walletBalance,total_earnings_response:total_earnings_response.length>0?total_earnings_response[0].totalEarnings*95/100:0,amountResponse:amountResponse.length>0?amountResponse[0].amount:0},null))
+res.json(responseObj(true,{walletBalance:walletBalance,"last_week_earnings":total_earnings_response.length>0?total_earnings_response[0].totalEarnings*95/100:0,"last_withdrawl":amountResponse.length>0?amountResponse[0].amount:0},null))
 }
 const withdraw=async (req,res,next)=>{
 const WalletResponse=await Wallet.findOneAndUpdate({

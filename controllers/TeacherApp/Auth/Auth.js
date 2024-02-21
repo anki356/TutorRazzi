@@ -46,10 +46,13 @@ const SignIn=async(req,res,next)=>{
     const isTeacher=await Teacher.findOne({
         user_id:user._id
     })
+    if(isTeacher===null){
+        return res.json(responseObj(false,null,"Profile Incomplete.Please complete from dashboard"))
+    }
     res.json(responseObj(true,{
         access_token:token,
         user:user,
-        isTeacher:isTeacher!==null
+      
         
     },"Successful Login") )
 }

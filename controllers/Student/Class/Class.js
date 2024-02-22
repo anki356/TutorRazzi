@@ -624,7 +624,7 @@ const acceptClassRequest = async (req, res, next) => {
   });
 
   const AcademicManangerResponse=await AcademicManager.findOne({
-    teachers:{
+    students:{
          $elemMatch: {
               $eq: req.user._id
           }

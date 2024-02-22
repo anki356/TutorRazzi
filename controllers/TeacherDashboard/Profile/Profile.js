@@ -45,8 +45,10 @@ const getUserProfile=async(req,res)=>{
 ifsc_code:1,
 account_number: 1,
  })
- 
-    return res.json(responseObj(true,{profile_image:profile_image_details.profile_image_url,education_details:education_details.degree,experience_details:experience_details.exp_details,teacherPersonalDetails:teacherPersonalDetails,subject_curriculums:subject_curriculums.subject_curriculum,bank_details},"User Details"))
+ const testimonials=await Testimonial.find({
+   teacher_id:req.user._id
+ })
+    return res.json(responseObj(true,{testimonials:testimonials,profile_image:profile_image_details.profile_image_url,education_details:education_details.degree,experience_details:experience_details.exp_details,teacherPersonalDetails:teacherPersonalDetails,subject_curriculums:subject_curriculums.subject_curriculum,bank_details},"User Details"))
 }
 const getTestimonialsOfTeacher=async(req,res)=>{
    let query={teacher_id:req.user._id}

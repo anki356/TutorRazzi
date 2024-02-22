@@ -251,8 +251,7 @@ const getTrialClassesRequests = async (req, res, next) => {
       class_type: 'Trial',
       start_time: {
         "$gte": moment().format("YYYY-MM-DDTHH:mm:ss")
-      },
-      status: 'Pending'
+      }
     }]
   }
   if(req.query.search) {

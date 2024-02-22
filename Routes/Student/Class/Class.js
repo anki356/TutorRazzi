@@ -1,5 +1,5 @@
 import express from 'express'
-import { getClassDetails, requestTrialClass,rescheduleClass,getPurchasedClasses, reviewClass,raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass,  uploadHomework, getQuotes, scheduleClass, requestExtraclass, getExtraClassQuotes, getPurchasedClassesByQuoteId, likeClass, getLastTrialClass, dislikeClass, getClassesBasedOnDate, getUpcomingClassDetails } from '../../../controllers/Student/Class/Class.js'
+import { getClassDetails, requestTrialClass,rescheduleClass,getPurchasedClasses, reviewClass,raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass,  uploadHomework, getQuotes, scheduleClass, requestExtraclass, getExtraClassQuotes, getPurchasedClassesByQuoteId, likeClass, getLastTrialClass, dislikeClass, getClassesBasedOnDate, getUpcomingClassDetails, acceptClassRequest } from '../../../controllers/Student/Class/Class.js'
 import { authVerify } from '../../../controllers/Student/Auth/Auth.js'
 import { addHomework, setReminder } from '../../../controllers/TeacherApp/Class/Class.js'
 import upload from "../../../util/upload.js"
@@ -84,4 +84,5 @@ const dateValidationChain=[
 ]
 router.get("/classes-by-date",authVerify,dateValidationChain,validationError,getClassesBasedOnDate)
 router.get("/upcoming-class-details",authVerify,getUpcomingClassDetails)
+router.post("/accept-class",authVerify,acceptClassRequest)
 export default router

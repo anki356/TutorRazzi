@@ -373,14 +373,17 @@ addNotifications(AcademicManangerResponse.user_id,"Resource Requested ",`${req.u
 
 const joinClass = async (req, res, next) => {
     let classResponse = await Class.findOne({
-        _id: req.body.class_id
+        _id: req.body.class_id,
+        student_id:req.user._id
     }, {
         start_time: 1,
         end_time: 1,
         teacher_id:1,
         subject:1
     })
-
+if(classResponse===null){
+    return res.json(responseObj(false,null,"Invalid Class"))
+}
     if (!moment().isBetween(moment(classResponse.start_time), moment(classResponse.end_time))) {
         throw new Error('You cannot Join Class at this time')
     }
@@ -538,7 +541,16 @@ year:moment().year(),
         class_id: req.body.class_id,
 
     })
-return res.json(responseObj(true, attendanceResponse, "Class Joined"))
+
+    axios.post(`https://api.dyte.io/v2
+    /meetings/${classResponse.meeting_id}/participants`,{preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+        headers:{
+            Authorization: "Basic 6894d463-40a7-4240-93dc-bb30ef741dbd:ac00320ed5f57433dfa8"
+        }
+    }).then((response)=>{
+        return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data}, "Class Joined"))
+    })
+
 
 }
 
@@ -934,4 +946,4 @@ const getClassesBasedOnDate=async (req,res)=>{
     let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
     res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,teacherDetails:teacherDetails }, null))
   }
-export { getUpcomingClassDetails,getClassesBasedOnDate,dislikeClass, getLastTrialClass, likeClass, setReminder, getExtraClassQuotes, requestExtraclass,  uploadHomework, scheduleClass, requestTrialClass, getClassDetails, rescheduleClass, reviewClass, raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass, getQuotes, getPurchasedClasses, getPurchasedClassesByQuoteId }
+export {acceptClassRequest, getUpcomingClassDetails,getClassesBasedOnDate,dislikeClass, getLastTrialClass, likeClass, setReminder, getExtraClassQuotes, requestExtraclass,  uploadHomework, scheduleClass, requestTrialClass, getClassDetails, rescheduleClass, reviewClass, raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass, getQuotes, getPurchasedClasses, getPurchasedClassesByQuoteId }

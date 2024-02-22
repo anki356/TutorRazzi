@@ -608,7 +608,7 @@ const acceptClassRequest = async (req, res, next) => {
   let classResponse=await Class.findOne(
   {_id:req.params._id,
   
-    rescheduled_by:'teacher'
+    rescheduled_by:'student'
   
   }
   )

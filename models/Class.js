@@ -106,7 +106,7 @@ other_information:{
     type:String
 },
 meeting_id:{
-    type:string
+    type:String
 }
    
 },{

@@ -642,18 +642,19 @@ const acceptClassRequest = async (req, res, next) => {
         meeting_id:response.data.id
     }
    })
-  })
-  
-  // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
-  
-  
-    addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" on "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+ " at "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
+   addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" on "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+ " at "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
   
     addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+ " at "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
   
   return res.json(responseObj(true,null,"Accepted Rescheduled Request"))
   
   
+  })
+  
+  // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
+  
+  
+    
     
   
   

@@ -84,5 +84,5 @@ const dateValidationChain=[
 ]
 router.get("/classes-by-date",authVerify,dateValidationChain,validationError,getClassesBasedOnDate)
 router.get("/upcoming-class-details",authVerify,getUpcomingClassDetails)
-router.post("/accept-class",authVerify,acceptClassRequest)
+router.patch("/accept-class/:_id",authVerify,acceptClassRequest)
 export default router

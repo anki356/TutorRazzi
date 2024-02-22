@@ -272,13 +272,18 @@ let options = {
 let query = {
   student_id: { $in: academicManagerResponse.students },
   teacher_id: { $in: academicManagerResponse.teachers },
-  class_type: "Trial"
+  class_type: "Trial",
+  status:"Pending",
+  start_time:{
+    $gte: moment().format("YYYY-MM-DDTHH:mm:ss"),
+  }
+  
 };
 
 if(req.query.date) {
   query["start_time"] = {
-    $gte: moment(req.query.date).format("YYYY-MM-DD"),
-    $lt: moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+    $gte: moment(req.query.date).format("YYYY-MM-DDTHH:mm:ss"),
+    $lt: moment(req.query.date).add(1,'d').format("YYYY-MM-DDTHH:mm:ss")
   }
 }
 
@@ -348,7 +353,8 @@ const getRescheduledClasses=async (req, res) => {
         is_rescheduled:true,
         start_time:{
           $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
-        }
+        },
+        status:"Pending"
 
     }
   

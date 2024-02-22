@@ -104,6 +104,9 @@ required:true
     },
 other_information:{
     type:String
+},
+meeting_id:{
+    type:string
 }
    
 },{

@@ -345,7 +345,9 @@ const getRescheduledClasses = async (req, res, next) => {
       },
       {
         is_rescheduled: true
-      }]
+      },
+   { status:"Pending"}
+    ]
   }
   if(req.query.search) {
     let student_ids=await User.find({

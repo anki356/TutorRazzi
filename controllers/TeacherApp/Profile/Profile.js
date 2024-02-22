@@ -90,7 +90,8 @@ const getTrialClassesRequests = async (req, res, next) => {
       class_type: 'Trial',
       start_time: {
         $gte:new Date().toLocaleDateString()
-      }
+      },
+      status:"Pending"
     }]
   }
   if (req.query.search) {

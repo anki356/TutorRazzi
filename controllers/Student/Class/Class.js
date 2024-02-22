@@ -24,6 +24,7 @@ import { addNotifications } from "../../../util/addNotification.js"
 import User from "../../../models/User.js"
 import Report from "../../../models/Report.js"
 import AcademicManager from "../../../models/AcademicManager.js"
+import axios from "axios"
 
 const dislikeClass = async (req, res, next) => {
 
@@ -569,6 +570,82 @@ const setReminder = async (req, res, next) => {
     })
     res.json(responseObj(true, reminderResponse, "Reminder Created Successfully"))
 }
+
+const acceptClassRequest = async (req, res, next) => {
+    let details=await Class.findOne({_id:req.params._id})
+  
+    let classDetails= await Class.find({
+      $and: [   { start_time:{$gte:details.start_time}},
+        {start_time:{
+          $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+        }},
+        {end_time:{$gte:details.start_time}},
+        {end_time:{
+          $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+        }},{$or:[{
+      teacher_id:req.user._id
+  },{
+      student_id:details.student_id
+  }]},{
+    status:"Scheduled"
+  }]})
+  if(classDetails.length!==0){
+  throw new Error("Slot Already Booked")
+     
+  }
+  let classResponse=await Class.findOne(
+  {_id:req.params._id,
+  
+    rescheduled_by:'teacher'
+  
+  }
+  )
+  
+  if(classResponse!==null){
+  throw new Error("You can't Accept your own Reschedule request.")
+  }
+  let rescheduleacceptResponse=await Class.findOneAndUpdate({_id:req.params._id},{
+  $set:{
+     
+  status:'Scheduled'
+  }
+  });
+
+  const AcademicManangerResponse=await AcademicManager.findOne({
+    teachers:{
+         $elemMatch: {
+              $eq: req.user._id
+          }
+    }
+  })
+  axios.post("https://api.dyte.io/v2/meetings",{ record_on_start:true},{
+    headers:{
+        Authorization: "Basic 6894d463-40a7-4240-93dc-bb30ef741dbd:ac00320ed5f57433dfa8"
+    }
+  }).then(async(response)=>{
+   await Class.updateOne({
+    _id:req.params._id
+   },{
+    $set:{
+        meeting_id:response.data.id
+    }
+   })
+  })
+  
+  // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
+  
+  
+    addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" on "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+ " at "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
+  
+    addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+ " at "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
+  
+  return res.json(responseObj(true,null,"Accepted Rescheduled Request"))
+  
+  
+    
+  
+  
+  }
 
 const acceptRescheduledClass = async (req, res, next) => {
 let classDetails=await Class.findOne({

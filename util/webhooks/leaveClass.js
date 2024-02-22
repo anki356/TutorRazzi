@@ -6,19 +6,15 @@ import User from "../../models/User.js";
 const leaveClass = async (data) => {
    
  console.log(data.body)
-await Class.updateOne({
+const classDetails=await Class.findOne({
     meeting_id:data.body.meeting.id
-},{
-    $set:{
-        status:'Done'
-    }
 })
 const user_id=await User.findOne({
 email:data.body.participant.customParticipantId
 })
 if(user_id.role==='student'){
     let response = await Attendance.findOneAndUpdate({
-        class_id: req.body.class_id,
+        class_id: classDetails._id,
         student_id: user_id._id
     }, {
         $set: {
@@ -28,7 +24,7 @@ if(user_id.role==='student'){
 }
 else if(user_id.role==='teacher'){
     let response = await Attendance.findOneAndUpdate({
-        class_id: req.body.class_id,
+        class_id: classDetails._id,
         teacher_id: user_id._id
     }, {
         $set: {
@@ -37,5 +33,17 @@ else if(user_id.role==='teacher'){
     })
 }
 
+
 }
-export{leaveClass}
+const meetingEnded=async()=>{
+    console.log(data.body)
+
+    await Class.updateOne({
+        meeting_id:data.body.meeting.id
+    },{
+        $set:{
+            status:'Done'
+        }
+    })
+}
+export{leaveClass,meetingEnded}

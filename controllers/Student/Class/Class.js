@@ -511,13 +511,15 @@ sub_title:"Subject Knowledge and Understanding",
             meeting_id:response.data.id
         }
        })
-       axios.post(`https://api.dyte.io/v2
-       /meetings/${response.data.id}/participants`,{preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+       
+       axios.post(`https://api.dyte.io/v2/meetings/${response.data.data.id}/participants`,{preset_name:'group_call_participant',custom_participant_id:req.user.email},{
            headers:{
-               Authorization: "Basic 6894d463-40a7-4240-93dc-bb30ef741dbd:ac00320ed5f57433dfa8"
+            'Authorization': `Basic ${encodedCredentials}`,
            }
        }).then((response)=>{
-           return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data}, "Class Joined"))
+           return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+       }).catch(err=>{
+        console.log(err)
        })
     })
    

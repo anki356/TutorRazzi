@@ -36,6 +36,7 @@ import WebsiteRouter from "./Routes/Website/index.js"
 import HomeWork from "./models/HomeWork.js";
 import upload from "./util/upload.js";
 import AuthRouter from "./Routes/Auth/changePassword.js"
+import { leaveClass } from "./util/webhooks/leaveClass.js";
 app.use("/api/",StudentRouter)
 app.use("/api/",AdminRouter)
 app.use("/api/",ParentRouter)
@@ -47,7 +48,7 @@ app.use("/api/",AuthRouter)
 
 
 app.use(errorHandlerMiddleware);
-
+app.use("/webhooks/leave-class",leaveClass)
 app.set('view engine', 'ejs');
 app.set('views', "./util" + '/views');
 app.get('/reset-password/:token', (req, res) => {

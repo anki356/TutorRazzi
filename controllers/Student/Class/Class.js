@@ -572,10 +572,10 @@ const acceptClassRequest = async (req, res, next) => {
   }]},{
     status:"Scheduled"
   }]})
-//   if(classDetails.length!==0){
-//   throw new Error("Slot Already Booked")
+  if(classDetails.length!==0){
+  throw new Error("Slot Already Booked")
      
-//   }
+  }
   let classResponse=await Class.findOne(
   {_id:req.params._id,
   

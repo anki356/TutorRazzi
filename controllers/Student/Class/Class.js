@@ -374,7 +374,8 @@ addNotifications(AcademicManangerResponse.user_id,"Resource Requested ",`${req.u
 const joinClass = async (req, res, next) => {
     let classResponse = await Class.findOne({
         _id: req.body.class_id,
-        student_id:req.user._id
+        student_id:req.user._id,
+        status:"Scheduled"
     }, {
         start_time: 1,
         end_time: 1,
@@ -412,15 +413,17 @@ if(classResponse===null){
    
    if(reportResponse===null&&attendanceResponse!==null){
 
-      reportResponse=await Report.insertMany([{
+    const   MonthlyReportResponse=await MonthlyReport.create({
+        student_id:req.user._id,
+        teacher_id:classResponse.teacher_id,
+        month:moment().month(),
+        year:moment().year(),
+        subject:classResponse.subject.name, 
+        reports:[{
+
 title:"Academic Performance",
 sub_title:"Subject Knowledge and Understanding",
 
-student_id:req.user._id,
-  subject: classResponse.subject.name  ,   
-teacher_id:classResponse.teacher_id,
-month:moment().month(),
-year:moment().year(),
 
 
 
@@ -429,111 +432,58 @@ year:moment().year(),
         title:"Academic Performance",
         sub_title:"Class Participation and Engagement",
         
-        student_id:req.user._id,
-        subject: classResponse.subject.name  , 
-        teacher_id:classResponse.teacher_id,
-        month:moment().month(),
-        year:moment().year()  ,
+       
         
     },{
         title:"Academic Performance",
         sub_title:"Homework and Assignments Completion",
        
-        student_id:req.user._id,
-        subject: classResponse.subject.name  , 
-        teacher_id:classResponse.teacher_id,
-        month:moment().month(),
-        year:moment().year()  ,
+       
        
     },{
         title:"Academic Performance",
         sub_title:"Problem-Solving and Critical Thinking Skills",
        
-        student_id:req.user._id,
-        subject: classResponse.subject.name  , 
-        teacher_id:classResponse.teacher_id,
-        month:moment().month(),
-        year:moment().year()  ,
         
     },{
         title:"Learning Attitude",
         sub_title:"Motivation and Enthusiasm",
        
-        student_id:req.user._id,
-        subject: classResponse.subject.name  , 
-        teacher_id:classResponse.teacher_id,
-        month:moment().month(),
-        year:moment().year() ,
         
     },{  title:"Learning Attitude",
     sub_title:"Initiative and Self Direction",
    
-    student_id:req.user._id,
-    subject: classResponse.subject.name,
-    teacher_id:classResponse.teacher_id,
-    month:moment().month(),
-    year:moment().year() ,
     },{
         title:"Learning Attitude",
         sub_title:"Collaboration and Teamwork",
       
-        student_id:req.user._id,
-        subject: classResponse.subject.name  , 
-        teacher_id:classResponse.teacher_id,
-        month:moment().month(),
-        year:moment().year() ,
         
     },{
         title:"Communication Skills",
         sub_title:"Verbal Communication",
         
-        student_id:req.user._id,
-        subject: classResponse.subject.name,
-        teacher_id:classResponse.teacher_id,
-        month:moment().month(),
-        year:moment().year() ,
         
     },{
         title:"Communication Skills",
         sub_title:"Written Communication",
         
-        student_id:req.user._id,
-        subject: classResponse.subject.name  , 
-        teacher_id:classResponse.teacher_id,
-        month:moment().month(),
-        year:moment().year(),
         
     },{
         title:"Personal Growth",
         sub_title:"Time Management",
        
-        student_id:req.user._id,
-        subject: classResponse.subject.name  , 
-        teacher_id:classResponse.teacher_id,
-        month:moment().month(),
-        year:moment().year(),
         
     },{
         title:"Personal Growth",
         sub_title:"Organization and Preparedness",
         
-        student_id:req.user._id,
-        subject: classResponse.subject.name  , 
-        teacher_id:classResponse.teacher_id,
-        month:moment().month(),
-        year:moment().year(),
        
     },{
         title:"Personal Growth",
         sub_title:"Responsibility and Accountability",
        
-        student_id:req.user._id,
-        subject: classResponse.subject.name  , 
-        teacher_id:classResponse.teacher_id,
-        month:moment().month(),
-        year:moment().year() ,
         
-    }])
+    }]})
    }
     attendanceResponse = await Attendance.insertMany({
         check_in_datetime: moment().format("YYYY-MM-DDTHH:mm:ss"),
@@ -541,15 +491,36 @@ year:moment().year(),
         class_id: req.body.class_id,
 
     })
-
-    axios.post(`https://api.dyte.io/v2
-    /meetings/${classResponse.meeting_id}/participants`,{preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+    const organizationId = '6894d463-40a7-4240-93dc-bb30ef741dbd';
+    const apiKey = 'ac00320ed5f57433dfa8';
+    
+    // Combine organizationId and apiKey with a colon
+    const credentials = `${organizationId}:${apiKey}`;
+    
+    // Encode credentials to Base64
+    const encodedCredentials = btoa(credentials);
+      axios.post("https://api.dyte.io/v2/meetings",{ record_on_start:true},{
         headers:{
-            Authorization: "Basic 6894d463-40a7-4240-93dc-bb30ef741dbd:ac00320ed5f57433dfa8"
+            'Authorization': `Basic ${encodedCredentials}`,
         }
-    }).then((response)=>{
-        return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data}, "Class Joined"))
+      }).then(async(response)=>{
+       await Class.updateOne({
+        _id:req.params._id
+       },{
+        $set:{
+            meeting_id:response.data.id
+        }
+       })
+       axios.post(`https://api.dyte.io/v2
+       /meetings/${response.data.id}/participants`,{preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+           headers:{
+               Authorization: "Basic 6894d463-40a7-4240-93dc-bb30ef741dbd:ac00320ed5f57433dfa8"
+           }
+       }).then((response)=>{
+           return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data}, "Class Joined"))
+       })
     })
+   
 
 
 }
@@ -601,10 +572,10 @@ const acceptClassRequest = async (req, res, next) => {
   }]},{
     status:"Scheduled"
   }]})
-  if(classDetails.length!==0){
-  throw new Error("Slot Already Booked")
+//   if(classDetails.length!==0){
+//   throw new Error("Slot Already Booked")
      
-  }
+//   }
   let classResponse=await Class.findOne(
   {_id:req.params._id,
   
@@ -630,18 +601,7 @@ const acceptClassRequest = async (req, res, next) => {
           }
     }
   })
-  axios.post("https://api.dyte.io/v2/meetings",{ record_on_start:true},{
-    headers:{
-        Authorization: "Basic 6894d463-40a7-4240-93dc-bb30ef741dbd:ac00320ed5f57433dfa8"
-    }
-  }).then(async(response)=>{
-   await Class.updateOne({
-    _id:req.params._id
-   },{
-    $set:{
-        meeting_id:response.data.id
-    }
-   })
+  
    addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" on "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+ " at "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
   
     addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+ " at "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
@@ -649,7 +609,7 @@ const acceptClassRequest = async (req, res, next) => {
   return res.json(responseObj(true,null,"Accepted Rescheduled Request"))
   
   
-  })
+
   
   // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
   

@@ -3,6 +3,7 @@ import Attendance from "../../models/Attendance.js";
 import Class from "../../models/Class.js";
 import MonthlyReport from "../../models/MonthlyReport.js";
 import User from "../../models/User.js";
+import moment from "moment";
 
 const leaveClass = async (data) => {
    
@@ -29,14 +30,14 @@ else if(user_id.role==='teacher'){
         teacher_id: user_id._id
     }, {
         $set: {
-            check_out_datetime:mmoment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+            check_out_datetime:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
         }
     })
 }
 
 
 }
-const meetingEnded=async()=>{
+const meetingEnded=async(data)=>{
     console.log(data.body)
     const organizationId = '6894d463-40a7-4240-93dc-bb30ef741dbd';
     const apiKey = 'ac00320ed5f57433dfa8';

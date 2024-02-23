@@ -478,7 +478,7 @@ sub_title:"Subject Knowledge and Understanding",
     }]})
    }
     attendanceResponse = await Attendance.insertMany({
-        check_in_datetime: moment().format("YYYY-MM-DDTHH:mm:ss"),
+        check_in_datetime: moment().format("YYYY-MM-DDTHH:mm:ss").add(5,'h').add(30,'m'),
         student_id: req.user._id,
         class_id: req.body.class_id,
 

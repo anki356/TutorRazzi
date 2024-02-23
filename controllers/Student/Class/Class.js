@@ -387,7 +387,7 @@ if(classResponse===null){
 }
 console.log(classResponse.start_time)
 console.log(moment().utc(),moment(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").utc(), moment(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").utc())
-    if (!(moment().utc().isBetween(moment(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").utc(), moment(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").utc()))) {
+    if (!(moment().tz("Asia/kolkata").isBetween(moment(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").utc(), moment(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").utc()))) {
         throw new Error('You cannot Join Class at this time')
     }
     console.log(classResponse.subject.name);

@@ -505,7 +505,7 @@ sub_title:"Subject Knowledge and Understanding",
         }
       }).then(async(response)=>{
        await Class.updateOne({
-        _id:req.params._id
+        _id:req.body.class_id
        },{
         $set:{
             meeting_id:response.data.id

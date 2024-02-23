@@ -124,6 +124,11 @@ const getAllStudents=async(req,res)=>{
     parent_id:req.user._id
   },{
     user_id:1,preferred_name:1
+  }).populate({
+    path:"user_id",
+    select:{
+      "profile_image":1
+    }
   })
   res.json(responseObj(true,students,"All Students linked to parent"))
 }
@@ -135,6 +140,7 @@ const selectStudent=async(req,res)=>{
   const token = user.signJWT();
   res.json(responseObj(true,{
       access_token:token,
+      user:user
       
   },"Token with Student Details Attached",null) )
 }

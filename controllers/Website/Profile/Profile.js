@@ -135,7 +135,7 @@ const getAllStudents=async(req,res)=>{
 
 const selectStudent=async(req,res)=>{
   let user=await User.findOne({
-    user_id:req.body.student_id
+    _id:req.body.student_id
   })
   const token = user.signJWT();
   res.json(responseObj(true,{

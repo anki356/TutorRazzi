@@ -149,7 +149,7 @@ const addMonthlyReport = async (req, res) => {
 
         }, {
             $set: {
-status:true,
+status:'Done',
 reports:array
             }
         })

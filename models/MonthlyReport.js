@@ -31,8 +31,9 @@ type:String,
 required:true
    },
    status:{
-    type:Boolean,
-    default:false
+    type:String,
+enum:["Pending",'Done'],
+    default:"Pending"
    },
    reports:{
     type:[Report.schema],

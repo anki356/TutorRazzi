@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import moment from "moment";
-import paginate from "mongoose-aggregate-paginate-v2";
+import aggregatePaginate from "mongoose-aggregate-paginate-v2";
+import paginate from "mongoose-paginate-v2"
 import Report from "./Report.js";
 const MonthlyReportSchema=new mongoose.Schema({
     student_id:{
@@ -41,6 +42,7 @@ required:true
 },{
 versionKey: false})
 MonthlyReportSchema.plugin(paginate)
+MonthlyReportSchema.plugin(aggregatePaginate)
 MonthlyReportSchema.set('toJSON', { virtuals: true });
 MonthlyReportSchema.virtual('month_name').get(function(){
     if(this.month){

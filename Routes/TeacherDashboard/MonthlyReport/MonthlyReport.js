@@ -6,7 +6,7 @@ import validationError from "../../../middleware/validationError.js";
 const router=express.Router()
 router.get("/get-monthly-report",authVerify,getMonthlyReport)
 const ReportValidation=[
-    body('subject').notEmpty().withMessage("Subject is required"),
+    
     body('subject_knowledge_and_understanding').notEmpty().withMessage("Subject knowledge rating cannot be empty"),
     body('class_participation_and_engagement').notEmpty().withMessage("Class participation and engagement  rating cannot be empty"),
     body('homeworks_and_assignment_completion').notEmpty().withMessage("Homework and assignment completion rating cannot be empty"),

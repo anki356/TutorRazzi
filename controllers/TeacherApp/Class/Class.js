@@ -453,7 +453,7 @@ const joinClass = async (req, res, next) => {
   }, {
       start_time: 1,
       end_time: 1,
-      teacher_id:1,
+      student_id:1,
       subject:1
   })
 if(classResponse===null){

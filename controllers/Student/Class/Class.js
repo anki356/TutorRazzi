@@ -388,9 +388,9 @@ if(classResponse===null){
 }
 console.log(classResponse.start_time)
 // console.log(moment().utc(),moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").utc(), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").utc())
-    if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {
-        throw new Error('You cannot Join Class at this time')
-    }
+    // if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {
+    //     throw new Error('You cannot Join Class at this time')
+    // }
     console.log(classResponse.subject.name);
    let reportResponse=await Report.findOne({
         student_id:req.user._id,
@@ -493,6 +493,7 @@ sub_title:"Subject Knowledge and Understanding",
     // Encode credentials to Base64
     const encodedCredentials = btoa(credentials);
     if(classResponse.meeting_id){
+        console.log("hello")
         axios.post(`https://api.dyte.io/v2/meetings/${classResponse.meeting_id}/participants`,{name:'student',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
             headers:{
              'Authorization': `Basic ${encodedCredentials}`,
@@ -503,29 +504,32 @@ sub_title:"Subject Knowledge and Understanding",
          console.log(err)
         }) 
     }
-      axios.post("https://api.dyte.io/v2/meetings",{ record_on_start:true},{
-        headers:{
-            'Authorization': `Basic ${encodedCredentials}`,
-        }
-      }).then(async(response)=>{
-       await Class.updateOne({
-        _id:req.body.class_id
-       },{
-        $set:{
-            meeting_id:response.data.data.id
-        }
-       })
-       
-       axios.post(`https://api.dyte.io/v2/meetings/${response.data.data.id}/participants`,{name:'student',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
-           headers:{
-            'Authorization': `Basic ${encodedCredentials}`,
-           }
-       }).then((response)=>{
-           return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
-       }).catch(err=>{
-        console.log(err)
-       })
-    })
+    else{
+        axios.post("https://api.dyte.io/v2/meetings",{ record_on_start:true},{
+            headers:{
+                'Authorization': `Basic ${encodedCredentials}`,
+            }
+          }).then(async(response)=>{
+           await Class.updateOne({
+            _id:req.body.class_id
+           },{
+            $set:{
+                meeting_id:response.data.data.id
+            }
+           })
+           
+           axios.post(`https://api.dyte.io/v2/meetings/${response.data.data.id}/participants`,{name:'student',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+               headers:{
+                'Authorization': `Basic ${encodedCredentials}`,
+               }
+           }).then((response)=>{
+               return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+           }).catch(err=>{
+            console.log(err)
+           })
+        })
+    }
+    
    
 
 

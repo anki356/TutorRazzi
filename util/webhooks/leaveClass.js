@@ -19,7 +19,7 @@ if(user_id.role==='student'){
         student_id: user_id._id
     }, {
         $set: {
-            check_out_datetime:moment().subtract(1,'m').format("YYYY-MM-DDTHH:mm:ss")
+            check_out_datetime:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
         }
     })
 }
@@ -29,7 +29,7 @@ else if(user_id.role==='teacher'){
         teacher_id: user_id._id
     }, {
         $set: {
-            check_out_datetime:moment().subtract(1,'m').format("YYYY-MM-DDTHH:mm:ss")
+            check_out_datetime:mmoment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
         }
     })
 }

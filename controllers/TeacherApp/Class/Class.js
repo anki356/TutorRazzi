@@ -461,8 +461,8 @@ const joinClass = async (req, res, next) => {
 if(classResponse===null){
   return res.json(responseObj(false,null,"Invalid Class"))
 }
-if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('You cannot Join Class at this time')
-  }
+// if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('You cannot Join Class at this time')
+//   }
   console.log(classResponse.subject.name);
  let reportResponse=await MonthlyReport.findOne({
       student_id:classResponse.student_id,
@@ -566,6 +566,7 @@ sub_title:"Subject Knowledge and Understanding",
   // Encode credentials to Base64
   const encodedCredentials = btoa(credentials);
   if(classResponse.meeting_id){
+    console.log("hello")
     axios.post(`https://api.dyte.io/v2/meetings/${classResponse.meeting_id}/participants`,{name:'teacher',preset_name:'group_call_host',custom_participant_id:req.user.email},{
          headers:{
           'Authorization': `Basic ${encodedCredentials}`,
@@ -575,7 +576,7 @@ sub_title:"Subject Knowledge and Understanding",
      }).catch(err=>{
       console.log(err)
      })
-  }
+  }else{
     axios.post("https://api.dyte.io/v2/meetings",{ record_on_start:true},{
       headers:{
           'Authorization': `Basic ${encodedCredentials}`,
@@ -600,6 +601,8 @@ sub_title:"Subject Knowledge and Understanding",
      })
   })
  
+  }
+  
 
 
 }

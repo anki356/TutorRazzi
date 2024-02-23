@@ -584,7 +584,7 @@ sub_title:"Subject Knowledge and Understanding",
       _id:req.body.class_id
      },{
       $set:{
-          meeting_id:response.data.id
+          meeting_id:response.data.data.id
       }
      })
      

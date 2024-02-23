@@ -400,17 +400,7 @@ if(classResponse===null){
     teacher_id:classResponse.teacher_id,
     class_id:req.body.class_id
    })
-   if(attendanceResponse!==null){
-    classResponse = await Class.findOneAndUpdate({
-        _id: req.body.class_id
-    }, {
-
-        $set: {
-            status: 'Done'
-        }
-    })
-   }
-   
+  
    if(reportResponse===null&&attendanceResponse!==null){
 
     const   MonthlyReportResponse=await MonthlyReport.create({

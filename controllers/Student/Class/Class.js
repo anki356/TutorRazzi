@@ -385,7 +385,7 @@ const joinClass = async (req, res, next) => {
 if(classResponse===null){
     return res.json(responseObj(false,null,"Invalid Class"))
 }
-    if (!moment().tz('Asia/Kolkata').isBetween(moment(classResponse.start_time), moment(classResponse.end_time))) {
+    if (!moment().tz('Asia/Kolkata').isBetween(moment(classResponse.start_time).tz('Asia/Kolkata'), moment(classResponse.end_time).tz('Asia/Kolkata'))) {
         throw new Error('You cannot Join Class at this time')
     }
     console.log(classResponse.subject.name);

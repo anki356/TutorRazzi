@@ -28,11 +28,25 @@ const getMonthlyReport = async (req, res, next) => {
         teacher_id: req.user._id,
         subject: req.query.subject
     }
+    let pipeline=MonthlyReport.aggregate([
+        {$match:{
+            student_id: new ObjectID(req.query.student_id),
+        teacher_id: new ObjectID(req.user._id),
+        subject: req.query.subject  
+        }},
+        {$project:{
+            averageRating: { $avg: "$reports.rating" },
+            status:1,
+            month:1,
+            year:1,
+
+        }}
+    ])
     let options = {
         limit: req.query.limit,
         page: req.query.page
     }
-    MonthlyReport.paginate(query, options, (err, result) => {
+    MonthlyReport.aggregatePaginate(pipeline, options, (err, result) => {
         return res.json(responseObj(true, result, null))
 
     })
@@ -149,7 +163,7 @@ const addMonthlyReport = async (req, res) => {
 
         }, {
             $set: {
-status:true,
+status:"Done",
 reports:array
             }
         })

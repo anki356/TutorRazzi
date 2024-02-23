@@ -455,7 +455,8 @@ const joinClass = async (req, res, next) => {
       start_time: 1,
       end_time: 1,
       student_id:1,
-      subject:1
+      subject:1,
+      meeting_id:1
   })
 if(classResponse===null){
   return res.json(responseObj(false,null,"Invalid Class"))

@@ -489,6 +489,17 @@ sub_title:"Subject Knowledge and Understanding",
     
     // Encode credentials to Base64
     const encodedCredentials = btoa(credentials);
+    if(classResponse.meeting_id){
+        axios.post(`https://api.dyte.io/v2/meetings/${classResponse.meeting_id}/participants`,{name:'student',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+            headers:{
+             'Authorization': `Basic ${encodedCredentials}`,
+            }
+        }).then((response)=>{
+            return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+        }).catch(err=>{
+         console.log(err)
+        }) 
+    }
       axios.post("https://api.dyte.io/v2/meetings",{ record_on_start:true},{
         headers:{
             'Authorization': `Basic ${encodedCredentials}`,

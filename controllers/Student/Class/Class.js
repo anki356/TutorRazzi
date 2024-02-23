@@ -512,7 +512,7 @@ sub_title:"Subject Knowledge and Understanding",
         }
        })
        
-       axios.post(`https://api.dyte.io/v2/meetings/${response.data.data.id}/participants`,{preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+       axios.post(`https://api.dyte.io/v2/meetings/${response.data.data.id}/participants`,{name:'student',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
            headers:{
             'Authorization': `Basic ${encodedCredentials}`,
            }

@@ -1,3 +1,4 @@
+import axios from "axios";
 import Attendance from "../../models/Attendance.js";
 import Class from "../../models/Class.js";
 import MonthlyReport from "../../models/MonthlyReport.js";
@@ -37,13 +38,50 @@ else if(user_id.role==='teacher'){
 }
 const meetingEnded=async()=>{
     console.log(data.body)
-
-    await Class.updateOne({
-        meeting_id:data.body.meeting.id
-    },{
-        $set:{
-            status:'Done'
+    const organizationId = '6894d463-40a7-4240-93dc-bb30ef741dbd';
+    const apiKey = 'ac00320ed5f57433dfa8';
+    
+    // Combine organizationId and apiKey with a colon
+    const credentials = `${organizationId}:${apiKey}`;
+    
+    // Encode credentials to Base64
+    const encodedCredentials = btoa(credentials);
+  
+axios.get(`https://api.dyte.io/v2/meetings/${data.body.meeting.id}/participants`,{
+    headers:{
+        'Authorization': `Basic ${encodedCredentials}`,
+    }
+}).then(async(response)=>{
+    let isStudent=false
+    let isTeacher=false
+    response.data.data.forEach(element => {
+        if(element.name==='student'){
+isStudent=true
         }
-    })
+        if(element.name==='teacher'){
+isTeacher=true
+        }
+    });
+    if(isStudent&&isTeacher){
+        await Class.updateOne({
+            meeting_id:data.body.meeting.id
+        },{
+            $set:{
+                status:'Done'
+            }
+        }) 
+    }
+    else{
+        await Class.updateOne({
+            meeting_id:data.body.meeting.id
+        },{
+            $set:{
+                status:'Cancelled'
+            }
+        })
+    }
+   
+})
+    
 }
 export{leaveClass,meetingEnded}

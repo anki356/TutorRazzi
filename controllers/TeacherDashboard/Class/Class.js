@@ -16,6 +16,8 @@ import Attendance from "../../../models/Attendance.js"
 import { addNotifications } from "../../../util/addNotification.js"
 import AcademicManager from "../../../models/AcademicManager.js"
 import User from "../../../models/User.js"
+import MonthlyReport from "../../../models/MonthlyReport.js"
+import axios from "axios"
 const ObjectId=mongoose.Types.ObjectId
 const getUpcomingClasses = async (req, res, next) => {
   
@@ -453,38 +455,162 @@ let taskResponse=await Task.find({
   }
   const joinClass = async (req, res, next) => {
     let classResponse = await Class.findOne({
-      _id: req.body.class_id
+        _id: req.body.class_id,
+        teacher_id:req.user._id,
+        status:"Scheduled"
     }, {
-      start_time: 1,
-      end_time: 1,
-      student_id:1
+        start_time: 1,
+        end_time: 1,
+        student_id:1,
+        subject:1,
+        meeting_id:1
     })
+  if(classResponse===null){
+    return res.json(responseObj(false,null,"Invalid Class"))
+  }
+  // if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('You cannot Join Class at this time')
+  //   }
+    console.log(classResponse.subject.name);
+   let reportResponse=await MonthlyReport.findOne({
+        student_id:classResponse.student_id,
+        teacher_id:req.user._id,
+        month:moment().month(),
+        year:moment().year(),
+        subject:classResponse.subject.name
+   })
+  let attendanceResponse=await Attendance.findOne({
+    student_id:classResponse.student_id,
+    class_id:req.body.class_id
+   })
   
-    if (!moment(req.body.check_in_datetime).isBetween(moment(classResponse.start_time), moment(classResponse.end_time))) {
-     throw new Error("You cannot Join Class at this time")
+   
+   if(reportResponse===null&&attendanceResponse!==null){
+  
+    const   MonthlyReportResponse=await MonthlyReport.create({
+        student_id:classResponse.student_id,
+        teacher_id:req.user._id,
+        month:moment().month(),
+        year:moment().year(),
+        subject:classResponse.subject.name, 
+        reports:[{
+  
+  title:"Academic Performance",
+  sub_title:"Subject Knowledge and Understanding",
+  
+  
+  
+  
+  
+    },{
+        title:"Academic Performance",
+        sub_title:"Class Participation and Engagement",
+        
+       
+        
+    },{
+        title:"Academic Performance",
+        sub_title:"Homework and Assignments Completion",
+       
+       
+       
+    },{
+        title:"Academic Performance",
+        sub_title:"Problem-Solving and Critical Thinking Skills",
+       
+        
+    },{
+        title:"Learning Attitude",
+        sub_title:"Motivation and Enthusiasm",
+       
+        
+    },{  title:"Learning Attitude",
+    sub_title:"Initiative and Self Direction",
+   
+    },{
+        title:"Learning Attitude",
+        sub_title:"Collaboration and Teamwork",
+      
+        
+    },{
+        title:"Communication Skills",
+        sub_title:"Verbal Communication",
+        
+        
+    },{
+        title:"Communication Skills",
+        sub_title:"Written Communication",
+        
+        
+    },{
+        title:"Personal Growth",
+        sub_title:"Time Management",
+       
+        
+    },{
+        title:"Personal Growth",
+        sub_title:"Organization and Preparedness",
+        
+       
+    },{
+        title:"Personal Growth",
+        sub_title:"Responsibility and Accountability",
+       
+        
+    }]})
+   }
+    attendanceResponse = await Attendance.insertMany({
+        check_in_datetime: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss"),
+        taecher_id: req.user._id,
+        class_id: req.body.class_id,
+  
+    })
+    const organizationId = '6894d463-40a7-4240-93dc-bb30ef741dbd';
+    const apiKey = 'ac00320ed5f57433dfa8';
+    
+    // Combine organizationId and apiKey with a colon
+    const credentials = `${organizationId}:${apiKey}`;
+    
+    // Encode credentials to Base64
+    const encodedCredentials = btoa(credentials);
+    if(classResponse.meeting_id){
+      console.log("hello")
+      axios.post(`https://api.dyte.io/v2/meetings/${classResponse.meeting_id}/participants`,{name:'teacher',preset_name:'group_call_host',custom_participant_id:req.user.email},{
+           headers:{
+            'Authorization': `Basic ${encodedCredentials}`,
+           }
+       }).then((response)=>{
+           return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+       }).catch(err=>{
+        console.log(err)
+       })
+    }else{
+      axios.post("https://api.dyte.io/v2/meetings",{ record_on_start:true},{
+        headers:{
+            'Authorization': `Basic ${encodedCredentials}`,
+        }
+      }).then(async(response)=>{
+       await Class.updateOne({
+        _id:req.body.class_id
+       },{
+        $set:{
+            meeting_id:response.data.data.id
+        }
+       })
+       
+       axios.post(`https://api.dyte.io/v2/meetings/${response.data.data.id}/participants`,{name:'teacher',preset_name:'group_call_host',custom_participant_id:req.user.email},{
+           headers:{
+            'Authorization': `Basic ${encodedCredentials}`,
+           }
+       }).then((response)=>{
+           return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+       }).catch(err=>{
+        console.log(err)
+       })
+    })
+   
     }
     
-   let attendanceResponse=await Attendance.findOne({
-      student_id:classResponse.student_id,
-      class_id:req.body.class_id
-     })
-     if(attendanceResponse!==null){
-      classResponse = await Class.findOneAndUpdate({
-          _id: req.body.class_id
-      }, {
   
-          $set: {
-              status: 'Done'
-          }
-      })
-     }
-     attendanceResponse = await Attendance.insertMany({
-      check_in_datetime: new Date(moment(req.body.check_in_datetime)),
-      teacher_id: req.user._id,
-      class_id: req.body.class_id,
-  
-    })
-    return res.json(responseObj(true, attendanceResponse, null))
   
   }
   const leaveClass = async (req, res, next) => {

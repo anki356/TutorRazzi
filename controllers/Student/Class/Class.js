@@ -386,8 +386,8 @@ if(classResponse===null){
     return res.json(responseObj(false,null,"Invalid Class"))
 }
 console.log(classResponse.start_time)
-console.log(moment().tz('Etc/GMT'),moment(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss"), moment(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss"))
-    if (!(moment().tz('Etc/GMT').isBetween(moment(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss"), moment(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss")))) {
+console.log(moment(),moment(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").utcOffset('+05:30'), moment(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").utcOffset('+05:30'))
+    if (!(moment().isBetween(moment(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").utcOffset('+05:30'), moment(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").utcOffset('+05:30')))) {
         throw new Error('You cannot Join Class at this time')
     }
     console.log(classResponse.subject.name);

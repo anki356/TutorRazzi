@@ -468,8 +468,8 @@ let taskResponse=await Task.find({
   if(classResponse===null){
     return res.json(responseObj(false,null,"Invalid Class"))
   }
-  // if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('You cannot Join Class at this time')
-  //   }
+  if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('You cannot Join Class at this time')
+    }
     console.log(classResponse.subject.name);
    let reportResponse=await MonthlyReport.findOne({
         student_id:classResponse.student_id,

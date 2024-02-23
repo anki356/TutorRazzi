@@ -388,9 +388,9 @@ if(classResponse===null){
 }
 console.log(classResponse.start_time)
 // console.log(moment().utc(),moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").utc(), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").utc())
-    // if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {
-    //     throw new Error('You cannot Join Class at this time')
-    // }
+    if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {
+        throw new Error('You cannot Join Class at this time')
+    }
     console.log(classResponse.subject.name);
    let reportResponse=await Report.findOne({
         student_id:req.user._id,

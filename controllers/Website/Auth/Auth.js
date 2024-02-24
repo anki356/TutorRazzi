@@ -11,6 +11,10 @@ import generateOTP from "../../../util/generateOtp.js";
 import Otp from "../../../models/Otp.js";
 import { createJWT } from "../../../util/auth.js";
 import Parent from "../../../models/Parent.js";
+import { sendMailAsync } from "../../../util/emailTransport.js";
+
+import crypto from 'crypto'
+
 const ObjectId=mongoose.Types.ObjectId
 
 const SignUp = async (req, res) => {
@@ -72,7 +76,7 @@ $set:{...req.body}
 
            
             
-            await sendEmail("anki356@gmail.com","Password Changed",changePasswordEmail(req.user.name))
+            await sendEmail(req.user.email,"Password Changed",changePasswordEmail(req.user.name))
             res.json(responseObj(true,[],"Password Changed",null))
         }
     
@@ -102,39 +106,25 @@ res.json(responseObj(true,{
 
 }
 const verifyEmail=async(req,res,next)=>{
-    
-    //false condition before
-   if(req.body.key==='parent'){
-    const user_details=await User.findOne({
-        email:req.body.email
-    })
+    let userResponse=await User.findOne({email:req.body.email,role:'student'})
+   
+    if(userResponse===null){
 
-    const parent_details=await Parent.findOne({
-        user_id:user_details?._id
-    })
-    
-    if(parent_details!==null){
-        return res.json(responseObj(false,null,"Parent Details already exist.Please Sign in."))
+throw new Error("User Email not found")
+
     }
-   }
-   else{
-    const user_details=await User.findOne({
-        email:req.body.email
-    })
-    if(user_details!==null){
-        return res.json(responseObj(false,"Student Details already exist.Please Sign in."))
-    }
-   }
 
 
-    const verificationToken=generateOTP(5)
-
-    await Otp.create({
-        email:req.body.email,
-        code:verificationToken
-    })
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    const mailOptions = {
+        to: req.body.email,
+        subject: 'Password Reset',
+        html: "./util/reset-link.ejs",
+    };
+    const options = { resetToken }
+    userResponse=await User.updateOne({email:req.body.email},{resetToken:resetToken})
    // Create a transporter using the Ethereal account
-  sendEmail(req.body.email,"Verification Email", "Verificaion code is "+verificationToken)
+  sendMailAsync(mailOptions, options)
   res.json(responseObj(true,null,"Email Sent"))
       
           

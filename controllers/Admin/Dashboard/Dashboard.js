@@ -9,7 +9,7 @@ const getTotalPaymentReceived=async(req,res)=>{
     
 }
 const getDashboard=async(req,res)=>{
-    const totalPaymentReceived=await Payment.aggregate([
+    let totalPaymentReceived=await Payment.aggregate([
         {$match:{$and:[{
             payment_type:"Credit"},{
             status:"Paid"
@@ -33,7 +33,7 @@ totalPaymentReceived=0
         totalPaymentReceived=totalPaymentReceived[0].net_amount*5/100
     }
     // return res.json(responseObj(true,totalPaymentReceived[0].net_amount*5/100,"Last Payment Received"))
-    const lastPaymentReceived=await Payment.aggregate([
+    let lastPaymentReceived=await Payment.aggregate([
         {$match:{$and:[{
             payment_type:"Credit"},{
             status:"Paid"
@@ -46,7 +46,7 @@ lastPaymentReceived=0
     else{
         lastPaymentReceived=lastPaymentReceived[0].net_amount*5/100
     }
-    const totalPaymentRemains=await Payment.aggregate([
+    let totalPaymentRemains=await Payment.aggregate([
         {$match:{$and:[{
             payment_type:"Credit"},{
             status:"Pending"
@@ -68,15 +68,15 @@ else{
 }
     // return res.json(responseObj(true,totalPaymentReceived[0].TotalAmount*5/100,"Payments Received"))
     let userId = req.user._id;
-    const profileViewCountResponse= await User.findOne({_id:userId},{
+    let profileViewCountResponse= await User.findOne({_id:userId},{
         views:1
     })
     profileViewCountResponse=profileViewCountResponse.views
     // return res.json(responseObj(true,profileViewCountResponse.views,"No Of Profile Views"))
-    const startOfDuration = moment().startOf('month').subtract(5,'M').format("YYYY-MM-DD");
-    const endOfDuration = moment().format("YYYY-MM-DD");
+    let startOfDuration = moment().startOf('month').subtract(5,'M').format("YYYY-MM-DD");
+    let endOfDuration = moment().format("YYYY-MM-DD");
   
-    const response=await Payment.aggregate([
+    let response=await Payment.aggregate([
       {
         $match: {
             $and:[
@@ -128,16 +128,16 @@ return dataOne.month===data._id
         date:data.month
       })
     })
-    const totalBookings=await Class.countDocuments({
+    let totalBookings=await Class.countDocuments({
         status:"Scheduled",
         start_time:{
           $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
         }
     })
     // return res.json(responseObj(true,totalBookings,"Total Bookings"))    
-    const totalStudents=await User.countDocuments({status:true,role:"student"})
+    let totalStudents=await User.countDocuments({status:true,role:"student"})
     // return res.json(responseObj(true,totalStudents,"Total Students"))
-    const totalHoursCompleted=await Class.find(
+    let totalHoursCompleted=await Class.find(
         {status:'Done'})
        let hoursCompleted=0
        console.log(totalHoursCompleted)
@@ -145,7 +145,7 @@ return dataOne.month===data._id
         hoursCompleted+= moment(data.end_time).diff(moment(data.start_time),'h')
        })
     //  return res.json(responseObj(true,hoursCompleted,"Total Hours Completed"))  
-    const totalTrialRequests=await Class.countDocuments({
+    let totalTrialRequests=await Class.countDocuments({
         class_type:"Trial",
         status:"Pending",
         start_time:{

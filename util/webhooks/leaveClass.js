@@ -25,7 +25,7 @@ if(user_id.role==='student'){
         }
     })
 }
-else if(user_id.role==='academic_manager'){
+else if(user_id.role==='academic manager'){
     let response = await Attendance.findOneAndUpdate({
         class_id: classDetails._id,
         academic_manager_id: user_id._id

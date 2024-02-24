@@ -18,6 +18,7 @@ import AcademicManager from "../../../models/AcademicManager.js"
 import User from "../../../models/User.js"
 import MonthlyReport from "../../../models/MonthlyReport.js"
 import axios from "axios"
+import upload from "../../../util/upload.js"
 const ObjectId=mongoose.Types.ObjectId
 const getUpcomingClasses = async (req, res, next) => {
   
@@ -33,7 +34,7 @@ const getUpcomingClasses = async (req, res, next) => {
   }
   let query = {
     $and: [
-      { start_time: { $gte: moment().format("YYYY-MM-DDTHH:mm:ss") } },
+      { start_time: { $gte: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")} },
 
       { teacher_id: req.user._id },
 
@@ -104,7 +105,7 @@ const getPastClasses = async (req, res, next) => {
     $and: [
       {
 
-        start_time: { $lt:moment().format("YYYY-MM-DDTHH:mm:ss") },
+        start_time: { $lt:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss") },
       }, {
         teacher_id: req.user._id,
 
@@ -193,7 +194,7 @@ const getRescheduledClasses = async (req, res, next) => {
     $and: [
       {
 
-        start_time: { $gte: moment().format("YYYY-MM-DDTHH:mm:ss")},
+        start_time: { $gte: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")},
       }, {
         teacher_id: req.user._id,
 
@@ -252,7 +253,7 @@ const getTrialClassesRequests = async (req, res, next) => {
       teacher_id: req.user._id,
       class_type: 'Trial',
       start_time: {
-        "$gte": moment().format("YYYY-MM-DDTHH:mm:ss")
+        "$gte": moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
       }
     }]
   }
@@ -417,7 +418,7 @@ const setReminder = async (req, res, next) => {
   }
   const getClassDetails=async(req,res)=>{
     let classDetails = {}
-  classDetails = await Class.findOne({ _id: req.query.class_id,end_time:{$lte:moment().format("YYYY-MM-DDTHH:mm:ss")}}).populate({
+  classDetails = await Class.findOne({ _id: req.query.class_id,end_time:{$lte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")}}).populate({
     path: 'teacher_id', select: {
      name: 1,profile_image:1
     }
@@ -634,7 +635,7 @@ let taskResponse=await Task.find({
   }
   const addTask = async (req, res, next) => {
     const classDetails=await Class.findOne({_id:req.body.class_id,end_time:{
-      $lte:moment().format("YYYY-MM-DDTHH:mm:ss")
+      $lte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
     }})
     if(classDetails===null){
       return res.json(responseObj(fasle,null,"Invalid Class Id"))
@@ -660,7 +661,7 @@ let taskResponse=await Task.find({
   }
   const addHomework = async (req, res, next) => {
     const classDetails=await Class.findOne({_id:req.body.class_id,end_time:{
-      $lte:moment().format("YYYY-MM-DDTHH:mm:ss")
+      $lte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
     }})
     if(classDetails===null){
       return res.json(responseObj(fasle,null,"Invalid Class Id"))
@@ -749,13 +750,19 @@ let taskResponse=await Task.find({
     let ClassMaterials=await Class.findOne({
       _id:req.params._id
     },{materials:1})
-    // if(req.files.)
-    ClassMaterials.materials.push({name:req.files[0].filename})
+    if(req.files?.document){
+
+    let fileName=await upload(req.files.document)
+    ClassMaterials.materials.push({name:fileName})
     let classResponse=await Class.updateOne({
       _id : req.params._id},{$set:{ materials:ClassMaterials.materials}});
       addNotifications(classDetails.student_id,"Class Material Uploaded", "Material for class on "+moment(classDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(classDetails.end_time).format("HH:mm")+ " of subject "+classDetails.subject.name+ " has been uploaded")
       
     res.json(responseObj(true,[],"Class Materials Uploaded Successfully"))
+    }
+    else{
+      res.json(responseObj(fals,null, "No file Found"))
+    }
   }
 const getTrialClassResponse=async(req,res)=>{
   const response=await Class.findOne({class_id:req.query.class_id})
@@ -789,15 +796,16 @@ const resolveResourceRequests=async(req,res)=>{
   },{
     materials:1
   })
-  console.log(req.files)
-  
+ 
 
-    req.files.forEach((data)=>{
+  if(req.files?.materials){
+
+  
   
       classResponse.materials.push({
             name:data.filename
         })
-    })
+    
  
   await Class.updateOne({_id:classResponse._id},{$set:{materials:classResponse.materials}})
   await ResourceRequest.updateOne({_id:req.body.resource_request_id},{
@@ -818,6 +826,10 @@ const resolveResourceRequests=async(req,res)=>{
   
   
   return res.json(responseObj(true,[],'Resource Request resolved'))
+}
+else{
+  return res.josn(resizeBy(false,null,"No File Found"))
+}
 }
 
 const acceptRescheduledClass=async(req,res,next)=>{
@@ -999,7 +1011,7 @@ return res.json(responseObj(true,null,"Accepted Rescheduled Request"))
 const getUpcomingClassDetails=async(req,res)=>{
   let classDetails = {}
   classDetails = await Class.findOne({ _id: req.query.class_id,start_time:{
-    $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
+    $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
   } }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1 }).populate({
     path: 'teacher_id', select: {
      name: 1,profile_image:1

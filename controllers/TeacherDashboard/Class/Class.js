@@ -800,10 +800,11 @@ const resolveResourceRequests=async(req,res)=>{
 
   if(req.files?.materials){
 
-  
+    let fileName=await upload(req.files?.materials)
+
   
       classResponse.materials.push({
-            name:data.filename
+            name:fileName
         })
     
  

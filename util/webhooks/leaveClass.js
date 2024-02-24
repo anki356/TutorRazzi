@@ -60,12 +60,13 @@ axios.get(`https://api.dyte.io/v2/meetings/${data.body.meeting.id}/participants`
 isStudent=true
         }
         if(element.name==='teacher'){
-            const user_id=await User.findOne({
-                email:element.userDisplayName
-                })
+            const classDetails=await Class.findOne({
+meeting_id:data.body.meeting_id
+            })
+            
             let response = await Attendance.findOneAndUpdate({
                 class_id: classDetails._id,
-                teacher_id: user_id._id
+                teacher_id: classDetails.teacher_id
             }, {
                 $set: {
                     check_out_datetime:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")

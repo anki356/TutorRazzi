@@ -671,7 +671,7 @@ const getUpcomingClasses=async(req,res,next)=>{
         select:{'name':1}
       }],
       select:{
-        "start_time":1,"subject":1,"name":1,
+        "start_time":1,"subject":1,"name":1,"end_time":1,
         class_type:1
       }
   

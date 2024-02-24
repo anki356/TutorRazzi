@@ -14,6 +14,7 @@ import Document from "../../../models/Document.js";
 import unlinkFile from "../../../util/unlinkFile.js";
 import { addNotifications } from "../../../util/addNotification.js";
 import User from "../../../models/User.js";
+import upload from "../../../util/upload.js";
 const objectId=mongoose.Types.ObjectId
 const rescheduleClass=async(req,res,next)=>{
   let details=await Class.findOne({
@@ -74,7 +75,7 @@ start_time:1
   }
     }
     let query={$and:[
-     { start_time :{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")}},
+     { start_time :{$gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")}},
     
       {student_id:req.user._id},
   
@@ -118,7 +119,7 @@ start_time:1
     let query={$and:[
       {
   
-        start_time :{$lt:moment().format("YYYY-MM-DDTHH:mm:ss")},
+        start_time :{$lt:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")},
       },{
         student_id:req.user._id,
   
@@ -180,7 +181,7 @@ start_time:1
       student_id:req.user._id,
       class_type:'Trial',
       start_time:{
-        "$gte":moment().format("YYYY-MM-DDTHH:mm:ss")
+        "$gte":moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
       }
     }]}
     if(req.query.search) {
@@ -224,7 +225,7 @@ start_time:1
   const getClassDetails = async (req, res, next) => {
     let classDetails = {}
     classDetails = await Class.findOne({ _id: req.query.class_id ,end_time:{
-      $lte:moment().format("YYYY-MM-DDTHH:mm:ss")
+      $lte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
     }}, { teacher_id:1,start_time: 1, end_time: 1, description: 1, grade: 1, subject: 1, notes: 1,  materials: 1,student_id:1  }).populate({
         path: 'teacher_id', select: {
             profile_image: 1, name: 1
@@ -301,7 +302,7 @@ const getUpcomingClassDetails=async(req,res)=>{
   let classDetails = {}
   classDetails = await Class.findOne({ _id: req.query.class_id,
     start_time:{
-      $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
+      $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
     }
   }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,materials:1 }).populate({
     path: 'teacher_id', select: {
@@ -548,18 +549,21 @@ addNotifications(AcademicManangerResponse.user_id,"Task marked Done"," Task has 
 }
 const uploadHomework = async (req, res, next) => {
 
-  if(!req.files){
+  if(!req.files?.document){
     return res.json(responseObj(false,null,"No File Found"))
   }
+  let homeworkResponse=await HomeWork.findOne({
+    _id:req.params._id
+ })
+ if(homeworkResponse===null){
+   return res.json(responseObj(false,null,"Invalid Homework Id"))
+ }
+  let fileName=await upload(req.files.document)
+
    let documentResponse = await Document.create({
-       name: req.files[0].filename
+       name: fileName
    })
-let homeworkResponse=await HomeWork.findOne({
-   _id:req.params._id
-})
-if(homeworkResponse===null){
-  return res.json(responseObj(false,null,"Invalid Homework Id"))
-}
+
 if(homeworkResponse.answer_document_id!==null&&homeworkResponse.answer_document_id!==undefined ){
  let  documentTobeDeleted=await Document.findOne(
        {_id:homeworkResponse.answer_document_id}

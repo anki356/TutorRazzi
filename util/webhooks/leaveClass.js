@@ -27,7 +27,7 @@ if(user_id.role==='student'){
 else if(user_id.role==='academic_manager'){
     let response = await Attendance.findOneAndUpdate({
         class_id: classDetails._id,
-        academic_manager: user_id._id
+        academic_manager_id: user_id._id
     }, {
         $set: {
             check_out_datetime:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")

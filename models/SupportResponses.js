@@ -38,7 +38,7 @@ SupportResponseSchema.virtual('response_document_url').get(function(){
 
     if(this.response_document!==undefined){
        
-    return process.env.CLOUD_API+this.response_document
+    return process.env.CLOUD_API+"/"+this.response_document
     }
 })
 export default mongoose.model('SupportResponse', SupportResponseSchema)

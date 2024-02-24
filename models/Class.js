@@ -157,7 +157,7 @@ ClassSchema.virtual('materials_url').get(function(){
     if(this.materials!==undefined){
         let materials_list= this.materials;
         materials_list.forEach((material)=>{
-            material.url=process.env.APP_URL
+            material.url=process.env.CLOUD_API+"/"+material
                 })
                 return materials_list
     }

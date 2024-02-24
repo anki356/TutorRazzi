@@ -3,6 +3,7 @@ import Support from "../../../models/Support.js"
 import SupportResponses from "../../../models/SupportResponses.js"
 import { responseObj } from "../../../util/response.js"
 import mongoose from "mongoose"
+import upload from "../../../util/upload.js"
 const ObjectId=mongoose.Types.ObjectId
 const getAllTickets=async(req,res)=>{
     let query={
@@ -67,9 +68,10 @@ const getAllTickets=async(req,res)=>{
 
 const addSupport=async (req,res,next)=>{
     let documentResponse
-    if(req.files?.length>0){
-         documentResponse=await Document.insertMany({
-    name:req.files[0].filename
+    if(req.files?.file){
+      let fileName=await upload(req.files.file)
+         documentResponse=await Document.create({
+    name:fileName
         })
 
     }
@@ -79,7 +81,7 @@ const addSupport=async (req,res,next)=>{
         subject:req.body.title,
         description:req.body.description,
         status:"Pending",
-        document_id:req.files?.length>0?documentResponse._id:null,
+        document_id:req.files?.file?documentResponse._id:null,
         
 
     })
@@ -89,7 +91,7 @@ const addSupport=async (req,res,next)=>{
         user_id:req.user._id,
         is_sender:true,
         response:req.body.description,
-        response_document:req.files?.length>0?req.files[0].filename:null,
+        response_document:req.files?.file?documentResponse._id:null,
         
     })
     res.json(responseObj(true,{documentResponse,supportResponse},null))
@@ -110,12 +112,17 @@ const getTicketDetails=async(req,res)=>{
     res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses,response_count:responses.length},"Ticket Details"))
 }
 const saveResponse=async(req,res)=>{
-    console.log(req.files)
+  let fileName
+  if(req.files?.attachment){
+    fileName=await upload(req.files.attachment)
+       
+
+  }
     const responses=await SupportResponses.create({
         user_id:req.user._id,
         support_id:req.body.support_id,
         response:req.body?.response,
-        response_document:req?.files[0]?.filename,
+        response_document:req.files?.attachment?fileName:null,
         is_sender:true
 
     })

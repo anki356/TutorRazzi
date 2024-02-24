@@ -96,7 +96,7 @@ class_type:"Non-Trial"
     }
   }
    Class.paginate(query,options,(err,classDetails)=>{
-
+console.log(err)
       return res.json(responseObj(true,{studentsDetails:studentsDetails,classDetails:classDetails,"profile_image":profile_photo?.profile_image_url},"Student Details"))
   })
 

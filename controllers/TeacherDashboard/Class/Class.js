@@ -239,7 +239,7 @@ const getRescheduledClasses = async (req, res, next) => {
     if (result) {
     
     
-      res.json(responseObj(true,result, null))
+      return res.json(responseObj(true,result, null))
     }
     else {
       console.log(err)

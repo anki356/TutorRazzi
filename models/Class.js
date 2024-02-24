@@ -133,7 +133,7 @@ ClassSchema.virtual('end_time_string').get(function () {
 ClassSchema.virtual('time_left').get(function () {
     if (this.status!==undefined&&this.status !=='Done'&&this.status!=='Cancelled'&&this.end_time!==undefined) {
         const end_time = moment(this.end_time);
-        const duration = moment.add(5,'h').add(30,'m').duration(end_time.diff(moment()));
+        const duration = moment.duration(end_time.diff(moment().add(5,'h').add(30,'m')));
        if(duration<0){
         return null
        }

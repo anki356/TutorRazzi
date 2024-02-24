@@ -14,6 +14,7 @@ const classDetails=await Class.findOne({
 const user_id=await User.findOne({
 email:data.body.participant.userDisplayName
 })
+console.log(user_id)
 if(user_id.role==='student'){
     let response = await Attendance.findOneAndUpdate({
         class_id: classDetails._id,

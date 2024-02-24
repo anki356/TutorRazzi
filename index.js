@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 const server = http.createServer(app);
 import dotenv from "dotenv";
 import nodeCron from 'node-cron'
-
+import fileUpload from 'express-fileupload'
 dotenv.config({ path: `.env.${process.env.NODE_ENV?.trim()}` });
 
 
@@ -22,7 +22,12 @@ app.use(upload.any())
  
  app.use("/",router)
  app.use(express.static('uploads'))
- 
+ app.use(fileUpload({
+  limits: { fileSize: 50 * 1024 * 1024 },
+  useTempFiles: true,
+  tempFileDir:path.resolve()+ '/storage/temp',
+  parseNested: true
+}))
 import "express-async-errors";
 import errorHandlerMiddleware from "./errorHandler/errorHandlerMiddleware.js"
 import notFound from "./errorHandler/notFound.js";

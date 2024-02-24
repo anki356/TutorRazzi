@@ -560,7 +560,7 @@ let taskResponse=await Task.find({
    }
     attendanceResponse = await Attendance.insertMany({
         check_in_datetime: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss"),
-        taecher_id: req.user._id,
+        teacher_id: req.user._id,
         class_id: req.body.class_id,
   
     })

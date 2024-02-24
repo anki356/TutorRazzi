@@ -18,6 +18,85 @@ import Reminder from "../../../models/Reminder.js"
 import User from "../../../models/User.js"
 import Review from "../../../models/Review.js"
 import {addNotifications} from "../../../util/addNotification.js"
+const joinClass = async (req, res, next) => {
+  let classResponse = await Class.findOne({
+      _id: req.body.class_id,
+      status:"Scheduled"
+  }, {
+      start_time: 1,
+      end_time: 1,
+      student_id:1,
+      subject:1,
+      meeting_id:1,
+      teacher_id:1
+  })
+if(classResponse===null){
+  return res.json(responseObj(false,null,"Invalid Class"))
+}
+if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('You cannot Join Class at this time')
+  }
+  console.log(classResponse.subject.name);
+ 
+
+
+ 
+ 
+  attendanceResponse = await Attendance.insertMany({
+      check_in_datetime: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss"),
+      academic_manager_id: req.user._id,
+      class_id: req.body.class_id,
+
+  })
+  const organizationId = '6894d463-40a7-4240-93dc-bb30ef741dbd';
+  const apiKey = 'ac00320ed5f57433dfa8';
+  
+  // Combine organizationId and apiKey with a colon
+  const credentials = `${organizationId}:${apiKey}`;
+  
+  // Encode credentials to Base64
+  const encodedCredentials = btoa(credentials);
+  if(classResponse.meeting_id){
+    console.log("hello")
+    axios.post(`https://api.dyte.io/v2/meetings/${classResponse.meeting_id}/participants`,{name:'academic_manager',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+         headers:{
+          'Authorization': `Basic ${encodedCredentials}`,
+         }
+     }).then((response)=>{
+         return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+     }).catch(err=>{
+      console.log(err)
+     })
+  }else{
+    axios.post("https://api.dyte.io/v2/meetings",{ record_on_start:true},{
+      headers:{
+          'Authorization': `Basic ${encodedCredentials}`,
+      }
+    }).then(async(response)=>{
+     await Class.updateOne({
+      _id:req.body.class_id
+     },{
+      $set:{
+          meeting_id:response.data.data.id
+      }
+     })
+     
+     axios.post(`https://api.dyte.io/v2/meetings/${response.data.data.id}/participants`,{name:'academic_manager',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+         headers:{
+          'Authorization': `Basic ${encodedCredentials}`,
+         }
+     }).then((response)=>{
+         return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+     }).catch(err=>{
+      console.log(err)
+     })
+  })
+ 
+  }
+  
+
+
+}
+
 const markTaskDone=async(req,res)=>{
   const taskDetails=await Task.findOne({
 _id:req.params._id
@@ -1013,5 +1092,5 @@ const requestReUpload=async(req,res)=>{
 
 }
 
-export {requestReUpload,markTaskDone,getRescheduledClasses, acceptClassRequest, reviewClass,reviewTeacher,getClassDetails,getPastClasses,getUpcomingClasses,getHomeworks, addExtraClassQuote, getTrialClasses,getResourceRequests,notifyTeacher,notifyStudent,resolveHomework,acceptTrialClassRequest ,rescheduleClass,getUpcomingClassDetails,getTrialClassDetails,getQuotes}
+export {requestReUpload,markTaskDone,getRescheduledClasses, acceptClassRequest, reviewClass,reviewTeacher,getClassDetails,getPastClasses,getUpcomingClasses,getHomeworks, addExtraClassQuote, getTrialClasses,getResourceRequests,notifyTeacher,notifyStudent,resolveHomework,acceptTrialClassRequest ,rescheduleClass,getUpcomingClassDetails,getTrialClassDetails,getQuotes,joinClass}
 

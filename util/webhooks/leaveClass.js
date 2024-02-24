@@ -24,10 +24,10 @@ if(user_id.role==='student'){
         }
     })
 }
-else if(user_id.role==='teacher'){
+else if(user_id.role==='academic_manager'){
     let response = await Attendance.findOneAndUpdate({
         class_id: classDetails._id,
-        teacher_id: user_id._id
+        academic_manager: user_id._id
     }, {
         $set: {
             check_out_datetime:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
@@ -47,7 +47,7 @@ const meetingEnded=async(data)=>{
     
     // Encode credentials to Base64
     const encodedCredentials = btoa(credentials);
-  
+    
 axios.get(`https://api.dyte.io/v2/meetings/${data.body.meeting.id}/participants`,{
     headers:{
         'Authorization': `Basic ${encodedCredentials}`,
@@ -55,11 +55,19 @@ axios.get(`https://api.dyte.io/v2/meetings/${data.body.meeting.id}/participants`
 }).then(async(response)=>{
     let isStudent=false
     let isTeacher=false
-    response.data.data.forEach(element => {
+    response.data.data.forEach(async element => {
         if(element.name==='student'){
 isStudent=true
         }
         if(element.name==='teacher'){
+            let response = await Attendance.findOneAndUpdate({
+                class_id: classDetails._id,
+                teacher_id: user_id._id
+            }, {
+                $set: {
+                    check_out_datetime:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+                }
+            })
 isTeacher=true
         }
     });

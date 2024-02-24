@@ -63,7 +63,7 @@ UserSchema.methods.signJWT = function () {
   UserSchema.virtual('profile_image_url').get(function () {
     if(this.profile_image!==undefined) {
  
-        return process.env.APP_URL+this.profile_image
+        return process.env.CLOUD_API+this.profile_image
     }
  })
 UserSchema.plugin(mongoosePaginate)

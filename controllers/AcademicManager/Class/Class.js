@@ -354,7 +354,7 @@ let query = {
   student_id: { $in: academicManagerResponse.students },
   teacher_id: { $in: academicManagerResponse.teachers },
   class_type: "Trial",
-  start_time:{
+  end_time:{
     $gte: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss"),
   }
   
@@ -431,7 +431,7 @@ const getRescheduledClasses=async (req, res) => {
         },
         teacher_id: { $in: academicManagerResponse.teachers },
         is_rescheduled:true,
-        start_time:{
+        end_time:{
           $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
         },
         status:"Pending"
@@ -677,7 +677,7 @@ const getUpcomingClasses=async(req,res,next)=>{
   
     }
     let query={$and:[
-     { start_time :{$gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")}},
+     { end_time :{$gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")}},
       {student_id:{$in:academicManagerResponse.students}},
       {teacher_id:{$in:academicManagerResponse.teachers}},
       {status:'Scheduled'}
@@ -700,7 +700,7 @@ const getUpcomingClasses=async(req,res,next)=>{
         })
       
       query={$and:[
-        { start_time :{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")}},
+        { end_time :{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")}},
        
         {student_id:{$in:academicManagerResponse.students}},
         {teacher_id:{$in:academicManagerResponse.teachers}},
@@ -1040,7 +1040,7 @@ const getExtraClassRequests=async(req,res)=>{
 
 const getUpcomingClassDetails=async(req,res)=>{
   let classDetails = {}
-  classDetails = await Class.findOne({ _id: req.query.class_id ,start_time:{
+  classDetails = await Class.findOne({ _id: req.query.class_id ,end_time:{
     $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
   }}, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,materials:1 }).populate({
     path: 'teacher_id', select: {

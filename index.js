@@ -8,6 +8,7 @@ const server = http.createServer(app);
 import dotenv from "dotenv";
 import nodeCron from 'node-cron'
 import fileUpload from 'express-fileupload'
+import path from "path";
 dotenv.config({ path: `.env.${process.env.NODE_ENV?.trim()}` });
 
 

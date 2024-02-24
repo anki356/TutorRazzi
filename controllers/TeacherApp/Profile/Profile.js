@@ -13,8 +13,9 @@ import Testimonial from "../../../models/Testimonial.js"
 import Review from "../../../models/Review.js"
 import Curriculum from "../../../models/Curriculum.js"
 import SubjectCurriculum from "../../../models/SubjectCurriculum.js"
+import { upload } from "../../../util/upload.js"
 const editProfile = async (req, res, next) => {
-if(req.files?.length>0){
+if(req.files?.profile_image){
   const imageResponse = await User.findOne({
     _id: req.user._id
   }, {
@@ -24,13 +25,7 @@ if(req.files?.length>0){
 
     unlinkFile(imageResponse.profile_image)
   }
-  const userResponse = await User.updateOne({
-    _id: req.user._id
-  }, {
-    $set: {
-      profile_image: req.files[0].filename
-    }
-  })
+ req.body.profile_image=await upload(req.files.profile_image)
 }
   
   const teacherResponse = await Teacher.findOneAndUpdate({
@@ -64,24 +59,39 @@ const editSubjectCurriculum=async(req,res)=>{
   })
   res.json(responseObj(true, { teacherResponse }, null))
 }
-const editPhoto = async (req, res, next) => {
-  const imageResponse = await User.findOne({
-    _id: req.user._id
-  }, {
-    profile_image: 1
-  })
-  if (imageResponse.profile_image) {
+const editPhoto=async(req,res)=>{
+  const userDetails=await User.findOne({
+     _id:req.user._id
+   })
+   if (req.files?.photo) {
+      if(userDetails.profile_image){
+          await  unlinkFile(userDetails.profile_image)
+          }
 
-    unlinkFile(imageResponse.profile_image)
-  }
-  const userResponse = await User.updateOne({
-    _id: req.user._id
-  }, {
-    $set: {
-      profile_image: req.files[0].filename
-    }
-  })
-  res.json(responseObj(true, userResponse, null))
+      req.body.profile_image = await upload(req.files.photo)
+  
+ 
+    
+       await User.updateMany({
+         _id:req.user._id
+       },{
+         $set:{
+           ...req.body
+         }
+       })
+
+       const teacherResponse=await AcademicManager.findOne({
+        user_id:req.user._id
+      }).populate({
+       path:"user_id"
+      })
+       return res.json(responseObj(true,teacherResponse,"Photo edited")) 
+  }     
+ else{
+  return res.json(responseObj(false,null,"Please give photo"))
+ }
+ 
+ 
 }
 const getTrialClassesRequests = async (req, res, next) => {
   let query = {

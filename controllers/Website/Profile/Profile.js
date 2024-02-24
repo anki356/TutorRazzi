@@ -7,6 +7,7 @@ import SubscribedEmail from "../../../models/SubscribedEmail.js"
 import unlinkFile from "../../../util/unlinkFile.js"
 import bcrypt from "bcrypt"
 import Subject from "../../../models/Subject.js"
+import { upload } from "../../../util/upload.js"
 const getProfileDetails=async(req,res)=>{
     let user_id=req.user._id
     let userDetails=await User.findOne({_id:user_id})
@@ -232,15 +233,16 @@ const editPhoto=async(req,res)=>{
   const userDetails=await User.findOne({
      _id:req.user._id
    })
-  if(req.files?.length>0){
+  if(req.files?.photo>0){
      if(userDetails.profile_image){
         await  unlinkFile(userDetails.profile_image)
         }
+        req.body.profile_image=await upload(req.files.photo)
        await User.updateMany({
          _id:req.user._id
        },{
          $set:{
-           profile_image:req.files[0].filename
+          ...req.body
          }
        })
 

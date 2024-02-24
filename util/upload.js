@@ -61,4 +61,4 @@ const upload = async (files) => {
 }
 
 
-export { upload }
+export default upload 

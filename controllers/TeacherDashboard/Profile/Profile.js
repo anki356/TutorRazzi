@@ -371,25 +371,30 @@ rest.exp=rest.end_year!==undefined&&rest.end_year!==null&& rest.end_year!==''?Nu
    const userDetails=await User.findOne({
       _id:req.user._id
     })
-   if(req.files?.length>0){
-      if(userDetails.profile_image){
-         await  unlinkFile(userDetails.profile_image)
-         }
+    if (req.files?.profile_image) {
+       if(userDetails.profile_image){
+           await  unlinkFile(userDetails.profile_image)
+           }
+
+       req.body.profile_image = await upload(req.files.profile_image)
+   
+  
+     
         await User.updateMany({
           _id:req.user._id
         },{
           $set:{
-            profile_image:req.files[0].filename
+            ...req.body
           }
         })
 
-        const teacherResponse=await Teacher.findOne({
+        const teacherResponse=await AcademicManager.findOne({
          user_id:req.user._id
        }).populate({
         path:"user_id"
        })
         return res.json(responseObj(true,teacherResponse,"Photo edited")) 
-      }
+   }     
   else{
    return res.json(responseObj(false,null,"Please give photo"))
   }

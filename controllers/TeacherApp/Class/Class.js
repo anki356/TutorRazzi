@@ -19,6 +19,7 @@ import { addNotifications } from "../../../util/addNotification.js"
 import User from "../../../models/User.js"
 import MonthlyReport from "../../../models/MonthlyReport.js"
 import axios from "axios"
+import { upload } from "../../../util/upload.js"
 const setReminder = async (req, res, next) => {
   const reminderResponse = await Reminder.insertMany({
     class_id: req.body.class_id,
@@ -405,12 +406,19 @@ const uploadClassMaterial=async (req,res,next)=>{
   let ClassMaterials=await Class.findOne({
     _id:req.params._id
   },{materials:1})
-  ClassMaterials.materials.push({name:req.files[0].filename})
-  let classResponse=await Class.updateOne({
-    _id : req.params._id},{$set:{ materials:ClassMaterials.materials}});
-    addNotifications(classDetails.student_id,"Class Material Uploaded", "Material for class on "+moment(classDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(classDetails.end_time).format("HH:mm")+ " of subject "+classDetails.subject.name+ " has been uploaded")
-   
-  res.json(responseObj(true,[],"Class Materials Uploaded Successfully"))
+  if(req.files?.document){
+
+    const fileName=await upload(req.files.document)
+    ClassMaterials.materials.push({name:req.files[0].filename})
+    let classResponse=await Class.updateOne({
+      _id : req.params._id},{$set:{ materials:ClassMaterials.materials}});
+      addNotifications(classDetails.student_id,"Class Material Uploaded", "Material for class on "+moment(classDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(classDetails.end_time).format("HH:mm")+ " of subject "+classDetails.subject.name+ " has been uploaded")
+     
+    res.json(responseObj(true,null,"Class Materials Uploaded Successfully"))
+  }
+  else{
+    res.json(responseObj(false,null,"No File Found"))
+  }
 }
 const reviewClass=async(req,res,next)=>{
   let classDetails=await Class.findOne({
@@ -670,19 +678,25 @@ const resolveResourceRequests=async(req,res)=>{
   },{
     materials:1
   })
-  req.files.forEach((data)=>{
+  if(req.files?.materials){
+
+  let fileName=await upload(req.files?.materials)
 
     classResponse.materials.push({
-          name:data.fileName
+          name:fileName
       })
-  })
+  
   await Class.updateOne({_id:req.body.class_id},{$set:{materials:classResponse.materials}})
   await ResourceRequest.updateOne({_id:req.body.resource_request_id},{
       $set:{
           status:'Resolved'
       }
   })
-  return res.json(responseObj(true,[],'Resource Request resolved'))
+  return res.json(responseObj(true,null,'Resource Request resolved'))
+}
+else{
+  return res.json(responseObj(false,null,'No File Found'))
+}
 }
 const acceptRescheduledClass=async(req,res,next)=>{
   let details=await Class.findOne({

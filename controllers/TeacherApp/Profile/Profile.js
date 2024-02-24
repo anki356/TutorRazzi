@@ -80,7 +80,7 @@ const editPhoto=async(req,res)=>{
          }
        })
 
-       const teacherResponse=await AcademicManager.findOne({
+       const teacherResponse=await Teacher.findOne({
         user_id:req.user._id
       }).populate({
        path:"user_id"

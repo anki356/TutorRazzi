@@ -388,7 +388,7 @@ rest.exp=rest.end_year!==undefined&&rest.end_year!==null&& rest.end_year!==''?Nu
           }
         })
 
-        const teacherResponse=await AcademicManager.findOne({
+        const teacherResponse=await Teacher.findOne({
          user_id:req.user._id
        }).populate({
         path:"user_id"

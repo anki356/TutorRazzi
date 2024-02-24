@@ -29,7 +29,7 @@ versionKey: false})
 NotificationSchema.set('toJSON', { virtuals: true });
 NotificationSchema.virtual('time_diff').get(function () {
     if(this.createdAt!==undefined){
-        const now = moment();
+        const now = moment().add(5,'h').add(30,'m');
         const duration = moment.duration(now.diff(this.createdAt));
         
         if (duration.asSeconds() < 60) {

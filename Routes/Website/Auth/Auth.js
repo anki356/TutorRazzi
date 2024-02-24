@@ -1,5 +1,5 @@
 import express from "express";
-import { SignUp,SignIn, changePassword, verifyEmail, verifyOTP, authVerify } from "../../../controllers/Website/Auth/Auth.js";
+import { SignUp,SignIn, changePassword, verifyEmail, verifyOTP, authVerify, verifyEmailPassword } from "../../../controllers/Website/Auth/Auth.js";
 import  { body, validationResult } from "express-validator";
 import { responseObj } from "../../../util/response.js";
 import validationError from "../../../middleware/validationError.js";
@@ -19,5 +19,6 @@ router.post("/SignIn",loginValidationChain,validationError,SignIn)
 
 router.patch("/change-Password",authVerify,loginValidationChain,validationError,changePassword)
 router.post("/verify-Email",loginValidationChain,validationError,verifyEmail)
+router.post("/verify-Email-Password",loginValidationChain,validationError,verifyEmailPassword)
 router.post("/verify-OTP",verifyOTP)
 export default router

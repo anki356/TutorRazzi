@@ -11,9 +11,9 @@ import generateOTP from "../../../util/generateOtp.js";
 import Otp from "../../../models/Otp.js";
 import { createJWT } from "../../../util/auth.js";
 import Parent from "../../../models/Parent.js";
-import { sendMailAsync } from "../../../util/emailTransport.js";
 
 import crypto from 'crypto'
+import { sendMailAsync } from "../../../util/emailTransport.js";
 
 const ObjectId=mongoose.Types.ObjectId
 
@@ -59,6 +59,31 @@ if(!user.password){
         
     },"Successful Login",null) )
 }
+const verifyEmailPassword=async()=>{
+    let userResponse=await User.findOne({email:req.body.email,role:'teacher'})
+   
+    if(userResponse===null){
+
+throw new Error("User Email not found")
+
+    }
+
+
+    const resetToken =crypto.randomBytes(20).toString('hex');
+    const mailOptions = {
+        to: req.body.email,
+        subject: 'Password Reset',
+        html: "./util/reset-link.ejs",
+    };
+    const options = { resetToken }
+    userResponse=await User.updateOne({email:req.body.email},{resetToken:resetToken})
+   // Create a transporter using the Ethereal account
+  sendMailAsync(mailOptions, options)
+  res.json(responseObj(true,null,"Email Sent"))
+      
+          
+
+}
 const changePassword=async(req,res,next)=>{
   
     const { password } = req.body;
@@ -76,7 +101,7 @@ $set:{...req.body}
 
            
             
-            await sendEmail(req.user.email,"Password Changed",changePasswordEmail(req.user.name))
+            await sendEmail("anki356@gmail.com","Password Changed",changePasswordEmail(req.user.name))
             res.json(responseObj(true,[],"Password Changed",null))
         }
     
@@ -106,30 +131,45 @@ res.json(responseObj(true,{
 
 }
 const verifyEmail=async(req,res,next)=>{
-    let userResponse=await User.findOne({email:req.body.email,role:'student'})
-   
-    if(userResponse===null){
+    
+    //false condition before
+   if(req.body.key==='parent'){
+    const user_details=await User.findOne({
+        email:req.body.email
+    })
 
-throw new Error("User Email not found")
-
+    const parent_details=await Parent.findOne({
+        user_id:user_details?._id
+    })
+    
+    if(parent_details!==null){
+        return res.json(responseObj(false,null,"Parent Details already exist.Please Sign in."))
     }
+   }
+   else{
+    const user_details=await User.findOne({
+        email:req.body.email
+    })
+    if(user_details!==null){
+        return res.json(responseObj(false,"Student Details already exist.Please Sign in."))
+    }
+   }
 
 
-    const resetToken = crypto.randomBytes(20).toString('hex');
-    const mailOptions = {
-        to: req.body.email,
-        subject: 'Password Reset',
-        html: "./util/reset-link.ejs",
-    };
-    const options = { resetToken }
-    userResponse=await User.updateOne({email:req.body.email},{resetToken:resetToken})
+    const verificationToken=generateOTP(5)
+
+    await Otp.create({
+        email:req.body.email,
+        code:verificationToken
+    })
    // Create a transporter using the Ethereal account
-  sendMailAsync(mailOptions, options)
+  sendEmail(req.body.email,"Verification Email", "Verificaion code is "+verificationToken)
   res.json(responseObj(true,null,"Email Sent"))
       
           
 
 }
+
 const authVerify = (req, res, next) => {
     let token = req.header('Authorization');
 
@@ -151,4 +191,4 @@ console.log(user)
         next();
     });
 }
-export {SignUp,SignIn,changePassword,verifyEmail,verifyOTP,authVerify}
+export {SignUp,SignIn,changePassword,verifyEmail,verifyOTP,authVerify,verifyEmailPassword}

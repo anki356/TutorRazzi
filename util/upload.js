@@ -29,7 +29,7 @@
 // const { removeTemp } = require("./removeFile");
 // const slugify = require("slugify");
 import slugify from "slugify"
-import {removeTemp} from "./removeFile.js"
+import removeTemp from "./removeTemp.js"
 import path from "path"
 import { Storage } from "@google-cloud/storage"
 import baseUploads from "../storage/baseUploads.js"

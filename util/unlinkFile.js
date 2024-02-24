@@ -2,10 +2,9 @@
 // const path = require('path');
 import fs from 'fs'
 import path from 'path'
-
 // const { baseUpload, tempUpload } = require("../storage/baseUploads");
 
-function removeFile(filePath) {
+function unlinkFile(filePath) {
     try {
         const fullPath = path.join(baseUpload, filePath);
 
@@ -42,14 +41,6 @@ function removeFile(filePath) {
 // }
 
 
-function removeTemp(filePath) {
-    try {
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-        }
-    } catch (error) {
-        console.error(`Error deleting file '${filePath}': ${error.message}`);
-    }
-}
 
-export { removeFile, removeTemp };
+
+export default  unlinkFile ;

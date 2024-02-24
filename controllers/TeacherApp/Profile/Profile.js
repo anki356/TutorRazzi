@@ -181,7 +181,7 @@ const getUpcomingClasses = async (req, res, next) => {
   }
   let query = {
     $and: [
-      { start_time: { $gte: moment().format("YYYY-MM-DDTHH:mm:ss") } },
+      { end_time: { $gte: moment().format("YYYY-MM-DDTHH:mm:ss") } },
 
       { teacher_id: req.user._id },
 
@@ -484,7 +484,7 @@ const getTrialClasses = async (req, res, next) => {
     $and: [{
       teacher_id: req.user._id,
       class_type: 'Trial',
-      start_time: {
+      end_time: {
         "$gte": moment().format("YYYY-MM-DDTHH:mm:ss")
       }
       // status: 'Pending'

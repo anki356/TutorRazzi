@@ -341,7 +341,7 @@ const getRescheduledClasses = async (req, res, next) => {
     $and: [
       {
 
-        start_time: { $gte: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")},
+        end_time: { $gte: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")},
       }, {
         teacher_id: req.user._id,
 
@@ -750,7 +750,7 @@ const getClassesBasedOnDate=async (req,res)=>{
 }
 const getUpcomingClassDetails=async(req,res)=>{
   let classDetails = {}
-  classDetails = await Class.findOne({ _id: req.query.class_id,$gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss") }, { start_time: 1, end_time: 1, details: 1, grade: 1,  teacher_id: 1, notes: 1,student_id:1,subject:1 })
+  classDetails = await Class.findOne({ _id: req.query.class_id,end_time:{$gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")} }, { start_time: 1, end_time: 1, details: 1, grade: 1,  teacher_id: 1, notes: 1,student_id:1,subject:1 })
   if(classDetails===null){
     throw new Error("Incorrect Class Id")
   }

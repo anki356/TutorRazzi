@@ -7,7 +7,7 @@ import SubscribedEmail from "../../../models/SubscribedEmail.js"
 import unlinkFile from "../../../util/unlinkFile.js"
 import bcrypt from "bcrypt"
 import Subject from "../../../models/Subject.js"
-import { upload } from "../../../util/upload.js"
+import upload  from "../../../util/upload.js"
 const getProfileDetails=async(req,res)=>{
     let user_id=req.user._id
     let userDetails=await User.findOne({_id:user_id})

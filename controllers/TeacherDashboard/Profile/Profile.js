@@ -6,7 +6,7 @@ import { responseObj } from "../../../util/response.js"
 import unlinkFile from "../../../util/unlinkFile.js"
 import Curriculum from "../../../models/Curriculum.js"
 import SubjectCurriculum from "../../../models/SubjectCurriculum.js"
-
+import upload from "../../../util/upload.js"
 const getUserProfile=async(req,res)=>{
   const profile_image_details=await User.findOne({
     _id:req.user._id

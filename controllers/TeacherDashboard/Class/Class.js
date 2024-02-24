@@ -749,6 +749,7 @@ let taskResponse=await Task.find({
     let ClassMaterials=await Class.findOne({
       _id:req.params._id
     },{materials:1})
+    // if(req.files.)
     ClassMaterials.materials.push({name:req.files[0].filename})
     let classResponse=await Class.updateOne({
       _id : req.params._id},{$set:{ materials:ClassMaterials.materials}});

@@ -13,7 +13,7 @@ import Testimonial from "../../../models/Testimonial.js"
 import Review from "../../../models/Review.js"
 import Curriculum from "../../../models/Curriculum.js"
 import SubjectCurriculum from "../../../models/SubjectCurriculum.js"
-import { upload } from "../../../util/upload.js"
+import upload  from "../../../util/upload.js"
 const editProfile = async (req, res, next) => {
 if(req.files?.profile_image){
   const imageResponse = await User.findOne({

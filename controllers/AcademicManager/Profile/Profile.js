@@ -4,7 +4,7 @@ import Teacher from "../../../models/Teacher.js"
 import User from "../../../models/User.js"
 import { responseObj } from "../../../util/response.js"
 import unlinkFile from "../../../util/unlinkFile.js"
-
+import upload from "../../../util/upload.js"
 const getProfileDetails=async(req,res)=>{
     let user_id=req.user._id
     let userDetails=await User.findOne({_id:user_id},{

@@ -19,7 +19,7 @@ import { addNotifications } from "../../../util/addNotification.js"
 import User from "../../../models/User.js"
 import MonthlyReport from "../../../models/MonthlyReport.js"
 import axios from "axios"
-import { upload } from "../../../util/upload.js"
+import  upload  from "../../../util/upload.js"
 const setReminder = async (req, res, next) => {
   const reminderResponse = await Reminder.insertMany({
     class_id: req.body.class_id,

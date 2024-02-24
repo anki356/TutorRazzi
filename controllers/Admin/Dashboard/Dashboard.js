@@ -154,7 +154,7 @@ return dataOne.month===data._id
     })
     // return res.json(responseObj(true,totalTrialRequests,"Total Requests")) 
    
-   return res.json(responseObj(true,{newArray,totalTrialRequests,totalHoursCompleted,totalStudents,totalBookings,newArray,profileViewCountResponse,totalPaymentRemains,totalPaymentRemains,lastPaymentReceived,totalPaymentReceived},"Stats")) 
+   return res.json(responseObj(true,{newArray,totalTrialRequests,hoursCompleted,totalStudents,totalBookings,newArray,profileViewCountResponse,totalPaymentRemains,totalPaymentRemains,lastPaymentReceived,totalPaymentReceived},"Stats")) 
 
 }
 const getTotalPaymentRemains=async(req,res)=>{

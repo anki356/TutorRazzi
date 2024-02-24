@@ -18,6 +18,8 @@ import Reminder from "../../../models/Reminder.js"
 import User from "../../../models/User.js"
 import Review from "../../../models/Review.js"
 import {addNotifications} from "../../../util/addNotification.js"
+import Attendance from "../../../models/Attendance.js"
+import axios from "axios"
 const joinClass = async (req, res, next) => {
   let classResponse = await Class.findOne({
       _id: req.body.class_id,

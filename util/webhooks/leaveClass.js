@@ -80,15 +80,7 @@ isTeacher=true
             }
         }) 
     }
-    else{
-        await Class.updateOne({
-            meeting_id:data.body.meeting.id
-        },{
-            $set:{
-                status:'Cancelled'
-            }
-        })
-    }
+  
    
 })
     

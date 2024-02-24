@@ -43,7 +43,7 @@ if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTH
 
  
  
-  attendanceResponse = await Attendance.insertMany({
+  let attendanceResponse = await Attendance.insertMany({
       check_in_datetime: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss"),
       academic_manager_id: req.user._id,
       class_id: req.body.class_id,
@@ -685,7 +685,14 @@ const getUpcomingClasses=async(req,res,next)=>{
   
      
     }
-   
+    if(req.query.date){
+      query["$and"].push({
+        start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
+        end_time:{
+          $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+        }
+      })
+    }
     
     if(req.query.search){
       let student_ids=await User.find({
@@ -804,7 +811,14 @@ const getUpcomingClasses=async(req,res,next)=>{
       ]}
       
     }
-    
+    if(req.query.date){
+      query["$and"].push({
+        start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
+        end_time:{
+          $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+        }
+      })
+    }
     if(req.query.student_id){
       query['student_id']=req.query.student_id;
     }

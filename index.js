@@ -53,7 +53,7 @@ app.use("/api/",WebsiteRouter)
 app.use("/api/",AuthRouter)
 
 
-// app.use(errorHandlerMiddleware);
+app.use(errorHandlerMiddleware);
 app.use("/webhooks/leave-class",leaveClass)
 app.use("/webhooks/meeting-ended",meetingEnded)
 app.set('view engine', 'ejs');

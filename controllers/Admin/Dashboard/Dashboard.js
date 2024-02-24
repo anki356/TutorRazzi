@@ -44,7 +44,7 @@ totalPaymentReceived=0
 lastPaymentReceived=0
     }
     else{
-        lastPaymentReceived=lastPaymentReceived[0].net_amount*5/100
+        lastPaymentReceived=lastPaymentReceived[0].TotalAmount*5/100
     }
     let totalPaymentRemains=await Payment.aggregate([
         {$match:{$and:[{
@@ -64,7 +64,7 @@ lastPaymentReceived=0
         // return res.json(responseObj(true,0,"Last Payment Received"))
             }
 else{
-    totalPaymentRemains=totalPaymentRemains*5/100
+    totalPaymentRemains=totalPaymentRemains[0].TotalAmount*5/100
 }
     // return res.json(responseObj(true,totalPaymentReceived[0].TotalAmount*5/100,"Payments Received"))
     let userId = req.user._id;

@@ -126,7 +126,9 @@ const getClassDetails=async(req,res)=>{
     return res.json(responseObj(true,classResponse,"Class Details"))
 }
 const getStudentDetails=async(req,res)=>{
-    const studentResponse=await Student.findOne({user_id:req.query.student_id}).populate({path:"parent_id"})
+    const studentResponse=await Student.findOne({user_id:req.query.student_id}).populate({path:"parent_id"}).populate({
+        path:"user_id"
+    })
     return res.json(responseObj(true,studentResponse,"Student Details"))
 }
 

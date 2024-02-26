@@ -62,7 +62,13 @@ let getAllQuotes=async(req,res)=>{
     })
 }
 const payQuote = async (req, res, next) => {
-    
+    const unique=await Payment.findOne({
+        trx_ref_no:req.body.trx_ref_no
+    })
+    if(unique!==null)
+    {
+        return resjson(responseObj(false,null,"Transaction number must be unique"))
+    }
     const quoteResponse = await Quote.findOneAndUpdate({_id:req.params._id},{$set:{
         status:"Paid"
     }})

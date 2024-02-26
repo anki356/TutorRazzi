@@ -166,6 +166,13 @@ const getPaymentDetails=async(req,res,next)=>{
 }
 
 const withdraw=async (req,res,next)=>{
+    const unique=await Payment.findOne({
+        trx_ref_no:req.body.trx_ref_no
+    })
+    if(unique!==null)
+    {
+        return resjson(responseObj(false,null,"Transaction number must be unique"))
+    }
     let WalletResponse= await Wallet.findOne({
 user_id:req.user._id
     })

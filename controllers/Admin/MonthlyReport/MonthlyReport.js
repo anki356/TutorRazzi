@@ -4,6 +4,7 @@ import { responseObj } from "../../../util/response.js"
 import AdditionalComment from "../../../models/AdditionalComment.js"
 import moment from "moment"
 import Report from "../../../models/Report.js"
+import MonthlyReport from "../../../models/MonthlyReport.js"
 const ObjectID=mongoose.Types.ObjectId
 const getMonthlyReport=async(req,res,next)=>{
     let query={
@@ -15,29 +16,28 @@ const getMonthlyReport=async(req,res,next)=>{
             teacher_id:new ObjectID(req.quer.teacher_id)
         }
     }
-    const monthlyReports=await Report.aggregate([
-        {
-            $match:query
-        },{$lookup:{
-            from:'teachers',
-            localField:'teacher_id',
-            foreignField:'user_id',
-            as:'teacher'
-        }},{
-            $group :{
-                _id: {
-                    year: "$year",
-                    month:"$month"
-                },
-                totalRatings:{
-                    "$avg":"$rating"
-                }
-            }
-        }
-    ])
-    
+    if(req.query.subject){
+        query.subject=req.query.subject
+    }
+   let options={
+    limit:req.query.limit,
+    page:req.query.page
+   }
+   let pipeline=MonthlyReport.aggregate([
+    {$match:query},
+    {$project:{
+        averageRating: { $avg: "$reports.rating" },
+        status:1,
+        month:1,
+        year:1,
+        createdAt:1
 
-  return  res.json(responseObj(true,monthlyReports,null))
+    }}
+])
+  MonthlyReport.aggregatePaginate(pipeline,options,(err,result)=>{
+    return res.json(responseObj(true,result,null))
+  })  
+
 }
 
 const getMonthlyReportDetails=async(req,res)=>{

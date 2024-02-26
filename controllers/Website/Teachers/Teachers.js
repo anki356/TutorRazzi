@@ -122,7 +122,7 @@ const getGreatTeachersList=async(req,res)=>{
         }
     }
     
-   if(req.query.subject){
+   if(req.query.subject&&req.query.subject!==''){
     
     query["subject_curriculum"]={
         $elemMatch:{
@@ -131,7 +131,7 @@ const getGreatTeachersList=async(req,res)=>{
         }
     };
    }
-   if(req.query.curriculum){
+   if(req.query.curriculum&& req.query.curriculum!==''){
     query["subject_curriculum"]={
         $elemMatch:{
             "curriculum":req.query.curriculum,

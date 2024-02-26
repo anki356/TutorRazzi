@@ -245,7 +245,10 @@ const getTeacherDetailsById=async(req,res)=>{
         bio:1,
         gender:1,
         dob:1,
-        testimonials:1
+        testimonials:1,
+        "city":1,
+        "state":1,
+        "country":1
 
     }).populate({
         path:'user_id',

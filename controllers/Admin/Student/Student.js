@@ -42,14 +42,12 @@ const getAllStudents=async(req,res)=>{
         page:req.query.page,
         populate:{
             path:"user_id",
-            select:{
-            "mobile_number":1,
-    
-            },
-           
+           select:{
+            "_id":1
+           }
         },
         select:{
-            "preferred_name":1,"user_id":1,"grade":1,"city":1,"state":1,"country":1
+            "preferred_name":1,"user_id":1,"grade":1,"city":1,"country":1
         }
     }
 Student.paginate(query,options,(err,result)=>{

@@ -750,7 +750,7 @@ const getUpcomingClasses=async(req,res,next)=>{
     let query={$and:[
       {
   
-        start_time :{$lt:moment().format("YYYY-MM-DDTHH:mm:ss").add(5,'h').add(30,'m')},
+        start_time :{$lt:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")},
       },
         {student_id:{$in:academicManagerResponse.students}},
         {teacher_id:{$in:academicManagerResponse.teachers}},

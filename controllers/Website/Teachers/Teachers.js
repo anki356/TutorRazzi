@@ -116,7 +116,7 @@ const getGreatTeachersList=async(req,res)=>{
 
     }
     let querySecond={}
-    if (req.query.exp){
+    if (req.query.exp&&req.query.exp!==""){
         querySecond={
             totalExp:Number(req.query.exp)
         }

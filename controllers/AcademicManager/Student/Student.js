@@ -176,7 +176,10 @@ const getAllStudentPayments=async(req,res)=>{
         status:"Paid"
     }
     if(req.query.date){
-        query.payment_date=req.query.date
+        query.payment_date={
+            $gte:req.query.date,
+            $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+        }
     }
     let options={
         limit:req.query.limit,

@@ -171,7 +171,7 @@ const withdraw=async (req,res,next)=>{
     })
     if(unique!==null)
     {
-        return resjson(responseObj(false,null,"Transaction number must be unique"))
+        return res.json(responseObj(false,null,"Transaction number must be unique"))
     }
     let WalletResponse= await Wallet.findOne({
 user_id:req.user._id

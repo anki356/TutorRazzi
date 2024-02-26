@@ -60,7 +60,10 @@ const getStats=async(req,res)=>{
     }
     let options={
         page:req.query.page,
-        limit:req.query.limit
+        limit:req.query.limit,
+        sort:{
+          createdAt:-1
+        }
     }
     console.log(query)
     let pipeline = Support.aggregate([

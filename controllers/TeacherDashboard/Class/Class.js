@@ -735,8 +735,8 @@ let taskResponse=await Task.find({
  
     // addNotifications(AcademicManangerResponse.user_id,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
     
-   addNotifications(AcademicManangerResponse.user_id,"A Class Reviewed","A class of "+classDetails.subject.name+" Reviewed as "+ rating+ "by "+req.user.name )
-   
+   addNotifications(AcademicManangerResponse.user_id,"A Class Reviewed","A class of "+classDetails.subject.name+" Reviewed as "+ req.body.rating+ "by "+req.user.name )
+   addNotifications(classDetails.student_id, "A Class Reviewed","A class of "+classDetails.subject.name+" Reviewed as "+ req.body.rating+ "by "+req.user.name)
     return res.json(responseObj(true,reviewResponse,null))
   }
   const uploadClassMaterial=async (req,res,next)=>{

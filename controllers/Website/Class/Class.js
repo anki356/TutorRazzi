@@ -504,14 +504,42 @@ const getRescheduledClasses=async(req,res,next)=>{
   }
 
   const reviewClass = async (req, res, next) => {
+    let classDetails=await Class.findOne({
+      _id : req.body.class_id
+    })
+    if(classDetails===null){
+      throw new Error("Incorrect Class ID")
+    }
+    let reviewResponse=await Review.findOne({
+      class_id:req.body.class_id,
+      given_by:req.user._id
+    })
   
-    const reviewResponse = await Review.insertMany({
+    if(reviewResponse===null){
+      reviewResponse = await Review.insertMany({
         class_id: req.body.class_id,
         message: req.body?.message,
         rating: req.body.ratings,
         given_by:req.user._id
     })
-
+    }
+    else{
+      return res.json(responseObj(false,null,"You have already reviewed"))
+    }
+  
+    const AcademicManangerResponse=await AcademicManager.findOne({
+      students:{
+           $elemMatch: {
+            $eq: req.user._id
+        }
+      }
+  })
+  
+ 
+    // addNotifications(AcademicManangerResponse.user_id,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
+    
+   addNotifications(AcademicManangerResponse.user_id,"A Class Reviewed","A class of "+classDetails.subject.name+" Reviewed as "+ req.body.ratings+ "by "+req.user.name )
+   addNotifications(classDetails.teacher_id, "A Class Reviewed","A class of "+classDetails.subject.name+" Reviewed as "+ req.body.ratings+ "by "+req.user.name)
     res.json(responseObj(true, reviewResponse, "Review Created Successfully"))
 }
 const setReminder = async (req, res, next) => {

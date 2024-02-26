@@ -59,8 +59,8 @@ if(!user.password){
         
     },"Successful Login",null) )
 }
-const verifyEmailPassword=async()=>{
-    let userResponse=await User.findOne({email:req.body.email,role:'teacher'})
+const verifyEmailPassword=async(req,res)=>{
+    let userResponse=await User.findOne({email:req.body.email,$or:[{role:'student'},{role:'parent'}]})
    
     if(userResponse===null){
 

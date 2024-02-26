@@ -8,14 +8,22 @@ import HomeWork from "../../../models/HomeWork.js"
 import User from "../../../models/User.js"
 import makeId from "../../../util/makeId.js"
 
-const getTotalUpcomingClasses=async(req,res)=>{
+const studentData=async(req,res)=>{
     let totalUpComingClasses=await Class.countDocuments({
         start_time:{
             $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
         },
         status:'Scheduled'
     })
-    return res.json(responseObj(true,totalUpComingClasses,"Total Upcoming Classes"))
+    let totalTrialClassRequests=await Class.countDocuments({
+        start_time:{
+            $gte:moment().format("YYYY-MM-DDTHH:mm:ss")
+        },
+        status:'Pending',
+        class_type:"Trial"
+    })
+    let totalStudents=await Student.countDocuments()
+    return res.json(responseObj(true,{totalUpComingClasses,totalTrialClassRequests,totalStudents},"Total Upcoming Classes"))
 
 }
 
@@ -186,4 +194,4 @@ const deleteStudent=async (req,res)=>{
 }
 
 
-export {deleteStudent,getHomeworkStatistics,getTotalClassesHoursAttended,getTotalUpcomingClasses,getStudentSchedule,getAllStudents,getAllTeachers,getStudentClasses,cancelClass,getClassDetails,getStudentDetails}
+export {deleteStudent,getHomeworkStatistics,getTotalClassesHoursAttended,studentData,getStudentSchedule,getAllStudents,getAllTeachers,getStudentClasses,cancelClass,getClassDetails,getStudentDetails}

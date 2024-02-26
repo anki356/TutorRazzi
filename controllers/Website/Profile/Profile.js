@@ -21,7 +21,10 @@ else if(userDetails.role==='student'){
     profileDetails=await Student.findOne({
         user_id:req.user._id
     }).populate({
-      path:"parent_id"
+      path:"parent_id",
+      select:{
+        "email":1,"mobile_number":1
+      }
     })
 }
 return res.json(responseObj(true,{userDetails:userDetails,profileDetails:profileDetails},"User profile Details"))

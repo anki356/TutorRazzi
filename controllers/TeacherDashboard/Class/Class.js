@@ -405,7 +405,7 @@ const setReminder = async (req, res, next) => {
     if(notesResponseAlready===null){
   throw new Error("Class ID Is incorrect")
     }
-    if(notesResponseAlready.notes!==null){
+    if(notesResponseAlready.notes){
       throw new Error("Notes already added")
     }
     let notesResponse = await Class.updateOne({ _id: req.params._id }, {

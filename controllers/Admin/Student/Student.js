@@ -43,7 +43,7 @@ const getAllStudents=async(req,res)=>{
         populate:{
             path:"user_id",
            select:{
-            "_id":1
+            "_id":1,"email":1
            }
         },
         select:{

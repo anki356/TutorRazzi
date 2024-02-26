@@ -31,15 +31,14 @@ return res.json(responseObj(true,{userDetails:userDetails,profileDetails:profile
 }
 
 const editProfileDetails=async(req,res)=>{
-const userDetails=await User.findOneAndUpdate({
-    _id:req.user._id
-},{
-    $set:{...req.body}
+const userDetails=await User.findOne({
+    _id:req.user._id,
+
 })
 if(req.files?.profile_image){
 unlinkFile(userDetails.profile_image)
 let fileName=await upload(req.files.profile_image)
-  await User.updateMany({
+  await User.updateOne({
     _id:req.user._id
   },{
     $set:{
@@ -47,24 +46,26 @@ let fileName=await upload(req.files.profile_image)
     }
   })
 }
-if(userDetails.role==='parent'){
-    await Parent.updateOne({
-        user_id:req.user._id
-    },{
-        $set:{...req.body,preferred_name:req.body.name}
-    })
-}
-else if(userDetails.role==='student'){
+ 
   req.body.subjects=JSON.parse(req.body.subjects).map((data)=>{
     return {name:data}
   })
-    await Student.updateOne({
+   let studentDetails= await Student.findOneAndUpdate({
         user_id:req.user._id
     },{
         $set:{...req.body,preferred_name:req.body.name,"grade":{name:req.body.grade},"curriculum":{name:req.body.curriculum}}
     })
+    if(req.body.parent_mobile_number){
+      await User.updateOne({
+        _id:studentDetails.parent_id
+      },{
+        $set:{
+          mobile_number:req.body.parent_mobile_number
+        }
+      })
+    }
  
-}
+
 res.json(responseObj(true,null,"profile Edited Successfully"))
 }
 const getHomework=async(req,res,next)=>{

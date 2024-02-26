@@ -122,16 +122,25 @@ const getGreatTeachersList=async(req,res)=>{
         }
     }
     
-   if(req.query.subject&&req.query.curriculum&&req.query.grade){
+   if(req.query.subject){
     
-    query["subject_curriculum_grade"]={
+    query["subject_curriculum"]={
         $elemMatch:{
             "subject":req.query.subject,
-            "curriculum":req.query.curriculum,
-            "grade":req.query.grade
+            
         }
     };
    }
+   if(req.query.curriculum){
+    query["subject_curriculum"]={
+        $elemMatch:{
+            "curriculum":req.query.curriculum,
+            
+        }
+    };
+   }
+ 
+
   
    let teacherResponse = Teacher.aggregate([
       {

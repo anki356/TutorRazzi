@@ -10,7 +10,9 @@ body('password').notEmpty().withMessage('Password is required field.')
     .withMessage('Password should have atleast 8 characters.'),
     body('key').notEmpty().withMessage('Key is required field.')
 ];
-
+const verifyEmailValidationChain = [
+    body('email').notEmpty().isEmail().trim(),
+];
 
 
 const router=express.Router()
@@ -19,6 +21,6 @@ router.post("/SignIn",loginValidationChain,validationError,SignIn)
 
 router.patch("/change-Password",authVerify,loginValidationChain,validationError,changePassword)
 router.post("/verify-Email",loginValidationChain,validationError,verifyEmail)
-router.post("/verify-Email-Password",loginValidationChain,validationError,verifyEmailPassword)
+router.post("/verify-Email-Password",verifyEmailValidationChain,validationError,verifyEmailPassword)
 router.post("/verify-OTP",verifyOTP)
 export default router

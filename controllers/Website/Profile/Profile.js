@@ -35,11 +35,12 @@ const userDetails=await User.findOneAndUpdate({
 })
 if(req.files?.profile_image){
 unlinkFile(userDetails.profile_image)
+let fileName=await upload(req.files.profile_image)
   await User.updateMany({
     _id:req.user._id
   },{
     $set:{
-      profile_image:req.files[0].filename
+      profile_image:fileName
     }
   })
 }

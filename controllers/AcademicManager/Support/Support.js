@@ -8,8 +8,9 @@ import upload from "../../../util/upload.js"
 const ObjectId=mongoose.Types.ObjectId
 const addSupport=async (req,res,next)=>{
     let documentResponse
+    let fileName
     if(req.files?.file){
-      let fileName=await upload(req.files.file)
+     fileName =await upload(req.files.file)
          documentResponse=await Document.create({
     name:fileName
         })

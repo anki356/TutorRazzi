@@ -192,7 +192,7 @@ $addFields:{
         $project: {
             user_id: 1,
             "preferred_name": 1,
-            "users.profile_image":1,
+            "users.profile_image_url":1,
             // subject_curriculum_grade:1,
             averageRating: {
                 $avg: "$reviews.rating"

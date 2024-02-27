@@ -23,14 +23,15 @@ const getTotalStudents=async(req,res)=>{
 }
 const getTotalUpcomingClasses=async(req,res)=>{
 
-    let upComingClassesCount= await Class.countDocuments({start_time:{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")},status:'Scheduled'})
+    let upComingClassesCount= await Class.countDocuments({end_time:{$gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")},status:'Scheduled'})
     res.json(responseObj(true,{"upComingClassesCount":upComingClassesCount},"upComingClasses"))
 }
 const getTrialRequests=async(req,res)=>{
     const trialRequests=await Class.countDocuments({
         class_type:"Trial",
         teacher_id:req.user._id,
-        status:'Pending'
+        status:'Pending',
+        end_time:{$gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")}
             })
             res.json(responseObj(true,{"trialRequests":trialRequests},"No of Trials Requested are"))
 }

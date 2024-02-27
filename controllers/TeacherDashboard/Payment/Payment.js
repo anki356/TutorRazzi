@@ -89,6 +89,12 @@ class_id:{$in:classResponse.map((data)=>data._id)},
    status:"Paid"
 
    }
+   if(req.query.date){
+    query.payment_date={
+        $gte:req.query.date,
+        $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+    }
+}
    let options={
        limit:req.query.limit,
        page:req.query.page,

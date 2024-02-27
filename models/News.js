@@ -21,4 +21,9 @@ const NewsSchema=new mongoose.Schema({
     }
 })
 NewsSchema.plugin(mongoosePaginate)
+NewsSchema.set('toJSON', { virtuals: true });
+NewsSchema.virtual('cover_photo_url').get(function(){
+
+return process.env.CLOUD_API+"/"+this.cover_photo
+})
 export default mongoose.model("News",NewsSchema)

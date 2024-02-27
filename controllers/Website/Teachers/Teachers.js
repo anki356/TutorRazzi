@@ -187,19 +187,18 @@ $addFields:{
       totalExp: { $sum: "$exp_details.exp" }
 }
     },
-{
-$addFields:{
-    "user_profile_url":{
-        $concat:[process.env.CLOUD_API,"/","$users.profile_image"]
-        
-    }
-}
-},
+
     {
         $project: {
             user_id: 1,
             "preferred_name": 1,
-            "users.profile_url":1,
+            "profile_image_url": {
+                $reduce: {
+                    input: "$users.profile_image",
+                    initialValue: "",
+                    in: { $concat: [process.env.CLOUD_API, "/", "$$this"] }
+                  }
+              },
             // subject_curriculum_grade:1,
             averageRating: {
                 $avg: "$reviews.rating"

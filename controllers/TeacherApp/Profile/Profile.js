@@ -486,6 +486,9 @@ const getTrialClasses = async (req, res, next) => {
       class_type: 'Trial',
       end_time: {
         "$gte": moment().format("YYYY-MM-DDTHH:mm:ss")
+      },
+      status:{
+        $ne:"Cancelled"
       }
       // status: 'Pending'
     }]

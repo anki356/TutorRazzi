@@ -254,6 +254,9 @@ const getTrialClassesRequests = async (req, res, next) => {
       class_type: 'Trial',
       end_time: {
         "$gte": moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+      },
+      status:{
+        $ne:"Cancelled"
       }
     }]
   }

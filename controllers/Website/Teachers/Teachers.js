@@ -197,10 +197,8 @@ country:1
     },
     {
         $sort: { averageRating: -1 }, 
-    },
-    {
-        $limit: req.query.limit ? Number(req.query.limit) : 5
     }
+   
 
 ])
 let options={

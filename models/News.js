@@ -16,6 +16,7 @@ const NewsSchema=new mongoose.Schema({
     },
     category:{
         type:String,
+        enum:['Subject Areas','Educational Resources','Pedagogical Strategies','Technology In Education','Professional Development','Career Guidance'],
         required:true  
     }
 })

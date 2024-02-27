@@ -53,6 +53,13 @@ const getGreatTeachers=async(req,res)=>{
             }
         },
         {
+            $match:{
+                averageRating:{
+                    $gte:4
+                }
+            }
+        },
+        {
             $sort: { averageRating: -1 }, 
         },
         {

@@ -438,6 +438,7 @@ return  res.json(responseObj(true,{teacherResponse:teacherDetails,is_complete:is
   
  }
  const getSubjectCurriculumByID=async(req,res)=>{
+   db.students.find({}, { "grades": { $elemMatch: { "subject": "math" } }, "_id": 0 })
    const subject_curriculum=await Teacher.findOne({
       subject_curriculum:{
          $elemMatch:{
@@ -445,7 +446,9 @@ return  res.json(responseObj(true,{teacherResponse:teacherDetails,is_complete:is
          }
       }
    },{
-      subject_curriculum:1
+      subject_curriculum:{
+         $elemMatch: { "_id": req.query.id } 
+      }
    })
    return res.json(responseObj(true,subject_curriculum,"Subject Curriculum"))
  }

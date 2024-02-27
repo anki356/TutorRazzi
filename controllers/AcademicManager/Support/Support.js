@@ -21,7 +21,7 @@ const addSupport=async (req,res,next)=>{
         subject:req.body.title,
         description:req.body.description,
         status:"Pending",
-        document_id:req.files?.file?documentResponse._id:null,
+        document_id:req.files?.file?fileName:null,
         
 
     })

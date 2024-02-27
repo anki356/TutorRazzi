@@ -91,7 +91,7 @@ const addSupport=async (req,res,next)=>{
         user_id:req.user._id,
         is_sender:true,
         response:req.body.description,
-        response_document:req.files?.file?documentResponse._id:null,
+        response_document:req.files?.file?fileName:null,
         
     })
     res.json(responseObj(true,{documentResponse,supportResponse},null))

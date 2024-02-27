@@ -17,6 +17,9 @@ import User from "../../../models/User.js";
 import upload from "../../../util/upload.js";
 const objectId=mongoose.Types.ObjectId
 const rescheduleClass=async(req,res,next)=>{
+  if(moment().add(5,'h').add(30,'s').diff(req.body.start_time,'s')>0){
+    return res.json(responseObj(false,null,"Start Time cannot be in past"))
+   }
   let details=await Class.findOne({
     _id:req.params._id
   })

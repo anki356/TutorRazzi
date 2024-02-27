@@ -392,6 +392,9 @@ const requestTrialClass = async (req, res, next) => {
     
 
     await req.body.start_time.forEach(async (element) => {
+       if(moment().add(5,'h').add(30,'s').diff(element,'s')>0){
+        return res.json(responseObj(false,null,"Start Time cannot be in past"))
+       }
         let classScheduled=await Class.find({
             $and: [   { start_time:{$gte:element}},
               {start_time:{

@@ -55,6 +55,13 @@ let fileName=await upload(req.files.profile_image)
     },{
         $set:{...req.body,preferred_name:req.body.name,"grade":{name:req.body.grade},"curriculum":{name:req.body.curriculum}}
     })
+    await User.updateOne({
+      _id:req.user._id
+    },{
+      $set:{
+        mobile_number:req.body.mobile_number
+      }
+    })
     if(req.body.parent_mobile_number){
       await User.updateOne({
         _id:studentDetails.parent_id

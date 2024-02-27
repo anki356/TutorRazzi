@@ -17,7 +17,7 @@ const getAllPayments=async(req,res)=>{
         sender_id:req.user._id,
         status:"Paid"
     }
-    if(req.query.date){
+    if(req.query.date&&req.query.date!==''){
         query.payment_date={
             $gte:req.query.date,
             $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
@@ -48,11 +48,17 @@ select:{
 }
 
 let getAllQuotes=async(req,res)=>{
+
     let query={
         student_id:req.user._id,
         status:"Pending"
     }
-  
+    if(req.query.date&&req.query.date!==''){
+        query.createdAt={
+            $gte:req.query.date,
+            $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+        }
+    }
     let options={
         limit:req.query.limit,
         page:req.query.page,

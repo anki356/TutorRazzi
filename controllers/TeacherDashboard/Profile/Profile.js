@@ -439,7 +439,7 @@ return  res.json(responseObj(true,{teacherResponse:teacherDetails,is_complete:is
  }
  const getSubjectCurriculumByID=async(req,res)=>{
    // db.students.find({}, { "grades": { $elemMatch: { "subject": "math" } }, "_id": 0 })
-   const subject_curriculum=await Teacher.findOne({
+   const subject_curriculum_details=await Teacher.findOne({
       subject_curriculum:{
          $elemMatch:{
             _id:req.query.id
@@ -450,6 +450,6 @@ return  res.json(responseObj(true,{teacherResponse:teacherDetails,is_complete:is
          $elemMatch: { "_id": req.query.id } 
       }
    })
-   return res.json(responseObj(true,subject_curriculum,"Subject Curriculum"))
+   return res.json(responseObj(true,subject_curriculum_details.subject_curriculum[0],"Subject Curriculum"))
  }
 export {getSubjectCurriculumByID,uploadTestimonialComplete,getSubjectCurriculum,editTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum,getAllCurriculums,getTestimonialsOfTeacher}

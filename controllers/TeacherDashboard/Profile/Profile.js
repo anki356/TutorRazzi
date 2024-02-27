@@ -251,6 +251,7 @@ const addSubjectCurriculum=async(req,res)=>{
  );
  return res.json(responseObj(true,null,"Subject Curriculum Added")) 
 }
+
 const editDegreeDetails=async(req,res)=>{
   await Teacher.updateOne(
      { "user_id": req.user._id, "degree._id": req.params._id },
@@ -436,4 +437,14 @@ let is_complete=teacherDetails!==null
 return  res.json(responseObj(true,{teacherResponse:teacherDetails,is_complete:is_complete,testimonial:testimonial,is_testimonial:testimonial!==null},"Teacher Profile Completed Successfully"))
   
  }
-export {uploadTestimonialComplete,getSubjectCurriculum,editTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum,getAllCurriculums,getTestimonialsOfTeacher}
+ const getSubjectCurriculumByID=async(req,res)=>{
+   const subject_curriculum=await Teacher.findOne({
+      subject_curriculum:{
+         $elemMatch:{
+            _id:req.query.id
+         }
+      }
+   })
+   return res.json(responseObj(true,subject_curriculum,"Subject Curriculum"))
+ }
+export {getSubjectCurriculumByID,uploadTestimonialComplete,getSubjectCurriculum,editTestimonial,editPhoto,addExpDetail,editExpDetails,deleteExpDetail,editDegreeDetails,deleteDegreeDetail,addDegreeDetail,addSubjectCurriculum,deleteSubjectCurriculum,getUserProfile,editProfile,completeProfile,uploadTestimonial,deleteTestimonial,editSubjectCurriculum,getAllCurriculums,getTestimonialsOfTeacher}

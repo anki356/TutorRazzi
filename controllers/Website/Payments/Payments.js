@@ -78,8 +78,8 @@ const payQuote = async (req, res, next) => {
         let classObj = {
             teacher_id: quoteResponse.teacher_id,
             student_id: req.user._id,
-            subject:{name: quoteResponse.subject_curriculum_grade.subject.name},
-            curriculum:{name: quoteResponse.subject_curriculum_grade.curriculum.name},
+            subject:{name: quoteResponse.subject_curriculum_grade.subject},
+            curriculum:{name: quoteResponse.subject_curriculum_grade.curriculum},
             class_type: req.body.class_type,
             is_rescheduled: false,
             grade: {name:quoteResponse.subject_curriculum_grade.grade},

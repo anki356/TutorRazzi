@@ -131,7 +131,7 @@ const getGreatTeachersList=async(req,res)=>{
     }
     
    if(req.query.subject&&req.query.subject!==''){
-    
+   
     query["subject_curriculum"]={
         $elemMatch:{
             "subject":req.query.subject,
@@ -144,6 +144,14 @@ const getGreatTeachersList=async(req,res)=>{
         $elemMatch:{
             "curriculum":req.query.curriculum,
             
+        }
+    };
+   }
+   if(eq.query.subject&&req.query.subject!==''&&req.query.curriculum&& req.query.curriculum!==''){
+    query["subject_curriculum"]={
+        $elemMatch:{
+            "curriculum":req.query.curriculum,
+            "subject":req.query.subject,
         }
     };
    }

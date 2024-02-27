@@ -444,6 +444,8 @@ return  res.json(responseObj(true,{teacherResponse:teacherDetails,is_complete:is
             _id:req.query.id
          }
       }
+   },{
+      subject_curriculum:1
    })
    return res.json(responseObj(true,subject_curriculum,"Subject Curriculum"))
  }

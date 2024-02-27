@@ -3,6 +3,9 @@ import { responseObj } from "../../../util/response.js"
 
 const getNews=async(req,res)=>{
     let query={}
+    if(req.query.category){
+        query.category=req.query.category
+    }
     let options={
         limit:req.query.limit,
         page:req.query.page,

@@ -383,8 +383,26 @@ const requestTrialClass = async (req, res, next) => {
 
 
     }
+    
 
     await req.body.start_time.forEach(async (element) => {
+        let classScheduled=await Class.find({
+            $and: [   { start_time:{$gte:element}},
+              {start_time:{
+                $lte:moment(element).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+              }},
+              {end_time:{$gte:element}},
+              {end_time:{
+                $lte:moment(element).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+              }},{$or:[{
+              teacher_id:req.body.teacher_id
+          },{
+              student_id:req.user._id
+          }]}]})
+        
+              if(classScheduled.length!==0){
+               throw new Error('This time slot has been already scheduled')  
+              }
         let newClassResponse = await Class.insertMany({
             teacher_id: req.body.teacher_id,
             student_id: req.user._id,

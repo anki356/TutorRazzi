@@ -48,6 +48,7 @@ const getGreatTeachers=async(req,res)=>{
                 averageRating: {
                     $avg: "$reviews.rating"
                 },
+
     
             }
         },
@@ -251,7 +252,7 @@ const getTeacherDetailsById=async(req,res)=>{
     }).populate({
         path:'user_id',
             select:{
-                email:1,mobile_number:1
+                email:1,mobile_number:1,profile_image:1
             }
         
     })

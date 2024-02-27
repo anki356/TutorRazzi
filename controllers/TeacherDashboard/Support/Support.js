@@ -57,6 +57,12 @@ const getTickets=async(req,res,next)=>{
 if(req.query.status){
     query.status=req.query.status
 }
+if(req.query.search){
+  query.subject={
+    $regex:req.query.search,
+    $options:"i"
+  }
+}
 let options={
     page:req.query.page,
     limit:req.query.limit,

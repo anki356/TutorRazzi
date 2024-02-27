@@ -253,6 +253,9 @@ const addSubjectCurriculum=async(req,res)=>{
 }
 
 const editDegreeDetails=async(req,res)=>{
+   if(Number(req.body.start_year)>moment().year()||Number(req.body?.end_year)>moment().year()){
+      return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
+   }
   await Teacher.updateOne(
      { "user_id": req.user._id, "degree._id": req.params._id },
      {
@@ -293,6 +296,9 @@ const editDegreeDetails=async(req,res)=>{
 
 //      }
 //    })
+if(Number(req.body.start_year)>moment().year()||Number(req.body?.end_year)>moment().year()){
+   return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
+}
   await Teacher.updateOne(
      { "user_id": req.user._id },
      {
@@ -308,6 +314,9 @@ const editDegreeDetails=async(req,res)=>{
   return res.json(responseObj(true,null,"Degree Detail Added")) 
  }
  const editExpDetails=async(req,res)=>{
+   if(Number(req.body.start_year)>moment().year()||Number(req.body?.end_year)>moment().year()){
+      return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
+   }
    if(req.body.end_year!==undefined&&req.body.end_year!==null&& req.body.end_year!==''&&Number(req.body.end_year)-Number(req.body.start_year)<0){
       return res.json(responseObj(false,null,"End year should be greater than start year"))
     }
@@ -339,7 +348,7 @@ const editDegreeDetails=async(req,res)=>{
         }
      }
   );
-  return res.json(responseObj(true,null,"EXp Details Deleted")) 
+  return res.json(responseObj(true,null,"Exp Details Deleted")) 
  }
  const addExpDetail=async(req,res)=>{
    // if(req.body.length===0){
@@ -352,6 +361,9 @@ const editDegreeDetails=async(req,res)=>{
 
 //   }
 // })
+if(Number(req.body.start_year)>moment().year()||Number(req.body?.end_year)>moment().year()){
+   return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
+}
 if(rest.end_year!==undefined&&rest.end_year!==null&& rest.end_year!==''&&Number(rest.end_year)-Number(rest.start_year)<0){
   return res.json(responseObj(false,null,"End year should be greater than start year"))
 }

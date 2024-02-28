@@ -40,28 +40,29 @@ const getMonthlyReport=async(req,res,next)=>{
 
 }
 
-const getMonthlyReportDetails=async(req,res)=>{
-    const averageGrade=await Report.aggregate([
+const getMonthlyReportDetails = async (req, res) => {
+    const averageGrade = await MonthlyReport.aggregate([
         {
-            $match:{
-                student_id:new ObjectID(req.query.student_id),
-                month:req.query.month,
-                year:req.query.year
-            }
-        },{
-            $group :{
-                _id:0,
-                totalRatings:{
-                    "$avg":"$rating"
-                }
+            $match: {
+                _id:req.query._id
+
             }
         }
+        ,
+        {$project:{
+            averageRating: { $avg: "$reports.rating" }
+        }}
+       
     ])
-    const report=await Report.find({student_id:new ObjectID(req.query.student_id),
-    month:req.query.month,
-    year:req.query.year})
 
-const additionalComment=await AdditionalComment.findOne({student_id:new ObjectID(req.query.student_id),month:req.query.month,year:req.query.year})
-  return  res.json(responseObj(true,{ratings:averageGrade[0]?.totalRatings?averageGrade[0]?.totalRatings:0,report:report,additionalComment:additionalComment},null))
+    const reportDetails = await MonthlyReport.findOne({
+       _id:req.query.id
+    })
+
+    const additionalComment = await AdditionalComment.findOne({
+        student_id: new ObjectID(req.query.student_id), month: req.query.month,
+        year: req.query.year, teacher_id: req.user._id
+    })
+    res.json(responseObj(true, { ratings: averageGrade[0]?.averageRating ? averageGrade[0]?.averageRating : 0, report: reportDetails.reports, additionalComment: additionalComment }, null))
 }
 export {getMonthlyReport,getMonthlyReportDetails}

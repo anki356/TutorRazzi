@@ -23,20 +23,17 @@ const getPayments=async(req,res)=>{
                 $options:"i"
             }
         })
-        const quote_ids=await Quote.find({$or:[{
+        const quote_ids=await Quote.find({
             "subject_curriculum_grade.subject":{
                 $regex:req.query.search,
                 $options:"i"
             },
             
-        }]})
+        })
         query["$or"]=[{
 sender_id:{
     $in:student_ids.map((data)=>data.user_id)
 }
-        },{
-            amount:{$regex:req.query.search,
-            $options:"i"}
         },{
             quote_id:{
                 $in:

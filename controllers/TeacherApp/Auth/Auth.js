@@ -86,10 +86,11 @@ $set:{...req.body}
 const verifyOTP=async(req,res,next)=>{
 
 const otpResponse=await Otp.findOne({code:req.body.otp})
+let userResponse=await User.findOne({email:otpResponse.email})
 if(!userResponse){
     throw new Error('Invalid or expired reset token.')
 }
-let userResponse=await User.findOne({email:otpResponse.email})
+
 const token = userResponse.signJWT();
 res.json(responseObj(true,{
     access_token:token

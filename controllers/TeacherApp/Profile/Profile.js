@@ -100,8 +100,8 @@ const getTrialClassesRequests = async (req, res, next) => {
     $and: [{
       teacher_id: req.user._id,
       class_type: 'Trial',
-      start_time: {
-        $gte:new Date().toLocaleDateString()
+      end_time: {
+        $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
       },
       status:"Pending"
     }]
@@ -111,9 +111,8 @@ const getTrialClassesRequests = async (req, res, next) => {
       $and: [{
         teacher_id: req.user._id,
         class_type: 'Trial',
-        start_time: {
-          $gte: new Date().toLocaleDateString(),
-
+        end_time: {
+          $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
         },
         // status: "Pending",
         $or:
@@ -183,7 +182,7 @@ const getUpcomingClasses = async (req, res, next) => {
   }
   let query = {
     $and: [
-      { end_time: { $gte: moment().format("YYYY-MM-DDTHH:mm:ss") } },
+      { end_time: { $gte: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss") } },
 
       { teacher_id: req.user._id },
 

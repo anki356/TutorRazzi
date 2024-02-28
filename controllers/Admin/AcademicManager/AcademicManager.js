@@ -18,9 +18,37 @@ const getAllAcademicManager=async(req,res)=>{ let users=await User.find({
 })
 let query={user_id:{
     $in:users.map((data)=>{
-        return data._id
+        return new ObjectId(data._id)
     })
 }}
+let pipeline=AcademicManager.aggregate([
+    {
+        $match:query
+    },{
+        $lookup:{from:'students',
+        localField:'students',
+        foreignField:"user_id",
+        as:"students"
+    }
+    }
+    ,{
+        $lookup:{from:'teachers',
+        localField:'teachers',
+        foreignField:"user_id",
+        as:"teachers"
+    }
+    },{
+        $project:{
+            "preferred_name":1,
+            "students_count":{
+                $size:'students'
+            },
+            "teachers_count":{
+                $size:'teachers'
+            }
+        }
+    }
+])
     let options={
         page:req.query.page,
         limit:req.query.limit,
@@ -29,7 +57,7 @@ let query={user_id:{
         }
     }
     AcademicManager.paginate(query,options,(err,result)=>{
-      return  res.json(responseObj(true,result,"All Academic Managers are"))
+      return  res.json(responseObj(true,{result},"All Academic Managers are"))
     })
 }
 

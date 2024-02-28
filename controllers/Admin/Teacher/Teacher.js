@@ -66,22 +66,28 @@ const getTeacherList=async(req,res)=>{
       select:{"preferred_name":1,"subject_curriculum":1,"city":1,"state":1,"country":1}
       
    }
-const new_trial_requests=await Class.countDocuments({
-   class_type:"Trial",
-     end_time:{
-         $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
-     } 
-})
-const upcomingClassRequests=await Class.countDocuments({
-   end_time:{
-      $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
-  } ,
-  status:"Scheduled"
-})
 
    Teacher.paginate(query,options,(err,result)=>{
-      return  res.json(responseObj(true,{result,new_trial_requests,upcomingClassRequests,totalTeachers:result.totalDocs},"List of Teachers"))  
+      return  res.json(responseObj(true,result,"List of Teachers"))  
    })
+}
+const getTeacherData=async(req,res)=>{
+   const new_trial_requests=await Class.countDocuments({
+      class_type:"Trial",
+        end_time:{
+            $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+        } 
+   })
+   const upcomingClassRequests=await Class.countDocuments({
+      end_time:{
+         $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+     } ,
+     status:"Scheduled"
+   })
+   let users=await User.countDocuments({
+      role:'teacher'
+   })
+   return  res.json(responseObj(true,{new_trial_requests,upcomingClassRequests,users},"Teacher Data"))  
 }
 
 const getTeacherDetails=async (req,res)=>{
@@ -132,4 +138,4 @@ _id:req.params.teacher_id
    })
    return  res.json(responseObj(true,[],"Teacher deleted successfullly")) 
 }
-export {addTeacher,getTotalTeachers,getTeacherList,getTeacherDetails,deleteTeacher}
+export {addTeacher,getTotalTeachers,getTeacherList,getTeacherDetails,deleteTeacher,getTeacherData}

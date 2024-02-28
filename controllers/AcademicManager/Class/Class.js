@@ -691,7 +691,7 @@ const getUpcomingClasses=async(req,res,next)=>{
   
      
     }
-    if(req.query.date){
+    if(req.query.date&&req.query.date!==''){
       query["$and"].push({
         start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
         end_time:{

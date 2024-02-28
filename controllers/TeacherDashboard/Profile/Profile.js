@@ -101,7 +101,12 @@ const completeProfile=async(req,res)=>{
  req.body.degree_details.forEach((data)=>{
    if(Number(data.start_year)>moment().year()||Number(data.end_year)>moment().year()){
       return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
-   }})
+   }
+   if(data.end_year!==undefined&&data.end_year!==null&& data.end_year!==''&&Number(data.end_year)-Number(data.start_year)<0){
+      return res.json(responseObj(false,null,"End year should be greater than start year"))
+    }
+
+})
   req.body.exp_details.forEach((data)=>{
    if(Number(data.start_year)>moment().year()||Number(data.end_year)>moment().year()){
       return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
@@ -260,6 +265,9 @@ const editDegreeDetails=async(req,res)=>{
    if(Number(req.body.start_year)>moment().year()||Number(req.body?.end_year)>moment().year()){
       return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
    }
+   if(req.body.end_year!==undefined&&req.body.end_year!==null&& req.body.end_year!==''&&Number(req.body.end_year)-Number(req.body.start_year)<0){
+      return res.json(responseObj(false,null,"End year should be greater than start year"))
+    }
   await Teacher.updateOne(
      { "user_id": req.user._id, "degree._id": req.params._id },
      {
@@ -303,6 +311,9 @@ const editDegreeDetails=async(req,res)=>{
 if(Number(req.body.start_year)>moment().year()||Number(req.body?.end_year)>moment().year()){
    return res.json(responseObj(false ,null,"end_year and start year cannot be in future"))
 }
+if(rest.end_year!==undefined&&rest.end_year!==null&& rest.end_year!==''&&Number(rest.end_year)-Number(rest.start_year)<0){
+   return res.json(responseObj(false,null,"End year should be greater than start year"))
+ }
   await Teacher.updateOne(
      { "user_id": req.user._id },
      {

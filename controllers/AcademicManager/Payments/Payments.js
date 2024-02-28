@@ -29,11 +29,6 @@ const getPayments=async(req,res)=>{
                 $options:"i"
             },
             
-        },{
-            class_count:{
-                $regex:req.query.search,
-                $options:"i"
-            }
         }]})
         query["$or"]=[{
 sender_id:{

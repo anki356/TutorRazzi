@@ -7,6 +7,8 @@ import { responseObj } from "../../../util/response.js"
 import bcrypt, { hash } from'bcrypt';
 import sendEmail from "../../../util/sendEmail.js";
 import { newTeacherSignup } from "../../../util/EmailFormats/newTeacherSignup.js";
+import Class from "../../../models/Class.js";
+import ResourceRequest from "../../../models/ResourceRequest.js";
 
 const addTeacher=async(req,res,next)=>{
  let hash= await  bcrypt.hash(req.body.password, 10)
@@ -71,10 +73,30 @@ const getTeacherList=async(req,res)=>{
 
 const getTeacherDetails=async (req,res)=>{
    const teacherDetails=await Teacher.findOne({
-      _id:req.query.teacher_id
+      user_id:req.query.teacher_id
    }).populate({path:'user_id'})
    const testimonialResponse=await Testimonial.find({teacher_id:teacherDetails.user_id})
-    return res.json(responseObj(true, {teacherDetails:teacherDetails,testimonialResponse:testimonialResponse}, "Teacher Details"))
+   const new_trial_requests=await Class.countDocuments({
+    
+     teacher_id:req.query.teacher_id,
+     class_type:"Trial",
+     end_time:{
+         $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+     }
+   })
+   const rescheduledClasses=await Class.countDocuments({
+     
+     teacher_id:req.query.teacher_id,
+    is_rescheduled:true,
+    status:"Pending"
+   })
+   const classes=await Class.find({
+      teacher_id:req.query.teacher_id
+   })
+   const resourceRequests=await ResourceRequest.countDocuments({
+      class_
+   })
+    return res.json(responseObj(true, {teacherDetails:teacherDetails,testimonialResponse:testimonialResponse,new_trial_requests,rescheduledClasses}, "Teacher Details"))
 }
 
 const deleteTeacher=async (req,res)=>{

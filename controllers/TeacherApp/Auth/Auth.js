@@ -86,9 +86,10 @@ $set:{...req.body}
 const verifyOTP=async(req,res,next)=>{
 
 const otpResponse=await Otp.findOne({code:req.body.otp})
+console.log(otpResponse)
 let userResponse=await User.findOne({email:otpResponse?.email,role:'teacher'})
 if(!userResponse){
-    throw new Error('Invalid or expired reset token.')
+    throw new Error('Invalid or expired otp.')
 }
 
 const token = userResponse.signJWT();
@@ -110,6 +111,7 @@ throw new Error("User Email not found")
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
 
     userResponse=await Otp.create({email:req.body.email,code:verificationCode})
+    console.log("userResponse",userResponse)
    // Create a transporter using the Ethereal account
   sendEmail(req.body.email,"Verification Email", "Verificaion code is "+verificationCode)
   res.json(responseObj(true,null,"Email Sent"))

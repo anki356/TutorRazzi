@@ -14,7 +14,10 @@ const classResponse=await Class.countDocuments({
         
     },
     teacher_id:{$in:[...academicManagerResponse.teachers]},
-    class_type:"Trial"
+    class_type:"Trial",
+    end_time:{
+        $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+    }
 })
 return res.json(responseObj(true,classResponse,"Total Trial Classes Requests "))
 }

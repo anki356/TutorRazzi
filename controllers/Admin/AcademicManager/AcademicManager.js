@@ -110,23 +110,17 @@ account_number:req.body.account_number
 
 
 const getAcademicManagerDetails=async(req,res)=>{
-    let academicManagerDetails=await AcademicManager.aggregate([
-        {$match:{
-            _id:new ObjectId(req.query.manager_id)
-        }},{
-            $lookup:{
-                from:'students',
-                localField:"students",
-                foreignField:"user_id",
-                as:"students"
-            }
-        }
-    ])
+    let academicManagerDetails=await AcademicManager.findOne({ user_id:new ObjectId(req.query.manager_id)}).populate({
+        path:'teachers'
+    }).populate({
+        path:'students'
+    })
+       
     let supportTicketsResolved=await Support.countDocuments({
         user_id:academicManagerDetails[0].user_id,
         status:"Resolved"
     })
-    return res.json(responseObj(true,{academicManagerDetails:academicManagerDetails,supportTicketsResolved:supportTicketsResolved},"Academic Manager Details"))
+    return res.json(responseObj(true,{academicManagerDetails:academicManagerDetails,supportTicketsResolved:supportTicketsResolved,total_students:academicManagerDetails.students.length},"Academic Manager Details"))
 }
 
 const deleteManager=async(req,res)=>{

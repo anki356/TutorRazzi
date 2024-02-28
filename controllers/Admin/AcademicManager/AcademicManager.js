@@ -1,4 +1,6 @@
+import moment from "moment"
 import AcademicManager from "../../../models/AcademicManager.js"
+import Class from "../../../models/Class.js"
 import Student from "../../../models/Student.js"
 import Support from "../../../models/Support.js"
 import User from "../../../models/User.js"
@@ -21,6 +23,16 @@ let query={user_id:{
         return new ObjectId(data._id)
     })
 }}
+let academicManagers=await AcademicManager.countDocuments({})
+let studentsCount=await Student.countDocuments({
+    user_id:{$in:users.map((data)=>data.students)}
+})
+let upcomingClasses=await Class.countDocuments({
+    status:'scheduled',
+    end_time:{
+        $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+    }
+})
 let pipeline=AcademicManager.aggregate([
     {
         $match:query
@@ -56,8 +68,8 @@ let pipeline=AcademicManager.aggregate([
             students:1,preferred_name:1,user_id:1
         }
     }
-    AcademicManager.paginate(query,options,(err,result)=>{
-      return  res.json(responseObj(true,{result},"All Academic Managers are"))
+    AcademicManager.aggregatePaginate(pipeline,options,(err,result)=>{
+      return  res.json(responseObj(true,{result,academicManagers,studentsCount,upcomingClasses},"All Academic Managers are"))
     })
 }
 

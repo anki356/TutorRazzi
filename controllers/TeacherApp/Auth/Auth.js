@@ -93,10 +93,14 @@ if(!userResponse){
 }
 
 const token = userResponse.signJWT();
-res.json(responseObj(true,{
-    access_token:token
+// res.json(responseObj(true,{
+//     access_token:token
     
-},"Otp Verified") )
+// },"Otp Verified") )
+res.json(responseObj(true,{
+        access_token:req.body
+        
+    },"Otp Verified"))
 }
 const verifyEmail=async(req,res,next)=>{
     let userResponse=await User.findOne({email:req.body.email})

@@ -216,6 +216,13 @@ const onBoardingStudent=async(req,res)=>{
      name:req.body.name
 
    })
+   await AcademicManager.updateOne({
+    user_id:"656d6dc49817c1eaebfff864"
+  },{
+    $push:{
+       students:user._id
+    }
+  })
    let parent_user_id=await User.findOne({
     email:req.body.parent_email,
     role:"parent"

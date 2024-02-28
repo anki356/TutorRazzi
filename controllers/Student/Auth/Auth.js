@@ -43,6 +43,7 @@ const SignIn=async(req,res,next)=>{
     if (!verifyPassword) {
         throw new Error("Invalid credentials, Try again.");
     }
+  
     const token = user.signJWT();
     res.json(responseObj(true,{
         access_token:token,

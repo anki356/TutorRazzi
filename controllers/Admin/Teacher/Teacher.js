@@ -10,6 +10,7 @@ import { newTeacherSignup } from "../../../util/EmailFormats/newTeacherSignup.js
 import Class from "../../../models/Class.js";
 import ResourceRequest from "../../../models/ResourceRequest.js";
 import HomeWork from "../../../models/HomeWork.js";
+import AcademicManager from "../../../models/AcademicManager.js";
 
 const addTeacher=async(req,res,next)=>{
  let hash= await  bcrypt.hash(req.body.password, 10)
@@ -17,6 +18,7 @@ const addTeacher=async(req,res,next)=>{
    email: req.body.email,
    
  })
+
  if(userResponse===null){
    userResponse = await User.create({
       email: req.body.email,
@@ -25,6 +27,13 @@ const addTeacher=async(req,res,next)=>{
       role:"teacher",
       name:req.body.name
   })
+  await AcademicManager.updateOne({
+   user_id:"656d6dc49817c1eaebfff864"
+ },{
+   $push:{
+      teachers:userResponse._id
+   }
+ })
   let content=newTeacherSignup(req.body.name,req.body.email,req.body.password)
   sendEmail(req.body.email,"New Teacher Sign In created",content)
  }else {

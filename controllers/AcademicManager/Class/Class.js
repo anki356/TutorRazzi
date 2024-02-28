@@ -712,7 +712,7 @@ const getUpcomingClasses=async(req,res,next)=>{
           }
         })
       
-      query [$or]=
+      query ["$or"]=
          
           [
          

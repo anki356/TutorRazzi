@@ -9,6 +9,7 @@ import sendEmail from "../../../util/sendEmail.js";
 import { newTeacherSignup } from "../../../util/EmailFormats/newTeacherSignup.js";
 import Class from "../../../models/Class.js";
 import ResourceRequest from "../../../models/ResourceRequest.js";
+import HomeWork from "../../../models/HomeWork.js";
 
 const addTeacher=async(req,res,next)=>{
  let hash= await  bcrypt.hash(req.body.password, 10)
@@ -94,9 +95,19 @@ const getTeacherDetails=async (req,res)=>{
       teacher_id:req.query.teacher_id
    })
    const resourceRequests=await ResourceRequest.countDocuments({
-      class_
+      class_id:{
+         $in:classes.map((data)=>data._id)
+      },
+      status:"Resolved"
    })
-    return res.json(responseObj(true, {teacherDetails:teacherDetails,testimonialResponse:testimonialResponse,new_trial_requests,rescheduledClasses}, "Teacher Details"))
+   const homeworkRequests=await HomeWork.countDocuments({
+      class_id:{
+         $in:classes.map((data)=>data._id)
+      },
+      status:"Resolved"
+   })
+
+    return res.json(responseObj(true, {teacherDetails:teacherDetails,testimonialResponse:testimonialResponse,new_trial_requests,rescheduledClasses,resourceRequests,homeworkRequests}, "Teacher Details"))
 }
 
 const deleteTeacher=async (req,res)=>{

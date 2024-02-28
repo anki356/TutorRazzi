@@ -14,8 +14,7 @@ const classResponse=await Class.countDocuments({
         
     },
     teacher_id:{$in:[...academicManagerResponse.teachers]},
-    class_type:"Trial",
-    status:"Pending"
+    class_type:"Trial"
 })
 return res.json(responseObj(true,classResponse,"Total Trial Classes Requests "))
 }

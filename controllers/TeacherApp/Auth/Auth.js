@@ -101,7 +101,7 @@ res.json(responseObj(true,{
 const verifyEmail=async(req,res,next)=>{
     let userResponse=await User.findOne({email:req.body.email})
    
-    if(userResponse.length===null||userResponse.role!=='teacher'){
+    if(userResponse===null||userResponse.role!=='teacher'){
 
 throw new Error("User Email not found")
 

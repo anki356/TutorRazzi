@@ -290,8 +290,8 @@ const rescheduleClassResponse=await Class.findOneAndUpdate({_id:req.params._id},
   status:'Pending'
   }})
 
-  addNotifications(rescheduleClassResponse.student_id,"Class Rescheduled","Class of "+details.subject.name+" earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ " has been rescheduled for on  "+ moment(req.body.start_time).format("DD-MM-YYYY")+" at "+ moment(req.body.start_time).format("HH:mm:ss")+" by academic manager ")
-  addNotifications(rescheduleClassResponse.teacher_id,"Class Rescheduled","Class of "+details.subject.name+" which was earlier scheduled at "+ moment(details.start_time).format("DD-MM-YYYYTHH:mm:ss")+ " has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYY")+" at "+ moment(req.body.start_time).format("HH:mm:ss")+" by academic manager ")
+  addNotifications(rescheduleClassResponse.student_id,"Class Rescheduled","Class of "+details.subject.name+" earlier scheduled for on  "+ moment(details.start_time).format("DD-MM-YYYY")+" at "+ moment(details.start_time).format("HH:mm:ss")+ " has been rescheduled for on  "+ moment(req.body.start_time).format("DD-MM-YYYY")+" at "+ moment(req.body.start_time).format("HH:mm:ss")+" by academic manager ")
+  addNotifications(rescheduleClassResponse.teacher_id,"Class Rescheduled","Class of "+details.subject.name+" earlier scheduled for on  "+ moment(details.start_time).format("DD-MM-YYYY")+" at "+ moment(details.start_time).format("HH:mm:ss")+ " has been rescheduled at "+ moment(req.body.start_time).format("DD-MM-YYYY")+" at "+ moment(req.body.start_time).format("HH:mm:ss")+" by academic manager ")
   res.json(responseObj(true,[],"Class Rescheduled"))
 
   

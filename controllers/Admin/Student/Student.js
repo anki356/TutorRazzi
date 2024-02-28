@@ -83,7 +83,7 @@ const getStudentClasses=async(req,res)=>{
        query.class_type="Trial"
       }
       if(req.query.class_type==='Rescheduled'){
-       
+       query.status="Pending"
         query.is_rescheduled=true
        }
 let options={

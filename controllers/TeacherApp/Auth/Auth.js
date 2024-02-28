@@ -59,7 +59,7 @@ const SignIn=async(req,res,next)=>{
 const changePassword=async(req,res,next)=>{
   
     const { password } = req.body;
-
+console.log(req.user.name)
     req.body.password = await bcrypt.hash(password, 10);
        
 
@@ -71,7 +71,7 @@ $set:{...req.body}
             )
             //Folder,content helper
 
-           
+           console.log(userResponse)
             
             await sendEmail(req.user.email,"Password Changed",changePasswordEmail(req.user.name))
             res.json(responseObj(true,[],"Password Changed"))

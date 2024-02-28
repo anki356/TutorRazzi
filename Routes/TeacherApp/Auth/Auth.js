@@ -5,8 +5,7 @@ import { body ,param} from "express-validator";
 const router=express.Router()
 const loginValidationChain = [
     body('email').notEmpty().isEmail().trim(),
-body('password').notEmpty().withMessage('Password is required field.')
-    .isLength({ min: 8 }).optional()
+body('password').notEmpty().withMessage('Password is required field.').optional()
     .withMessage('Password should have atleast 8 characters.')];
 
 

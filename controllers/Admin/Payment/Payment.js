@@ -24,7 +24,7 @@ $group:{
     const getTeacherPayout=getTotalPayments.length>0?getTotalPayments[0].totalAmount*95/100:0
     
     const profits=getTotalPayments.length>0?getTotalPayments[0].totalAmount*5/100:0
-    return res.json(responseObj(true,{getTotalPayments,getTeacherPayout,profits},"Payment Statistics"))
+    return res.json(responseObj(true,{totalPayments:getTotalPayments.length>0?getTotalPayments[0].totalAmount:0,getTeacherPayout,profits},"Payment Statistics"))
 }
 
 const getWeeklyData=async (req,res,next)=>{
@@ -109,7 +109,13 @@ payment_type:"Credit"
 
     let options={
       limit:req.query.limit,
-      page:req.query.page
+      page:req.query.page,
+      populate:{
+        path:"quote_id",
+        select:{
+          "class_name":1
+        }
+      }
     }
     Payment.paginate(query,options,(err,result)=>{
       return res.json(responseObj(true,result,"All payments"))

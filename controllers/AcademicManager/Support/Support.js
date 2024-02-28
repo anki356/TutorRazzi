@@ -22,7 +22,8 @@ const addSupport=async (req,res,next)=>{
         subject:req.body.title,
         description:req.body.description,
         status:"Pending",
-        document_id:req.files?.file?fileName:null,
+        
+        document_id:req.files?.file?documentResponse._id:null,
         
 
     })
@@ -32,7 +33,7 @@ const addSupport=async (req,res,next)=>{
         user_id:req.user._id,
         is_sender:true,
         response:req.body.description,
-        response_document:req.files?.file?documentResponse._id:null,
+        response_document:req.files?.file?fileName:null,
         
     })
     res.json(responseObj(true,{documentResponse,supportResponse},null))

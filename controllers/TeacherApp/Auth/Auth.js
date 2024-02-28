@@ -85,7 +85,7 @@ $set:{...req.body}
    
 const verifyOTP=async(req,res,next)=>{
 
-const otpResponse=await Otp.findOne({code:req.body.otp})
+const otpResponse=await Otp.findOne({code:Number(req.body.otp)})
 console.log(otpResponse)
 let userResponse=await User.findOne({email:otpResponse?.email,role:'teacher'})
 if(!userResponse){

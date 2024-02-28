@@ -14,7 +14,10 @@ const getPayments=async(req,res)=>{
         $in:studentsDetails.students
     }}
     if(req.query.date){
-        query.createdAt=req.query.date
+        query.createdAt={
+            $gte:req.query.date,
+            $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")   
+        }
     }
     if(req.query.search){
         const student_ids=await Student.find({

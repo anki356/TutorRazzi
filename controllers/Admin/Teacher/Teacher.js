@@ -63,12 +63,24 @@ const getTeacherList=async(req,res)=>{
       populate:{
          path:'user_id',
       },
-      select:{"preferred_name":1,"subject_curriculum_grade":1,"city":1,"state":1,"country":1}
+      select:{"preferred_name":1,"subject_curriculum":1,"city":1,"state":1,"country":1}
       
    }
+const new_trial_requests=await Class.countDocuments({
+   class_type:"Trial",
+     end_time:{
+         $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+     } 
+})
+const upcomingClassRequests=await Class.countDocuments({
+   end_time:{
+      $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+  } ,
+  status:"Scheduled"
+})
 
    Teacher.paginate(query,options,(err,result)=>{
-      return  res.json(responseObj(true,result,"List of Teachers"))  
+      return  res.json(responseObj(true,{result,new_trial_requests,upcomingClassRequests,totalTeachers:result.totalDocs},"List of Teachers"))  
    })
 }
 

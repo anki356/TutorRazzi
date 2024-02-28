@@ -8,6 +8,7 @@ import sendEmail from "../../../util/sendEmail.js";
 import {newUserEmail} from "../../../util/EmailFormats/newUserEmail.js"
 import {  changePasswordEmail } from "../../../util/EmailFormats/changePasswordEmail.js";
 import Teacher from "../../../models/Teacher.js";
+import Otp from "../../../models/Otp.js";
 const ObjectId=mongoose.Types.ObjectId
 
 const SignUp = async (req, res) => {
@@ -84,11 +85,11 @@ $set:{...req.body}
    
 const verifyOTP=async(req,res,next)=>{
 
-const userResponse=await User.findOne({resetToken:req.body.otp})
+const otpResponse=await Otp.findOne({code:req.body.otp})
 if(!userResponse){
     throw new Error('Invalid or expired reset token.')
 }
-
+let userResponse=await User.findOne({email:otpResponse.email})
 const token = userResponse.signJWT();
 res.json(responseObj(true,{
     access_token:token
@@ -107,7 +108,7 @@ throw new Error("User Email not found")
 
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
 
-    userResponse=await User.updateOne({email:req.body.email},{resetToken:verificationCode})
+    userResponse=await Otp.create({email:req.body.email,code:verificationCode})
    // Create a transporter using the Ethereal account
   sendEmail(req.body.email,"Verification Email", "Verificaion code is "+verificationCode)
   res.json(responseObj(true,null,"Email Sent"))

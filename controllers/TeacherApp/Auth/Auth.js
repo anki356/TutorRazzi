@@ -84,10 +84,7 @@ $set:{...req.body}
 
    
 const verifyOTP=async(req,res,next)=>{
-    res.json(responseObj(true,{
-        access_token:req.body
-        
-    },"Otp Verified"))
+    
 const otpResponse=await Otp.findOne({code:Number(req.body.otp)})
 console.log(otpResponse)
 let userResponse=await User.findOne({email:otpResponse?.email,role:'teacher'})
@@ -96,10 +93,10 @@ if(!userResponse){
 }
 
 const token = userResponse.signJWT();
-// res.json(responseObj(true,{
-//     access_token:token
+res.json(responseObj(true,{
+    access_token:token
     
-// },"Otp Verified") )
+},"Otp Verified") )
 
 }
 const verifyEmail=async(req,res,next)=>{

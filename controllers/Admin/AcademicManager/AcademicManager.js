@@ -23,16 +23,7 @@ let query={user_id:{
         return new ObjectId(data._id)
     })
 }}
-let academicManagers=await AcademicManager.countDocuments({})
-let studentsCount=await Student.countDocuments({
-    user_id:{$in:users.map((data)=>data.students)}
-})
-let upcomingClasses=await Class.countDocuments({
-    status:'scheduled',
-    end_time:{
-        $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
-    }
-})
+
 let pipeline=AcademicManager.aggregate([
     {
         $match:query
@@ -69,10 +60,26 @@ let pipeline=AcademicManager.aggregate([
         }
     }
     AcademicManager.aggregatePaginate(pipeline,options,(err,result)=>{
-      return  res.json(responseObj(true,{result,academicManagers,studentsCount,upcomingClasses},"All Academic Managers are"))
+      return  res.json(responseObj(true,result,"All Academic Managers are"))
     })
 }
-
+const getAcademicManagerData=async(req,res)=>{
+    let users=await User.find({
+        status:true,
+        role:'academic manager'
+    })
+    let academicManagers=await AcademicManager.countDocuments({})
+    let studentsCount=await Student.countDocuments({
+        user_id:{$in:users.map((data)=>data.students)}
+    })
+    let upcomingClasses=await Class.countDocuments({
+        status:'scheduled',
+        end_time:{
+            $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+        }
+    })
+    return  res.json(responseObj(true,{academicManagers,studentsCount,upcomingClasses},"All Academic Managers Data is"))
+}
 const addAcademicManager=async(req,res)=>{
     let password= await  bcrypt.hash(makeId(5), 10)
  
@@ -171,4 +178,4 @@ const deleteManager=async(req,res)=>{
     }})
     return res.json(responseObj(true,[],'Manager Deleted Successfully'))
 }
-export {getTotalAcademicManager, getAllAcademicManager, addAcademicManager, getAcademicManagerDetails, deleteManager}
+export {getTotalAcademicManager, getAllAcademicManager, addAcademicManager, getAcademicManagerDetails, deleteManager,getAcademicManagerData}

@@ -1,6 +1,6 @@
 import express from 'express'
 import { authVerify } from '../../../controllers/Admin/Auth/Auth.js'
-import { addAcademicManager, deleteManager, getAcademicManagerDetails, getAllAcademicManager, getTotalAcademicManager } from '../../../controllers/Admin/AcademicManager/AcademicManager.js'
+import { addAcademicManager, deleteManager, getAcademicManagerData, getAcademicManagerDetails, getAllAcademicManager, getTotalAcademicManager } from '../../../controllers/Admin/AcademicManager/AcademicManager.js'
 import { body } from 'express-validator'
 const router=express.Router()
 import validationError  from "../../../middleware/validationError.js"
@@ -40,4 +40,5 @@ router.get("/all-academic-managers",authVerify,getAllAcademicManager)
 router.post("/add-academic-managers",authVerify,academicManagerValidation,validationError,addAcademicManager)
 router.get("/academic-manager-details",authVerify,getAcademicManagerDetails)
 router.patch("/manager/:manager_id",authVerify,deleteManager)
+router.get("/academic-manager-data",authVerify,getAcademicManagerData)
 export default router

@@ -26,7 +26,7 @@ const getMonthlyReport=async(req,res,next)=>{
    let pipeline=MonthlyReport.aggregate([
     {$match:query},
     {$project:{
-        averageRating: { $avg: "$reports.rating" },
+        averageRating: {$round:[{$avg: "$reports.rating"},0] },
         status:1,
         month:1,
         year:1,

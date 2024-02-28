@@ -35,7 +35,7 @@ const getMonthlyReport = async (req, res, next) => {
         subject: req.query.subject  
         }},
         {$project:{
-            averageRating: { $avg: "$reports.rating" },
+            averageRating: {$round:[{$avg: "$reports.rating"},0] },
             status:1,
             month:1,
             year:1,

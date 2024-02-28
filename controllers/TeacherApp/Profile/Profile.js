@@ -199,15 +199,7 @@ const getUpcomingClasses = async (req, res, next) => {
       })
      
     
-    query={$and:[
-      { start_time :{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")}},
-     
-     
-      { teacher_id: req.user._id },
-   
-     
-       {status:'Scheduled'},{
-        $or:
+    query[ "$or"]=
         [
        
           { "subject.name": { $regex: req.query.search, $options: 'i' } },
@@ -219,11 +211,7 @@ const getUpcomingClasses = async (req, res, next) => {
           }},
           // {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
         ]
-       }
-     ]
-   
-      
-     }
+       
   }
   if(req.query.date){
     query["$and"].push({

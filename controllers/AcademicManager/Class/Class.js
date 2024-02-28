@@ -785,7 +785,7 @@ const getUpcomingClasses=async(req,res,next)=>{
             $regex: req.query.search, $options: 'i'
           }
         })
-      query[$or]= [
+      query["$or"]= [
          
             { "subject.name": { $regex: req.query.search, $options: 'i' } },
             {"name":  {$regex: req.query.search, $options: 'i' }

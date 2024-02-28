@@ -56,15 +56,7 @@ const getUpcomingClasses = async (req, res, next) => {
         }
       })
     
-    query={$and:[
-      { end_time :{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")}},
-     
-     
-      { teacher_id: req.user._id },
-   
-     
-       {status:'Scheduled'},{
-        $or:
+    query["or"]=
         [
        
           { "subject.name": { $regex: req.query.search, $options: 'i' } },
@@ -76,11 +68,7 @@ const getUpcomingClasses = async (req, res, next) => {
           }},
           // {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
         ]
-       }
-     ]
-   
-      
-     }
+       
   }
   if(req.query.date){
     query["$and"].push({
@@ -136,16 +124,8 @@ const getPastClasses = async (req, res, next) => {
           $regex: req.query.search, $options: 'i'
         }
       })
-    query={$and:[
-      {
-  
-        start_time :{$lt:moment().format("YYYY-MM-DDTHH:mm:ss")},
-      },   { teacher_id: req.user._id },
-
-      {
-        status:'Done'
-      },{
-        $or: [
+    query["$or"]=
+         [
        
           { "subject.name": { $regex: req.query.search, $options: 'i' } },
           {"name":  {$regex: req.query.search, $options: 'i' }
@@ -156,8 +136,7 @@ const getPastClasses = async (req, res, next) => {
           }},
           // {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
         ]
-      }
-    ]}
+      
     
   }
   if(req.query.date){

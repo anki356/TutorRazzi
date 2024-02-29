@@ -19,7 +19,7 @@ const getAll=async (req,res)=>{
 
     if (search) {
         orConditions.push(
-            { 'student_id.name': { $regex: new RegExp(search, 'i') } },
+            { 'student_id.name': { $regex: search,$options:"i" } },
         );
     }
 

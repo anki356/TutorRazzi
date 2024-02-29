@@ -94,7 +94,7 @@ status:"Resolved"
             name:1
         }
     })
-
+    addNotifications(ticketDetails.user_id,"Ticket marked Resolved","Ticket raised of subject of "+ticketDetails.subject+" has been mark resolved by  admin")
     return  res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses},"Ticket marked Resolved"))
 }
 export {addSupport,getTickets,getTicketDetails,getSupportStats,saveResponse,markResolveTicket}

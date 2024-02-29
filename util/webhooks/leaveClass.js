@@ -4,6 +4,8 @@ import Class from "../../models/Class.js";
 import MonthlyReport from "../../models/MonthlyReport.js";
 import User from "../../models/User.js";
 import moment from "moment";
+import { addNotifications } from "../addNotification.js";
+import Student from "../../models/Student.js";
 
 const leaveClass = async (data) => {
    
@@ -56,14 +58,15 @@ axios.get(`https://api.dyte.io/v2/meetings/${data.body.meeting.id}/participants`
 }).then(async(response)=>{
     let isStudent=false
     let isTeacher=false
+    const classDetails=await Class.findOne({
+        meeting_id:data.body.meeting_id
+                    })
     response.data.data.forEach(async element => {
         if(element.name==='student'){
 isStudent=true
         }
         if(element.name==='teacher'){
-            const classDetails=await Class.findOne({
-meeting_id:data.body.meeting_id
-            })
+        
             
             let response = await Attendance.findOneAndUpdate({
                 class_id: classDetails._id,
@@ -84,6 +87,12 @@ isTeacher=true
                 status:'Done'
             }
         }) 
+        let student_name=await Student.findOne({
+            user_id:classDetails.student_id
+        })
+if(classDetails.class_type==='Trial'){
+    addNotifications("65891c1d69765570ec7d213a","Trial Class Completed","Trial Class of "+classDetails.subject.name+" has been completed of student "+student_name.preferred_name)
+}
     }
   
    

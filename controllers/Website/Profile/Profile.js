@@ -8,6 +8,7 @@ import unlinkFile from "../../../util/unlinkFile.js"
 import bcrypt from "bcrypt"
 import Subject from "../../../models/Subject.js"
 import upload  from "../../../util/upload.js"
+import { addNotifications } from "../../../util/addNotification.js"
 const getProfileDetails=async(req,res)=>{
     let user_id=req.user._id
     let userDetails=await User.findOne({_id:user_id})
@@ -190,7 +191,7 @@ user=await User.create({
     
         })
         const token = user.signJWT();
-   
+        addNotifications("65891c1d69765570ec7d213a","New Parent Onboarded","New Parent Onboarded of name "+ req.body.name)
         return res.json(responseObj(true,{
           access_token:token,
           user:user
@@ -242,6 +243,7 @@ curriculum:{name:req.body.curriculum},
 parent_id:parent_user_id._id
    })
    const token = user.signJWT();
+   addNotifications("65891c1d69765570ec7d213a","New Student Onboarded","New Student Onboarded of name "+ req.body.name)
    return res.json(responseObj(true,{
     access_token:token,
     user:user

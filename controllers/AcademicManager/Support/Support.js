@@ -5,6 +5,7 @@ import { responseObj } from "../../../util/response.js"
 
 import mongoose from "mongoose"
 import upload from "../../../util/upload.js"
+import { addNotifications } from "../../../util/addNotification.js"
 const ObjectId=mongoose.Types.ObjectId
 const addSupport=async (req,res,next)=>{
     let documentResponse
@@ -36,6 +37,7 @@ const addSupport=async (req,res,next)=>{
         response_document:req.files?.file?fileName:null,
         
     })
+    addNotifications("65891c1d69765570ec7d213a","Ticket raised","Ticket raised of subject of "+req.body.title+" by "+req.user.name)
     res.json(responseObj(true,{documentResponse,supportResponse},null))
 }
 
@@ -142,6 +144,7 @@ const getStats=async(req,res)=>{
               is_sender:true
       
           })
+          
           return  res.json(responseObj(true,responses,"Response Saved Successfully"))
       }
     
@@ -164,7 +167,7 @@ const getStats=async(req,res)=>{
                 name:1
             }
         })
-    
+        addNotifications("65891c1d69765570ec7d213a","Ticket marked Resolved","Ticket raised of subject of "+ticketDetails.subject+" has been mark resolved by  "+req.user.name)
         return  res.json(responseObj(true,{ticketDetails:ticketDetails,responses:responses},"Ticket marked Resolved"))
     }
     export {getStats,getTickets,getTicketDetails,addSupport,saveResponse,markResolveTicket}

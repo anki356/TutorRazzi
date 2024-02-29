@@ -7,6 +7,7 @@ import unlinkFile from "../../../util/unlinkFile.js"
 import Curriculum from "../../../models/Curriculum.js"
 import SubjectCurriculum from "../../../models/SubjectCurriculum.js"
 import upload from "../../../util/upload.js"
+import { addNotifications } from "../../../util/addNotification.js"
 const getUserProfile=async(req,res)=>{
   const profile_image_details=await User.findOne({
     _id:req.user._id
@@ -162,6 +163,7 @@ bio:req.body.bio
   })
   const testimonial=await Testimonial.findOne({teacher_id:req.user._id})
   let is_complete=teacherDetails!==null
+  addNotifications("65891c1d69765570ec7d213a","New Teacher Onboarded","New Teacher Onboarded of name "+ teacherDetails.preferred_name)
   return  res.json(responseObj(true,{teacherResponse:teacherResponse,is_complete:is_complete,testimonial:testimonial},"Teacher Profile Completed Successfully"))
 }
 

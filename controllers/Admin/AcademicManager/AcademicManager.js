@@ -48,7 +48,8 @@ let pipeline=AcademicManager.aggregate([
             },
             "teachers_count":{
                 $size:'$teachers'
-            }
+            },
+            "user_id":1
         }
     }
 ])

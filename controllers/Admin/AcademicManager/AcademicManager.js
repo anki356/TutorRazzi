@@ -171,6 +171,8 @@ const getAcademicManagerDetails=async(req,res)=>{
         path:'teachers'
     }).populate({
         path:'students'
+    }).populate({
+        path:"user_id"
     })
        
     let supportTicketsResolved=await Support.countDocuments({

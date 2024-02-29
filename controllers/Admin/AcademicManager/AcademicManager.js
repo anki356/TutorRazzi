@@ -44,10 +44,10 @@ let pipeline=AcademicManager.aggregate([
         $project:{
             "preferred_name":1,
             "students_count":{
-                $size:'students'
+                $size:'$students'
             },
             "teachers_count":{
-                $size:'teachers'
+                $size:'$teachers'
             }
         }
     }
@@ -60,6 +60,7 @@ let pipeline=AcademicManager.aggregate([
         }
     }
     AcademicManager.aggregatePaginate(pipeline,options,(err,result)=>{
+        console.log(err)
       return  res.json(responseObj(true,result,"All Academic Managers are"))
     })
 }
@@ -68,17 +69,25 @@ const getAcademicManagerData=async(req,res)=>{
         status:true,
         role:'academic manager'
     })
-    let academicManagers=await AcademicManager.countDocuments({})
+    let academicManagers=await AcademicManager.find({
+        user_id:{
+            $in:users.map((data)=>data._id)
+        }
+    })
+    let academicManagersCount=await AcademicManager.countDocuments({})
+    console.log("Hello")
+    let studentArray=academicManagers.map((data)=>data.students)
+    console.log(studentArray)
     let studentsCount=await Student.countDocuments({
-        user_id:{$in:users.map((data)=>data.students)}
+        user_id:{$in:studentArray[0]}
     })
     let upcomingClasses=await Class.countDocuments({
-        status:'scheduled',
+        status:'Scheduled',
         end_time:{
             $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
         }
     })
-    return  res.json(responseObj(true,{academicManagers,studentsCount,upcomingClasses},"All Academic Managers Data is"))
+    return  res.json(responseObj(true,{academicManagersCount,studentsCount,upcomingClasses},"All Academic Managers Data is"))
 }
 const addAcademicManager=async(req,res)=>{
     let password= await  bcrypt.hash(makeId(5), 10)
@@ -157,14 +166,14 @@ account_number:req.body.account_number
 
 
 const getAcademicManagerDetails=async(req,res)=>{
-    let academicManagerDetails=await AcademicManager.findOne({ user_id:new ObjectId(req.query.manager_id)}).populate({
+    let academicManagerDetails=await AcademicManager.findOne({ user_id:req.query.manager_id}).populate({
         path:'teachers'
     }).populate({
         path:'students'
     })
        
     let supportTicketsResolved=await Support.countDocuments({
-        user_id:academicManagerDetails[0].user_id,
+        user_id:academicManagerDetails.user_id,
         status:"Resolved"
     })
     return res.json(responseObj(true,{academicManagerDetails:academicManagerDetails,supportTicketsResolved:supportTicketsResolved,total_students:academicManagerDetails.students.length},"Academic Manager Details"))

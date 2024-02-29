@@ -60,8 +60,8 @@ const getMonthlyReportDetails = async (req, res) => {
     })
 
     const additionalComment = await AdditionalComment.findOne({
-        student_id: new ObjectID(req.query.student_id), month: req.query.month,
-        year: req.query.year, teacher_id: req.user._id
+        student_id: reportDetails.student_id, month: reportDetails.month,
+        year: reportDetails.year, teacher_id: reportDetails.teacher_id
     })
     res.json(responseObj(true, { ratings: averageGrade[0]?.averageRating ? averageGrade[0]?.averageRating : 0, report: reportDetails.reports, additionalComment: additionalComment }, null))
 }

@@ -15,7 +15,7 @@ const ReportSchema=new mongoose.Schema({
        
     },
     rating:{
-        type:mongoose.Schema.Types.Decimal128,
+        type:Number,
         
     },
   

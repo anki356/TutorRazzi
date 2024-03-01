@@ -3,6 +3,7 @@ import Document from "../../../models/Document.js"
 import { responseObj } from "../../../util/response.js"
 import SupportResponses from "../../../models/SupportResponses.js"
 import upload from "../../../util/upload.js"
+import { addNotifications } from "../../../util/addNotification.js"
 
 const addSupport=async (req,res,next)=>{
     const documentResponse=await Document.insertMany({
@@ -30,22 +31,69 @@ const totalResolvedTicket=await Support.countDocuments({
 res.json(responseObj(true,{lastTicketRaisedDate:lastTicketRaisedDate[0].createdAt,totalPendingTickets,totalResolvedTicket},"Stats"))
 }
 const getTickets=async(req,res,next)=>{
+    let query={
+       
+    }
+    if(req.query.status){
+        query.status=req.query.status
+    }
     let options={
-        limit:req.query.limit,
         page:req.query.page,
+        limit:req.query.limit,
         sort:{
             createdAt:-1
         }
     }
-   let query={}
-Support.paginate(query,options,(err,result)=>{
-    console.log(result)
-    res.json(responseObj(true,result,"Tickets"))
-})
+   
+    let pipeline = Support.aggregate([
+        {
+          $match: query
+        },
+        {
+          $lookup: {
+            from: 'supportresponses',
+            localField: "_id",
+            foreignField: "support_id",
+            as: "response",
+            pipeline: [
+              {
+                $match: {
+                  is_sender: true,
+                  is_read: false
+                }
+              }
+            ]
+          }
+        },
+        {
+          $addFields: {
+            "responseLength": { $size: "$response" }
+          }
+        },
+        {
+          $project: {
+            "_id": 1,
+            "subject": 1,
+            "createdAt": 1,
+            "description": 1,
+            "responseLength": 1,
+            "user_id":1 ,// Include responseLength field
+            "status":1,
+            "ticket_id":1
+          }
+        }
+      ]);
+      
+      Support.aggregatePaginate(pipeline, options, (err, result) => {
+
+        return res.json(responseObj(true, result, "All Tickets"));
+      });
    
 }
 const getTicketDetails=async(req,res)=>{
-    const ticketDetails=await Support.findById({_id:req.query.ticket_id})
+    const ticketDetails=await Support.findById({_id:req.query.ticket_id}).populate({
+        path:'user_id'
+    })
     await SupportResponses.updateMany({
         support_id:req.query.ticket_id
     },{$set:{

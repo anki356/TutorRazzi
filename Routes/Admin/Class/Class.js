@@ -1,6 +1,10 @@
 import express from 'express'
 import { authVerify } from '../../../controllers/Student/Auth/Auth'
-import { getTotalBookings } from '../../../controllers/Admin/Dashboard/Dashboard'
+import { getPastClasses, getRescheduledClasses, getTrialClasses, getUpcomingClasses } from '../../../controllers/Admin/Class/Class'
+
 const router=express.Router()
-router.get("/all-bookings",authVerify,getTotalBookings)
+router.get("/get-upcoming-classes",authVerify,getUpcomingClasses)
+router.get("/get-past-classes",authVerify,getPastClasses)
+router.get("/rescheduled-classes",authVerify,getRescheduledClasses)
+router.get("/trial-classes",authVerify,getTrialClasses)
 export default router

@@ -2,6 +2,7 @@ import Support from "../../../models/Support.js"
 import Document from "../../../models/Document.js"
 import { responseObj } from "../../../util/response.js"
 import SupportResponses from "../../../models/SupportResponses.js"
+import upload from "../../../util/upload.js"
 
 const addSupport=async (req,res,next)=>{
     const documentResponse=await Document.insertMany({

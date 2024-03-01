@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
 import moment from "moment";
-import { paginate } from "mongoose-paginate-v2";
+import mongoosePaginate from "mongoose-paginate-v2";
 const SupportSchema = new mongoose.Schema({
     ticket_id: {
         type: Number,
@@ -43,5 +43,5 @@ enum:["High","Medium","Low"],
     versionKey: false
 })
 SupportSchema.plugin(aggregatePaginate)
-SupportSchema.plugin(paginate)
+SupportSchema.plugin(mongoosePaginate)
 export default mongoose.model("Support", SupportSchema)

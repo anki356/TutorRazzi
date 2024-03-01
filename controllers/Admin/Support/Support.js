@@ -92,7 +92,9 @@ const getTickets=async(req,res,next)=>{
 }
 const getTicketDetails=async(req,res)=>{
     const ticketDetails=await Support.findById({_id:req.query.ticket_id}).populate({
-        path:'user_id'
+        path:'user_id',select:{
+            name:1,role:1
+        }
     })
     await SupportResponses.updateMany({
         support_id:req.query.ticket_id

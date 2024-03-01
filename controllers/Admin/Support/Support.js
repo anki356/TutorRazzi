@@ -26,7 +26,7 @@ const totalPendingTickets=await Support.countDocuments({
 const totalResolvedTicket=await Support.countDocuments({
     status:'Resolved'
 })
-res.json(responseObj(true,{lastTicketRaisedDate,totalPendingTickets,totalResolvedTicket},"Stats"))
+res.json(responseObj(true,{lastTicketRaisedDate:lastTicketRaisedDate[0].createdAt,totalPendingTickets,totalResolvedTicket},"Stats"))
 }
 const getTickets=async(req,res,next)=>{
     let options={

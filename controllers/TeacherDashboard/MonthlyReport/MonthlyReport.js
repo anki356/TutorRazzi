@@ -204,7 +204,7 @@ const getMonthlyReportDetails = async (req, res) => {
     const averageGrade = await MonthlyReport.aggregate([
         {
             $match: {
-                _id:req.query._id
+                _id:req.query.id
 
             }
         }

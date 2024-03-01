@@ -210,7 +210,7 @@ const getMonthlyReportDetails = async (req, res) => {
         }
         ,
         {$project:{
-            averageRating: { $avg: "$reports.rating" }
+            averageRating: {$round:[{$avg: "$reports.rating"},2] }
         }}
        
     ])

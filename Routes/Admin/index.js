@@ -13,6 +13,7 @@ import SupportRouter from "./Support/Support.js"
 import RoleRouter from "./Role/Role.js"
 import NewsRouter from "./News/News.js"
 import MonthlyReport from "./MonthlyReport/MonthlyReport.js"
+import NoificationRouter from "./Notification/Notification.js"
 router.use("/admin/",CurriculumRouter)
 router.use("/admin/",TeacherRouter)
 router.use("/admin/",AuthRouter)
@@ -24,4 +25,5 @@ router.use("/admin/",SupportRouter)
 router.use("/admin/",RoleRouter)
 router.use("/admin/",NewsRouter)
 router.use("/admin/",MonthlyReport)
+router.use("/admin/",NoificationRouter)
 export default router

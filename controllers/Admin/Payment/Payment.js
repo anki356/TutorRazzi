@@ -106,7 +106,12 @@ payment_type:"Credit"
     if(req.query.trx_ref_no){
       query.trx_ref_no=req.query.trx_ref_no
     }
-
+    if(req.query.date&&req.query.date!==''){
+      query.payment_date={
+          $gte:req.query.date,
+          $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+      }
+  }
     let options={
       limit:req.query.limit,
       page:req.query.page,

@@ -4,6 +4,7 @@ import SupportResponses from "../../../models/SupportResponses.js"
 import { responseObj } from "../../../util/response.js"
 import mongoose from "mongoose"
 import upload from "../../../util/upload.js"
+import { addNotifications } from "../../../util/addNotification.js"
 const ObjectId=mongoose.Types.ObjectId
 const getAllTickets=async(req,res)=>{
     let query={

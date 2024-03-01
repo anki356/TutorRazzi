@@ -67,6 +67,9 @@ const getTeacherList=async(req,res)=>{
           return data._id
       })
   }}
+  if(req.query.search){
+   query.preferred_name===req.query.search
+  }
    let options={
       limit:req.query.limit,
       page:req.query.page,

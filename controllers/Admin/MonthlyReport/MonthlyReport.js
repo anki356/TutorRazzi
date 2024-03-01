@@ -5,6 +5,8 @@ import AdditionalComment from "../../../models/AdditionalComment.js"
 import moment from "moment"
 import Report from "../../../models/Report.js"
 import MonthlyReport from "../../../models/MonthlyReport.js"
+import Class from "../../../models/Class.js"
+import HomeWork from "../../../models/HomeWork.js"
 const ObjectID=mongoose.Types.ObjectId
 const getMonthlyReport=async(req,res,next)=>{
     let query={
@@ -41,6 +43,7 @@ const getMonthlyReport=async(req,res,next)=>{
 }
 
 const getMonthlyReportDetails = async (req, res) => {
+    
     const averageGrade = await MonthlyReport.aggregate([
         {
             $match: {
@@ -66,6 +69,36 @@ if(reportDetails===null){
         student_id: reportDetails.student_id, month: reportDetails.month,
         year: reportDetails.year, teacher_id: reportDetails.teacher_id
     })
-    res.json(responseObj(true, { ratings: averageGrade[0]?.averageRating ? averageGrade[0]?.averageRating : 0, report: reportDetails.reports, additionalComment: additionalComment }, null))
+    const totalHoursCompleted=await Class.find({
+        student_id: reportDetails.student_id,
+        teacher_id: reportDetails.teacher_id,
+        start_time:{
+            $gte:moment().add(5,'h').add(30,'m').startOf('date').format("YYYY-MM-DD")
+        },
+        end_time:{
+            $lte:moment().add(5,'h').add(30,'m').endOf('date').format("YYYY-MM-DD")
+        },
+        "subject.name":reportDetails.subject
+
+    })
+const homeworksPending=await HomeWork.countDocuments({
+    class_id:{$in:totalHoursCompleted.map((data)=>data._id)},
+    status:'Pending'
+})
+const homeworksCompleted=await HomeWork.countDocuments({
+    class_id:{$in:totalHoursCompleted.map((data)=>data._id)},
+    status:'Resolved'
+})
+const tasksPending=await HomeWork.countDocuments({
+    class_id:{$in:totalHoursCompleted.map((data)=>data._id)},
+    status:'Pending'
+})
+const taskDone=await HomeWork.countDocuments({
+    class_id:{$in:totalHoursCompleted.map((data)=>data._id)},
+    status:'Done'
+})
+const totalPending=homeworksPending+tasksPending
+const totalCompleted=homeworksCompleted+taskDone
+    res.json(responseObj(true, { ratings: averageGrade[0]?.averageRating ? averageGrade[0]?.averageRating : 0, report: reportDetails.reports, additionalComment: additionalComment,totalHoursCompleted:totalHoursCompleted.length,totalPending,totalCompleted }, null))
 }
 export {getMonthlyReport,getMonthlyReportDetails}

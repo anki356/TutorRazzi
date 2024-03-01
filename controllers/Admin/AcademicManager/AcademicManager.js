@@ -23,7 +23,9 @@ let query={user_id:{
         return new ObjectId(data._id)
     })
 }}
-
+if(req.query.search){
+    query.preferred_name===req.query.search
+   }
 let pipeline=AcademicManager.aggregate([
     {
         $match:query

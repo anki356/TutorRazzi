@@ -46,9 +46,9 @@ start_time:1
         {"name":  {$regex: req.query.search, $options: 'i' }
          
         },
-        // {"student_id":{
-        //   $in:student_ids.map((data)=>data._id)
-        // }},
+        {"student_id":{
+          $in:student_ids.map((data)=>data._id)
+        }},
         {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
       ];
     }
@@ -101,9 +101,9 @@ start_time:1
         {"name":  {$regex: req.query.search, $options: 'i' }
          
         },
-        // {"student_id":{
-        //   $in:student_ids.map((data)=>data._id)
-        // }},
+        {"student_id":{
+          $in:student_ids.map((data)=>data._id)
+        }},
         {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
       ];
     }
@@ -148,9 +148,9 @@ start_time:1
         {"name":  {$regex: req.query.search, $options: 'i' }
          
         },
-        // {"student_id":{
-        //   $in:student_ids.map((data)=>data._id)
-        // }},
+        {"student_id":{
+          $in:student_ids.map((data)=>data._id)
+        }},
         {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
       ];
     }
@@ -214,9 +214,9 @@ start_time:1
               {"name":  {$regex: req.query.search, $options: 'i' }
                
               },
-              // {"student_id":{
-              //   $in:student_ids.map((data)=>data._id)
-              // }},
+              {"student_id":{
+                $in:student_ids.map((data)=>data._id)
+              }},
               {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
             ];
           }

@@ -58,7 +58,9 @@ const getMonthlyReportDetails = async (req, res) => {
     const reportDetails = await MonthlyReport.findOne({
        _id:req.query.id
     })
-
+if(reportDetails===null){
+    throw new Error("Invalid Report Id")
+}
     const additionalComment = await AdditionalComment.findOne({
         student_id: reportDetails.student_id, month: reportDetails.month,
         year: reportDetails.year, teacher_id: reportDetails.teacher_id

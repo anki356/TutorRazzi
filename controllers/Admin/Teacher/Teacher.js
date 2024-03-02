@@ -59,7 +59,6 @@ return  res.json(responseObj(true,totalTeachers,"Total Count of Teachers"))
 
 const getTeacherList=async(req,res)=>{
    let users=await User.find({
-      status:true,
       role:'teacher'
   })
   let query={user_id:{
@@ -144,12 +143,12 @@ const getTeacherDetails=async (req,res)=>{
     return res.json(responseObj(true, {teacherDetails:teacherDetails,testimonialResponse:testimonialResponse,new_trial_requests,rescheduledClasses,resourceRequests,homeworkRequests}, "Teacher Details"))
 }
 
-const inactivateTeacher=async (req,res)=>{
+const updateTeacher=async (req,res)=>{
    await User.updateOne({
 _id:req.params.teacher_id
    },{
       $set:{
-         status:false
+         status:req.body.status
       }
    })
    return  res.json(responseObj(true,[],"Teacher inactivated successfullly")) 
@@ -161,4 +160,4 @@ const deleteTeacher=async (req,res)=>{
    })
    return  res.json(responseObj(true,[],"Teacher deleted successfullly")) 
 }
-export {addTeacher,getTotalTeachers,getTeacherList,getTeacherDetails,inactivateTeacher,getTeacherData,deleteTeacher}
+export {addTeacher,getTotalTeachers,getTeacherList,getTeacherDetails,updateTeacher,getTeacherData,deleteTeacher}

@@ -46,6 +46,9 @@ const getNews=async(req,res)=>{
 "title":1,
 "sub_title":1,
 "category":1,"_id":1
+        },
+        sort:{
+            createdAt:-1
         }
     }
    News.paginate(query,options,(err,result)=>{

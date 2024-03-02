@@ -23,7 +23,7 @@ start_time:1
      { end_time :{$gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")}},
     
     //   {student_id:req.user._id},
-  
+  {class_type:"Non-Trial"},
     
       {status:'Scheduled'}
     ]

@@ -22,7 +22,7 @@ const studentData=async(req,res)=>{
         status:'Pending',
         class_type:"Trial"
     })
-    let totalUserStudents=await User.find({status:true,role:"student"})
+    let totalUserStudents=await User.find({role:"student"})
     let totalStudents=await Student.countDocuments({user_id:{
         $in:totalUserStudents.map((data)=>data._id)}
       })

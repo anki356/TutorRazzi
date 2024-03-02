@@ -97,7 +97,8 @@ const getTicketDetails=async(req,res)=>{
         }
     })
     await SupportResponses.updateMany({
-        support_id:req.query.ticket_id
+        support_id:req.query.ticket_id,
+        is_sender:true
     },{$set:{
         is_read:true
     }

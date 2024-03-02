@@ -91,7 +91,9 @@ let userResponse=await User.findOne({email:otpResponse?.email,role:'teacher'})
 if(!userResponse){
     throw new Error('Invalid or expired otp.')
 }
-
+await Otp.deleteOne({
+    _id:otpResponse._id
+})
 const token = userResponse.signJWT();
 res.json(responseObj(true,{
     access_token:token

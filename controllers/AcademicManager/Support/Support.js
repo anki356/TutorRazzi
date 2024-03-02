@@ -118,7 +118,8 @@ const getStats=async(req,res)=>{
     const getTicketDetails=async(req,res)=>{
         const ticketDetails=await Support.findById({_id:req.query.ticket_id})
         await SupportResponses.updateMany({
-            support_id:req.query.ticket_id
+            support_id:req.query.ticket_id,
+            is_sender:false
         },{$set:{
             is_read:true
         }

@@ -7,7 +7,7 @@ const router=express.Router()
 const newsValidation=[
    body('title').notEmpty().withMessage("Title is required") ,
    body('description').notEmpty().withMessage("Description is required"),
-   body('category').notEmpty().withMessage("Category is required")
+   body('category').notEmpty().withMessage("Category is required").isIn(['Educational ','Strategies','Technology','Professional','Career','Parental'])
 ]
 
 router.post("/news",authVerify,newsValidation,validationError,addNews)

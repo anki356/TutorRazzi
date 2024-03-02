@@ -142,11 +142,12 @@ const getTeacherDetails=async (req,res)=>{
 }
 
 const updateTeacher=async (req,res)=>{
+   let details= await User.findById(req.params.teacher_id)
    await User.updateOne({
 _id:req.params.teacher_id
    },{
       $set:{
-         status:req.body.status
+         status:!details.status
       }
    })
    return  res.json(responseObj(true,[],"Teacher Status updated successfullly")) 

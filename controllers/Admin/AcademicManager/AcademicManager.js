@@ -193,20 +193,21 @@ const getAcademicManagerDetails=async(req,res)=>{
 }
 
 const updateManager=async (req,res)=>{
+   let details= await User.findById(req.params.manager_id)
     await User.updateOne({
  _id:req.params.manager_id
     },{
        $set:{
-          status:req.body.status
+          status:!details.status
        }
     })
-    return  res.json(responseObj(true,[],"Manager Status updated successfullly")) 
+    return  res.json(responseObj(true,null,"Manager Status updated successfullly")) 
  }
  const deleteManager=async (req,res)=>{
    await User.deleteById(req.params.manager_id)
   await  AcademicManager.delete({
        user_id:req.params.manager_id
     })
-    return  res.json(responseObj(true,[],"Manager deleted successfullly")) 
+    return  res.json(responseObj(true,null,"Manager deleted successfullly")) 
  }
 export {getTotalAcademicManager, getAllAcademicManager, addAcademicManager, getAcademicManagerDetails, updateManager,getAcademicManagerData,deleteManager}

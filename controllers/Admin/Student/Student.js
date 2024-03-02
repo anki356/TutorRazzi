@@ -195,21 +195,22 @@ const getHomeworkStatistics=async(req,res)=>{
 
 }
 const updateStudent=async (req,res)=>{
+    let details= await User.findById(req.params.student_id)
     await User.updateOne({
  _id:req.params.student_id
     },{
        $set:{
-          status:req.body.status
+          status:!details.status
        }
     })
-    return  res.json(responseObj(true,[],"Student Status updated successfullly")) 
+    return  res.json(responseObj(true,null,"Student Status updated successfullly")) 
  }
 const deleteStudent=async (req,res)=>{
     await User.deleteById(req.params.student_id)
     await  Student.delete({
          user_id:req.params.student_id
       })
-      return  res.json(responseObj(true,[],"Student deleted successfullly"))  
+      return  res.json(responseObj(true,null,"Student deleted successfullly"))  
 }
 
 

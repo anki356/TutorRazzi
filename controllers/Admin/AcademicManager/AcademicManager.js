@@ -68,7 +68,7 @@ let pipeline=AcademicManager.aggregate([
         populate:{
             path:'user_id',
             select:{
-                status:1
+                "status":1
             }
         }
     }

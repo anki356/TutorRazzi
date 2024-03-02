@@ -402,7 +402,7 @@ const uploadClassMaterial=async (req,res,next)=>{
   if(req.files?.document){
 
     const fileName=await upload(req.files.document)
-    ClassMaterials.materials.push({name:req.files[0].filename})
+    ClassMaterials.materials.push({name:fileName})
     let classResponse=await Class.updateOne({
       _id : req.params._id},{$set:{ materials:ClassMaterials.materials}});
       addNotifications(classDetails.student_id,"Class Material Uploaded", "Material for class on "+moment(classDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(classDetails.end_time).format("HH:mm")+ " of subject "+classDetails.subject.name+ " has been uploaded")

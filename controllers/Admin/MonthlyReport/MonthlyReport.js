@@ -73,10 +73,10 @@ if(reportDetails===null){
         student_id: reportDetails.student_id,
         teacher_id: reportDetails.teacher_id,
         start_time:{
-            $gte:moment().add(5,'h').add(30,'m').startOf('month').format("YYYY-MM-DD")
+            $gte:moment().add(5,'h').add(30,'m').set('month',reportDetails.month).startOf('month').format("YYYY-MM-DD")
         },
         end_time:{
-            $lte:moment().add(5,'h').add(30,'m').endOf('month').format("YYYY-MM-DD")
+            $lte:moment().add(5,'h').add(30,'m').set('month',reportDetails.month).endOf('month').format("YYYY-MM-DD")
         },
         "subject.name":reportDetails.subject
 

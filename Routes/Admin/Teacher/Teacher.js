@@ -15,7 +15,7 @@ router.post("/add-Teacher",authVerify,teacherValidation,validationError,addTeach
 router.get("/total-teachers",authVerify,getTotalTeachers)
 router.get("/teacher-list",authVerify,getTeacherList)
 router.get("/teacher-details",authVerify,getTeacherDetails)
-router.patch("/inactivate-teacher/:teacher_id",authVerify,updateTeacher)
+router.patch("/update-teacher/:teacher_id",authVerify,updateTeacher)
 router.delete("/teacher/:teacher_id",authVerify,deleteTeacher)
 router.get("/teacher-data",authVerify,getTeacherData)
 export default router

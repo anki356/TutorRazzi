@@ -72,7 +72,7 @@ const StudentSchema = new mongoose.Schema({
     versionKey: false
 })
 StudentSchema.plugin(mongoosePaginate)
-TeacherSchema.plugin(MongooseDelete, { 
+StudentSchema.plugin(MongooseDelete, { 
     deletedAt : true,
     overrideMethods: 'all' 
   })

@@ -33,5 +33,24 @@ req.body.cover_photo=await upload(req.files.cover_photo)
         }
     })
 }
+const getNews=async(req,res)=>{
+    let query={}
+    if(req.query.category){
+        query.category=req.query.category
+    }
+    let options={
+        limit:req.query.limit,
+        page:req.query.page,
+        select:{
+            "cover_photo":1,
+"title":1,
+"sub_title":1,
+"category":1,"_id":1
+        }
+    }
+   News.paginate(query,options,(err,result)=>{
+    return res.json(responseObj(true,result,"News"))
+   })
+}
 
-export {addNews,editNews}
+export {addNews,editNews,getNews}

@@ -39,7 +39,7 @@ const SignIn=async(req,res,next)=>{
    
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email ,status:true});
     console.log(req.body.key,user.role)
     if (!user ||user.role!==req.body.key ) {
         throw new Error("Invalid credentials or no user exist.");

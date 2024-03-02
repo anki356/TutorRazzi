@@ -4,6 +4,7 @@ import ExpDetail from "./ExpDetail.js";
 import mongoosePaginate from 'mongoose-paginate-v2'
 import moment from "moment";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
+import MongooseDelete from "mongoose-delete";
 const AcademicManagerSchema =
     new mongoose.Schema({
         preferred_name: {
@@ -81,6 +82,10 @@ const AcademicManagerSchema =
 
     AcademicManagerSchema.plugin(mongoosePaginate)
     AcademicManagerSchema.plugin(mongooseAggregatePaginate)
+    AcademicManagerSchema.plugin(MongooseDelete, { 
+        deletedAt : true,
+        overrideMethods: 'all' 
+      })
     AcademicManagerSchema.set('toJSON', { virtuals: true });
 
 // Custom Virtuals

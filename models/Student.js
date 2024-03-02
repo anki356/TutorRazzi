@@ -8,6 +8,7 @@ import Subject from "./Subject.js";
 import Curriculum from "./Curriculum.js";
 import mongoosePaginate from 'mongoose-paginate-v2'
 import moment from "moment";
+import MongooseDelete from "mongoose-delete";
 const StudentSchema = new mongoose.Schema({
     
     preferred_name: {
@@ -71,6 +72,10 @@ const StudentSchema = new mongoose.Schema({
     versionKey: false
 })
 StudentSchema.plugin(mongoosePaginate)
+TeacherSchema.plugin(MongooseDelete, { 
+    deletedAt : true,
+    overrideMethods: 'all' 
+  })
 StudentSchema.set('toJSON', { virtuals: true });
 StudentSchema.virtual('grade_name').get(function(){
 

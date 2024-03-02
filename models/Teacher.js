@@ -8,6 +8,7 @@ import Testimonial from "./Testimonial.js";
 import mongoosePaginate from "mongoose-paginate-v2";
 import Subject from "./Subject.js";
 import Curriculum from "./Curriculum.js";
+import MongooseDelete from "mongoose-delete";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 const TeacherSchema = new mongoose.Schema({
   
@@ -101,6 +102,10 @@ TeacherSchema.virtual('profileImageUrl').get(function () {
     }
 
 })
+TeacherSchema.plugin(MongooseDelete, { 
+    deletedAt : true,
+    overrideMethods: 'all' 
+  })
 TeacherSchema.virtual('exp').get(function () {
     let exp=0
     if (this.exp_details !== undefined&&this.exp_details.length>0) {

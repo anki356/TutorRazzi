@@ -1,6 +1,6 @@
 import express from 'express'
 import { authVerify } from "../../../controllers/Admin/Auth/Auth.js";
-import { addNews, editNews } from '../../../controllers/Admin/News/News.js'
+import { addNews, editNews, getNews } from '../../../controllers/Admin/News/News.js'
 import { body } from 'express-validator';
 import validationError from '../../../middleware/validationError.js';
 const router=express.Router()
@@ -12,4 +12,5 @@ const newsValidation=[
 
 router.post("/news",authVerify,newsValidation,validationError,addNews)
 router.patch("/news/:_id",authVerify,editNews)
+router.get("/news",authVerify,getNews)
 export default router

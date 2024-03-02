@@ -2,6 +2,7 @@ import moment from "moment";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import mongoosePaginate from 'mongoose-paginate-v2'
+import MongooseDelete from "mongoose-delete";
 const UserSchema = new mongoose.Schema({
     profile_image: {
         type: String,
@@ -49,7 +50,10 @@ default:null
 }, {
     versionKey: false
 })
-
+UserSchema.plugin(MongooseDelete, { 
+    deletedAt : true,
+    overrideMethods: 'all' 
+  })
 UserSchema.methods.signJWT = function () {
     const user = this;
     if (user) {

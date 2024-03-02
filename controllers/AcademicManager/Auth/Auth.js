@@ -34,7 +34,7 @@ const SignIn=async(req,res,next)=>{
    
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email,status:true });
     console.log(user)
     if (!user || user.role !== 'academic manager') {
         throw new Error("Invalid credentials or no user exist.");

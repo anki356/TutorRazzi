@@ -36,9 +36,9 @@ const userDetails=await User.findOne({
     _id:req.user._id,
 
 })
-if(req.files?.profile_image){
+if(req.files?.file){
 unlinkFile(userDetails.profile_image)
-let fileName=await upload(req.files.profile_image)
+let fileName=await upload(req.files.file)
   await User.updateOne({
     _id:req.user._id
   },{

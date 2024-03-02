@@ -1,6 +1,6 @@
 import express from 'express'
 import { authVerify } from '../../../controllers/Admin/Auth/Auth.js'
-import {  cancelClass, deleteStudent, getAllStudents, getAllTeachers, getClassDetails, getHomeworkStatistics, getStudentClasses, getStudentDetails, getStudentSchedule, getTotalClassesHoursAttended, studentData } from '../../../controllers/Admin/Student/Student.js'
+import {  cancelClass, deleteStudent, getAllStudents, getAllTeachers, getClassDetails, getHomeworkStatistics, getStudentClasses, getStudentDetails, getStudentSchedule, getTotalClassesHoursAttended, studentData, updateStudent } from '../../../controllers/Admin/Student/Student.js'
 import { body } from 'express-validator'
 const router=express.Router()
 import validationError from '../../../middleware/validationError.js'
@@ -15,5 +15,6 @@ router.get("/student-schedule",authVerify,getStudentSchedule)
 router.get("/student-class-hours-attended",authVerify,getTotalClassesHoursAttended)
 router.get("/student-homework-statistics",authVerify,getHomeworkStatistics)
 router.delete("/delete-student/:student_id",authVerify,deleteStudent)
+router.patch("/update-student/:student_id",authVerify,updateStudent)
 
 export default router

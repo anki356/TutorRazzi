@@ -109,6 +109,9 @@ const getTeacherDetails=async (req,res)=>{
    const teacherDetails=await Teacher.findOne({
       user_id:req.query.teacher_id
    }).populate({path:'user_id'})
+   if(teacherDetails===null){
+      throw new Error("No Teacher Found")
+   }
    const testimonialResponse=await Testimonial.find({teacher_id:teacherDetails.user_id})
    const new_trial_requests=await Class.countDocuments({
     
@@ -151,7 +154,7 @@ _id:req.params.teacher_id
          status:req.body.status
       }
    })
-   return  res.json(responseObj(true,[],"Teacher inactivated successfullly")) 
+   return  res.json(responseObj(true,[],"Teacher Status updated successfullly")) 
 }
 const deleteTeacher=async (req,res)=>{
   await User.deleteById(req.params.teacher_id)

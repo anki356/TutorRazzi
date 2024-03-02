@@ -135,6 +135,9 @@ const getStudentDetails=async(req,res)=>{
     const studentResponse=await Student.findOne({user_id:req.query.student_id}).populate({path:"parent_id"}).populate({
         path:"user_id"
     })
+    if(studentResponse===null){
+        throw new Error("No Student Found")
+    }
     return res.json(responseObj(true,studentResponse,"Student Details"))
 }
 
@@ -189,15 +192,23 @@ const getHomeworkStatistics=async(req,res)=>{
     return res.json(responseObj(true,[pendingHomeworks,completedHomework],"Homework Statistics"))
 
 }
-
-const deleteStudent=async (req,res)=>{
-    await User.findOneAndUpdate({_id:req.params.student_id},{
-        $set:{
-            status:false
-        }
+const updateStudent=async (req,res)=>{
+    await User.updateOne({
+ _id:req.params.student_id
+    },{
+       $set:{
+          status:req.body.status
+       }
     })
-    return res.json(responseObj(true,null,"Student Deleted Successfully"));
+    return  res.json(responseObj(true,[],"Student Status updated successfullly")) 
+ }
+const deleteStudent=async (req,res)=>{
+    await User.deleteById(req.params.student_id)
+    await  Student.delete({
+         user_id:req.params.student_id
+      })
+      return  res.json(responseObj(true,[],"Student deleted successfullly"))  
 }
 
 
-export {deleteStudent,getHomeworkStatistics,getTotalClassesHoursAttended,studentData,getStudentSchedule,getAllStudents,getAllTeachers,getStudentClasses,cancelClass,getClassDetails,getStudentDetails}
+export {updateStudent,deleteStudent,getHomeworkStatistics,getTotalClassesHoursAttended,studentData,getStudentSchedule,getAllStudents,getAllTeachers,getStudentClasses,cancelClass,getClassDetails,getStudentDetails}

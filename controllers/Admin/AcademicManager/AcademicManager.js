@@ -15,7 +15,6 @@ const getTotalAcademicManager=async(req,res)=>{
 }
 
 const getAllAcademicManager=async(req,res)=>{ let users=await User.find({
-    status:true,
     role:'academic manager'
 })
 let query={user_id:{
@@ -116,56 +115,56 @@ const addAcademicManager=async(req,res)=>{
     })
   }
 
-   let degree=[
-    {name:req.body.bachelor_degree_name,
-    start_date:req.body.bachelor_degree_start_date,
-    end_date:req.body.bachelor_degree_end_date,
-    stream:req.body.bachelor_stream,
-    college:req.body.bachelor_college_name}
-   ]
-   let exp_details=[]
-   req.body.exp_detail_exp.forEach((data,index)=>{
-exp_details.push(
-    {
-        exp:data,
-        start_date:req.body.exp_detail_start_date[index],
-        end_date:req.body.exp_detail_end_date[index],
-        stream:req.body.stream[index],
-        organization:req.body.organization[index]
-       }
-)
+//    let degree=[
+//     {name:req.body.bachelor_degree_name,
+//     start_date:req.body.bachelor_degree_start_date,
+//     end_date:req.body.bachelor_degree_end_date,
+//     stream:req.body.bachelor_stream,
+//     college:req.body.bachelor_college_name}
+//    ]
+//    let exp_details=[]
+//    req.body.exp_detail_exp.forEach((data,index)=>{
+// exp_details.push(
+//     {
+//         exp:data,
+//         start_date:req.body.exp_detail_start_date[index],
+//         end_date:req.body.exp_detail_end_date[index],
+//         stream:req.body.stream[index],
+//         organization:req.body.organization[index]
+//        }
+// )
         
      
-   })
+//    })
 
-   if(req.body.master_degree_name){
-    degree.push({
-        name:req.body.master_degree_name,
-        start_date:req.body.master_degree_start_date,
-        end_date:req.body.master_degree_end_date,
-        stream:req.body.master_stream,
-        college:req.body.master_college_name
-    })
-   }
+//    if(req.body.master_degree_name){
+//     degree.push({
+//         name:req.body.master_degree_name,
+//         start_date:req.body.master_degree_start_date,
+//         end_date:req.body.master_degree_end_date,
+//         stream:req.body.master_stream,
+//         college:req.body.master_college_name
+//     })
+//    }
     const academicManager=await AcademicManager.create({
        preferred_name:req.body.name,
         user_id:userResponse._id,
-        students:req.body.students,
-        teachers:req.body.teachers,
+        // students:req.body.students,
+        // teachers:req.body.teachers,
         city:req.body.city,
         state:req.body.state,
         pincode:req.body.pincode,
         country:req.body.country,
         address:req.body.address,
-        degree:degree,
-         exp:req.body.exp,
-         exp_details:exp_details,
+        // degree:degree,
+        //  exp:req.body.exp,
+        //  exp_details:exp_details,
 dob:req.body.dob,
 gender:req.body.gender,
-bank_name:req.body.bank_name,
-branch_name:req.body.branch_name,
-ifsc_code:req.body.ifsc_code,
-account_number:req.body.account_number
+// bank_name:req.body.bank_name,
+// branch_name:req.body.branch_name,
+// ifsc_code:req.body.ifsc_code,
+// account_number:req.body.account_number
     })
     return res.json(responseObj(true,academicManager,"Academic Manager Added"))
 }
@@ -179,7 +178,9 @@ const getAcademicManagerDetails=async(req,res)=>{
     }).populate({
         path:"user_id"
     })
-       
+      if(academicManagerDetails===null) {
+        throw new Error("No Aacdemic Manager Found")
+      }
     let supportTicketsResolved=await Support.countDocuments({
         user_id:academicManagerDetails.user_id,
         status:"Resolved"
@@ -187,12 +188,21 @@ const getAcademicManagerDetails=async(req,res)=>{
     return res.json(responseObj(true,{academicManagerDetails:academicManagerDetails,supportTicketsResolved:supportTicketsResolved,total_students:academicManagerDetails.students.length},"Academic Manager Details"))
 }
 
-const deleteManager=async(req,res)=>{
+const updateManager=async (req,res)=>{
     await User.updateOne({
-        _id:req.params.manager_id
-    },{$set:{
-        status:false
-    }})
-    return res.json(responseObj(true,[],'Manager Deleted Successfully'))
-}
-export {getTotalAcademicManager, getAllAcademicManager, addAcademicManager, getAcademicManagerDetails, deleteManager,getAcademicManagerData}
+ _id:req.params.manager_id
+    },{
+       $set:{
+          status:req.body.status
+       }
+    })
+    return  res.json(responseObj(true,[],"Manager Status updated successfullly")) 
+ }
+ const deleteManager=async (req,res)=>{
+   await User.deleteById(req.params.manager_id)
+  await  AcademicManager.delete({
+       user_id:req.params.manager_id
+    })
+    return  res.json(responseObj(true,[],"Manger deleted successfullly")) 
+ }
+export {getTotalAcademicManager, getAllAcademicManager, addAcademicManager, getAcademicManagerDetails, updateManager,getAcademicManagerData,deleteManager}

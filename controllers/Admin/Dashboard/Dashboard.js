@@ -4,6 +4,7 @@ import Payment from "../../../models/Payment.js"
 
 import User from "../../../models/User.js"
 import { responseObj } from "../../../util/response.js"
+import Student from "../../../models/Student.js"
 
 const getTotalPaymentReceived=async(req,res)=>{
     

@@ -14,6 +14,7 @@ import RoleRouter from "./Role/Role.js"
 import NewsRouter from "./News/News.js"
 import MonthlyReport from "./MonthlyReport/MonthlyReport.js"
 import NoificationRouter from "./Notification/Notification.js"
+import Class from "./Class/Class.js"
 router.use("/admin/",CurriculumRouter)
 router.use("/admin/",TeacherRouter)
 router.use("/admin/",AuthRouter)
@@ -26,4 +27,5 @@ router.use("/admin/",RoleRouter)
 router.use("/admin/",NewsRouter)
 router.use("/admin/",MonthlyReport)
 router.use("/admin/",NoificationRouter)
+router.use("/admin/",Class)
 export default router

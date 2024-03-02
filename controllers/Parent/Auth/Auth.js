@@ -82,7 +82,7 @@ $set:{...req.body}
 
             const otpResponse=await Otp.findOne({email:req.body.email,code:Number(req.body.otp)})
             console.log(otpResponse)
-            let userResponse=await User.findOne({email:otpResponse?.email,role:'student'})
+            let userResponse=await User.findOne({email:otpResponse?.email,role:'parent'})
             if(!userResponse){
                 throw new Error('Invalid or expired otp.')
             }

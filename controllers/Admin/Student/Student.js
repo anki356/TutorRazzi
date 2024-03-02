@@ -38,7 +38,10 @@ const getAllStudents=async(req,res)=>{
         })
     }}
     if(req.query.search){
-        query.preferred_name===req.query.search
+        query.preferred_name={
+          $regex: req.query.search,
+          $options:"i"
+        }
        }
     let options={
         limit:req.query.limit,

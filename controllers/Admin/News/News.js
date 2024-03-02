@@ -55,5 +55,12 @@ const getNews=async(req,res)=>{
     return res.json(responseObj(true,result,"News"))
    })
 }
-
-export {addNews,editNews,getNews}
+const getNewsById=async(req,res)=>{
+    const news=await News.findById(req.query.news_id)
+    return res.json(responseObj(true,news,"News Details"))
+}
+const deleteNews=async(req,res)=>{
+    await News.deleteOne({_id:req.params.news_id})
+    return res.json(responseObj(true,null,"News Deleted"))
+}
+export {addNews,editNews,getNews,getNewsById,deleteNews}

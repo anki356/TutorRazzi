@@ -8,6 +8,8 @@ import makeId from "../../../util/makeId.js"
 import { responseObj } from "../../../util/response.js"
 import bcrypt from 'bcrypt'
 import mongoose from "mongoose"
+import sendEmail from "../../../util/sendEmail.js"
+import { newTeacherSignup } from "../../../util/EmailFormats/newTeacherSignup.js"
 const ObjectId=mongoose.Types.ObjectId
 const getTotalAcademicManager=async(req,res)=>{
      let total_academic_managers = await AcademicManager.countDocuments({})
@@ -151,21 +153,23 @@ const addAcademicManager=async(req,res)=>{
         user_id:userResponse._id,
         // students:req.body.students,
         // teachers:req.body.teachers,
-        city:req.body.city,
-        state:req.body.state,
-        pincode:req.body.pincode,
-        country:req.body.country,
-        address:req.body.address,
+        // city:req.body.city,
+        // state:req.body.state,
+        // pincode:req.body.pincode,
+        // country:req.body.country,
+        // address:req.body.address,
         // degree:degree,
         //  exp:req.body.exp,
         //  exp_details:exp_details,
-dob:req.body.dob,
-gender:req.body.gender,
+// dob:req.body.dob,
+// gender:req.body.gender,
 // bank_name:req.body.bank_name,
 // branch_name:req.body.branch_name,
 // ifsc_code:req.body.ifsc_code,
 // account_number:req.body.account_number
     })
+    let content=newTeacherSignup(req.body.name,req.body.email,req.body.password)
+    sendEmail(req.body.email,"New Academic Manager Sign In created",content)
     return res.json(responseObj(true,academicManager,"Academic Manager Added"))
 }
 

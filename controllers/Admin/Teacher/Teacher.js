@@ -58,16 +58,11 @@ return  res.json(responseObj(true,totalTeachers,"Total Count of Teachers"))
 }
 
 const getTeacherList=async(req,res)=>{
-   let users=await User.find({
-      role:'teacher'
-  })
-  let query={user_id:{
-      $in:users.map((data)=>{
-          return data._id
-      })
-  }}
+  let query={
+   role:"teacher"
+  }
   if(req.query.search){
-   query.preferred_name={
+   query.name={
      $regex: req.query.search,
      $options:"i"
    }
@@ -75,14 +70,14 @@ const getTeacherList=async(req,res)=>{
    let options={
       limit:req.query.limit,
       page:req.query.page,
-      populate:{
-         path:'user_id',
-      },
-      select:{"preferred_name":1,"subject_curriculum":1,"city":1,"state":1,"country":1}
+      select:{
+         "name":1,"email":1,"mobile_number":1
+      }
+      
       
    }
 
-   Teacher.paginate(query,options,(err,result)=>{
+   User.paginate(query,options,(err,result)=>{
       return  res.json(responseObj(true,result,"List of Teachers"))  
    })
 }

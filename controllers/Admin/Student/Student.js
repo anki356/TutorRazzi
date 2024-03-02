@@ -22,14 +22,16 @@ const studentData=async(req,res)=>{
         status:'Pending',
         class_type:"Trial"
     })
-    let totalStudents=await Student.countDocuments()
+    let totalUserStudents=await User.find({status:true,role:"student"})
+    let totalStudents=await Student.countDocuments({user_id:{
+        $in:totalUserStudents.map((data)=>data._id)}
+      })
     return res.json(responseObj(true,{totalUpComingClasses,totalTrialClassRequests,totalStudents},"Total Upcoming Classes"))
 
 }
 
 const getAllStudents=async(req,res)=>{
     let users=await User.find({
-        status:true,
         role:'student'
     })
     let query={user_id:{

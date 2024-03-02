@@ -135,7 +135,12 @@ return dataOne.month===data._id
         }
     })
     // return res.json(responseObj(true,totalBookings,"Total Bookings"))    
-    let totalStudents=await User.countDocuments({status:true,role:"student"})
+    let totalUserStudents=await User.find({status:true,role:"student"})
+   let  totalStudents=await Student.countDocuments({
+      user_id:{
+        $in:totalUserStudents.map((data)=>data._id)
+      }
+    })
     // return res.json(responseObj(true,totalStudents,"Total Students"))
     let totalHoursCompleted=await Class.find(
         {status:'Done'})

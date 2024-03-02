@@ -64,6 +64,12 @@ let pipeline=AcademicManager.aggregate([
         limit:req.query.limit,
         select:{
             students:1,preferred_name:1,user_id:1
+        },
+        populate:{
+            path:'user_id',
+            select:{
+                status:1
+            }
         }
     }
     AcademicManager.aggregatePaginate(pipeline,options,(err,result)=>{

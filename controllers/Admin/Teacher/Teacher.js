@@ -71,7 +71,7 @@ const getTeacherList=async(req,res)=>{
       limit:req.query.limit,
       page:req.query.page,
       select:{
-         "name":1,"email":1,"mobile_number":1
+         "name":1,"email":1,"mobile_number":1,"status":1
       }
       
       

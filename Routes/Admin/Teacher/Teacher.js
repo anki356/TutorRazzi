@@ -1,6 +1,6 @@
 import express from "express";
 import { authVerify } from "../../../controllers/Admin/Auth/Auth.js";
-import { addTeacher, deleteTeacher, getTeacherData, getTeacherDetails, getTeacherList, getTotalTeachers } from "../../../controllers/Admin/Teacher/Teacher.js";
+import { addTeacher, inactivateTeacher, getTeacherData, getTeacherDetails, getTeacherList, getTotalTeachers, deleteTeacher } from "../../../controllers/Admin/Teacher/Teacher.js";
 import upload from "../../../util/upload.js";
 import validationError from '../../../middleware/validationError.js'
 import { body } from "express-validator";
@@ -15,6 +15,7 @@ router.post("/add-Teacher",authVerify,teacherValidation,validationError,addTeach
 router.get("/total-teachers",authVerify,getTotalTeachers)
 router.get("/teacher-list",authVerify,getTeacherList)
 router.get("/teacher-details",authVerify,getTeacherDetails)
-router.patch("/teacher/:teacher_id",authVerify,deleteTeacher)
+router.patch("/inactivate-teacher/:teacher_id",authVerify,inactivateTeacher)
+router.delete("/teacher/:teacher_id",authVerify,deleteTeacher)
 router.get("/teacher-data",authVerify,getTeacherData)
 export default router

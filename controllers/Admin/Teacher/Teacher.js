@@ -144,7 +144,7 @@ const getTeacherDetails=async (req,res)=>{
     return res.json(responseObj(true, {teacherDetails:teacherDetails,testimonialResponse:testimonialResponse,new_trial_requests,rescheduledClasses,resourceRequests,homeworkRequests}, "Teacher Details"))
 }
 
-const deleteTeacher=async (req,res)=>{
+const inactivateTeacher=async (req,res)=>{
    await User.updateOne({
 _id:req.params.teacher_id
    },{
@@ -152,6 +152,13 @@ _id:req.params.teacher_id
          status:false
       }
    })
+   return  res.json(responseObj(true,[],"Teacher inactivated successfullly")) 
+}
+const deleteTeacher=async (req,res)=>{
+  await User.deleteById(req.params.teacher_id)
+ await  Teacher.delete({
+      user_id:req.params.teacher_id
+   })
    return  res.json(responseObj(true,[],"Teacher deleted successfullly")) 
 }
-export {addTeacher,getTotalTeachers,getTeacherList,getTeacherDetails,deleteTeacher,getTeacherData}
+export {addTeacher,getTotalTeachers,getTeacherList,getTeacherDetails,inactivateTeacher,getTeacherData,deleteTeacher}

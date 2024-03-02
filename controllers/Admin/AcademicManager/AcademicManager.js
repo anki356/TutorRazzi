@@ -12,7 +12,7 @@ import sendEmail from "../../../util/sendEmail.js"
 import { newTeacherSignup } from "../../../util/EmailFormats/newTeacherSignup.js"
 const ObjectId=mongoose.Types.ObjectId
 const getTotalAcademicManager=async(req,res)=>{
-     let total_academic_managers = await AcademicManager.countDocuments({})
+     let total_academic_managers = await AcademicManager.countDocuments()
      return res.json(responseObj(false,total_academic_managers,"Total Number of Academic manager"))
 }
 
@@ -207,6 +207,6 @@ const updateManager=async (req,res)=>{
   await  AcademicManager.delete({
        user_id:req.params.manager_id
     })
-    return  res.json(responseObj(true,[],"Manger deleted successfullly")) 
+    return  res.json(responseObj(true,[],"Manager deleted successfullly")) 
  }
 export {getTotalAcademicManager, getAllAcademicManager, addAcademicManager, getAcademicManagerDetails, updateManager,getAcademicManagerData,deleteManager}

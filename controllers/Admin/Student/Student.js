@@ -67,7 +67,8 @@ Student.paginate(query,options,(err,result)=>{
 
 const getStudentClasses=async(req,res)=>{
     let query = {
-        student_id: req.query.student_id
+        student_id: req.query.student_id,
+        class_type:"Non Trial"
       };
     
       if (req.query.teacher_id) {

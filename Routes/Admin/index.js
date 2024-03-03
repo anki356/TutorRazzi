@@ -15,7 +15,9 @@ import NewsRouter from "./News/News.js"
 import MonthlyReport from "./MonthlyReport/MonthlyReport.js"
 import NoificationRouter from "./Notification/Notification.js"
 import Class from "./Class/Class.js"
+import Chat from "./Chat/Chat.js"
 router.use("/admin/",CurriculumRouter)
+router.use("/admin/",Chat)
 router.use("/admin/",TeacherRouter)
 router.use("/admin/",AuthRouter)
 router.use("/admin/",DashboardRouter)

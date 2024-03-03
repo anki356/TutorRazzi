@@ -2,6 +2,13 @@ import {responseObj} from "../../../util/response.js"
 import Class from "../../../models/Class.js"
 import User from "../../../models/User.js"
 import moment from "moment"
+import Student from "../../../models/Student.js"
+import Teacher from "../../../models/Teacher.js"
+import Reminder from "../../../models/Reminder.js"
+import ResourceRequest from "../../../models/ResourceRequest.js"
+import Task from "../../../models/Task.js"
+import HomeWork from "../../../models/HomeWork.js"
+import Review from "../../../models/Review.js"
 const getUpcomingClasses=async(req,res,next)=>{
   
   
@@ -230,4 +237,70 @@ start_time:1
           }
         })
     }
-    export {getUpcomingClasses,getPastClasses,getRescheduledClasses,getTrialClasses}
+    const getUpcomingClassDetails=async(req,res)=>{
+      let classDetails = {}
+      classDetails = await Class.findOne({ _id: req.query.class_id,end_time:{
+        $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+      } }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1 }).populate({
+        path: 'teacher_id', select: {
+         name: 1,profile_image:1
+        }
+      }).populate({
+        path: 'student_id', select: {
+          name: 1,mobile_number:1,profile_image:1
+        }
+      })
+      let studentDetails=await Student.findOne({user_id:classDetails.student_id},{
+        grade:1,
+        curriculum:1,
+        school:1
+      })
+      let teacherDetails=await Teacher.findOne({user_id:classDetails.teacher_id},{
+        qualification:1,
+    
+      })
+     
+      
+      // let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
+      res.json(responseObj(true, { classDetails: classDetails,studentDetails:studentDetails,teacherDetails:teacherDetails }, null))
+    }
+
+    const getClassDetails=async(req,res)=>{
+      let classDetails = {}
+    classDetails = await Class.findOne({ _id: req.query.class_id,end_time:{$lte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")}}).populate({
+      path: 'teacher_id', select: {
+       name: 1,profile_image:1
+      }
+    }).populate({
+      path: 'student_id', select: {
+        name: 1
+      }
+    })
+    if(classDetails===null){
+    return res.json(responseObj(false,null,"No Class Found"))
+    }
+    let studentDetails=await Student.findOne({user_id:classDetails.student_id},{
+      grade:1,
+      curriculum:1,
+      school:1
+    })
+    let homeworkResponse=await HomeWork.find({
+      class_id:req.query.class_id
+  })
+  let taskResponse=await Task.find({
+      class_id:req.query.class_id
+  })
+    
+    // let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id})
+    let resource_requests=await ResourceRequest.find({
+      class_id:req.query.class_id,
+      status:'Pending'
+    })
+   let ratings=await Review.findOne({
+    class_id:req.query.class_id,
+    given_by:req.user._id
+   })
+    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,resource_requests:resource_requests,ratings:ratings }, null))
+  
+    }
+    export {getUpcomingClasses,getPastClasses,getRescheduledClasses,getTrialClasses,getUpcomingClassDetails,getClassDetails}

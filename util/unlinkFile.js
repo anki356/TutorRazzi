@@ -21,8 +21,7 @@ const unlinkFile = async (filePath) => {
     try {
         const projectId = process.env.PROJECT_ID
         const bucketName = process.env.BUCKET_NAME
-        const serviceKey = path.join(__dirname, "..", 'storageservice.json')
-
+        const serviceKey = path.join(path.resolve(),  'storageservice.json')
         const storage = new Storage({ projectId, keyFilename: serviceKey });
         const bucket = storage.bucket(bucketName);
 

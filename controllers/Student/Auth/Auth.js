@@ -107,7 +107,7 @@ throw new Error("User Email not found")
 
 
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
-    userResponse=await User.updateOne({email:req.body.email},{resetToken:verificationCode})
+    userResponse=await Otp.create({email:req.body.email,code:verificationCode})
    // Create a transporter using the Ethereal account
   sendEmail(req.body.email,"Verification Email", "Verificaion code is "+verificationCode)
   res.json(responseObj(true,req.body.email,"Email Sent"))

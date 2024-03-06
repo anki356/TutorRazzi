@@ -151,7 +151,7 @@ const verifyEmail=async(req,res,next)=>{
         email:req.body.email
     })
     if(user_details!==null){
-        return res.json(responseObj(false,"Student Details already exist.Please Sign in."))
+        return res.json(responseObj(false,null,"Student Details already exist.Please Sign in."))
     }
    }
 

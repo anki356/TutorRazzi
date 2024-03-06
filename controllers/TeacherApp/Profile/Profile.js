@@ -473,12 +473,6 @@ const getTrialClasses = async (req, res, next) => {
     $and: [{
       teacher_id: req.user._id,
       class_type: 'Trial',
-      end_time: {
-        "$gte": moment().format("YYYY-MM-DDTHH:mm:ss")
-      },
-      status:{
-        $ne:"Cancelled"
-      }
       // status: 'Pending'
     }]
   }

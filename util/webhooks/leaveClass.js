@@ -56,6 +56,7 @@ axios.get(`https://api.dyte.io/v2/meetings/${data.body.meeting.id}/participants`
         'Authorization': `Basic ${encodedCredentials}`,
     }
 }).then(async(response)=>{
+    console.log(response.data.data)
     let isStudent=false
     let isTeacher=false
     const classDetails=await Class.findOne({

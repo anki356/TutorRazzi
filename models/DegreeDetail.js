@@ -11,7 +11,7 @@ const DegreeDetailSchema=new mongoose.Schema({
     },
     end_year:{
         type:String,
-        
+        default:null
     },
         college:{
 type:String,

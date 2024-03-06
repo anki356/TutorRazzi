@@ -77,7 +77,11 @@ curriculum:req.query.curriculum,
 const getTeacherById = async (req, res, next) => {
 
     const { id } = req.query
-    const teacherResponse = await Teacher.findOne({ user_id: id }).populate({ path: 'user_id' })
+    const teacherResponse = await Teacher.findOne({ user_id: id },{
+        "exp_details":1,"bio":1,"subject_curriculum":1
+    }).populate({ path: 'user_id' ,select:{
+        "name":1,"profile_image":1
+    }})
 const reviewResponse=await Review.aggregate([
     {
         $match:{
@@ -95,13 +99,57 @@ const reviewResponse=await Review.aggregate([
         }
     }
 ])
-     const testimonialResponse=await Testimonial.find({teacher_id:id})
-    return res.json(responseObj(true, {teacherResponse:teacherResponse,testimonialResponse:testimonialResponse,reviewResponse,reviewResponse}, "Teacher Details"))
+let ratings=0
+let reviews=0
+if(reviewResponse.length>0){
+     ratings=reviewResponse[0].ratings,
+    reviews=reviewResponse[0].reviews
+}
+if(teacherResponse===null){
+    return res.json(responseObj(false, null,"No Details Found"))
+}
+    //  const testimonialResponse=await Testimonial.find({teacher_id:id})
+    return res.json(responseObj(true, {teacherResponse:teacherResponse,ratings,reviews}, "Teacher Details"))
 
 
 
 
 }
+const getTeacherDetails=async(req,res)=>{
+    let details
+  if(req.query.parameter==='about'){
+    details=await Teacher.findOne({
+      user_id:req.query.id
+    },{
+      "preferred_name":1,"city":1,"state":1,"country":1,"degree":1,"subject_curriculum":1
+    }).populate({
+      path:"user_id",
+      select:{
+        "email":1,"mobile_number":1
+      }
+    })
+  }
+  else if(req.query.parameter==='exp_details'){
+    details=await Teacher.findOne({
+      user_id:req.query.id
+    },{
+      "exp_details":1
+    }) 
+  
+  }
+  else if(req.query.parameter==='testimonials'){
+  details=await Testimonial.find({
+    teacher_id:req.query.id
+  })
+  }
+  else{
+    return res.json(responseObj(false,null,"Please Specify Parameter"))
+  }
+  if(details===null){
+    return res.json(responseObj(false, null,"No Details Found"))
+}
+  return res.json(responseObj(true,details,"Teacher Profile Details"))
+  }
 const reviewTeacher = async (req, res, next) => {
    
     const reviewResponse = await Review.insertMany({
@@ -165,12 +213,18 @@ const getGreatTeachers = async (req, res, next) => {
                 as: "users"
             }
         },
-
+{
+    $unwind:"$users"
+},
         {
             $project: {
                 user_id: 1,
                 preferred_name: 1,
-                "users.profile_image":1,
+                "users.profile_image":{ $cond: {
+                    if: { $eq: ["$users.profile_image", null] },
+                    then: null,
+                    else: { $concat: [process.env.CLOUD_API+"/", "$users.profile_image"] }
+                }},
                 subjects: {
                     $filter: {
                       input: "$subject_curriculum",  
@@ -180,7 +234,13 @@ const getGreatTeachers = async (req, res, next) => {
                   },
                 exp:1,
                 ratings: {
-                    $avg: "$reviews.rating"
+                    $avg: {
+                        $cond: [
+                            { $eq: [{ $size: "$reviews" }, 0] },
+                            0,
+                            { $avg: "$reviews.rating" }
+                        ]
+                    }
                 },
                 reviews: {
                     $size: "$reviews"
@@ -209,7 +269,13 @@ const getGreatTeachers = async (req, res, next) => {
             }
         },
         {
-            $sort: { averageRating: -1 }, 
+            $group: {
+                _id: null,
+                allTeachers: { $push: "$teachers" }
+            }
+        },
+        {
+            $sort: { ratings: -1 }, 
         },
         {
             $limit: req.query.limit ? req.query.limit : 5
@@ -217,7 +283,9 @@ const getGreatTeachers = async (req, res, next) => {
 
     ])
 
-console.log(teacherResponse)
+if(teacherResponse.length===0){
+return res.json(responseObj(false, [], ' No Teachers Found'))
+}
     
     return res.json(responseObj(true, teacherResponse, ' Great Teachers'))
 }
@@ -307,4 +375,4 @@ const getTeachersBySubjectAndName=async(req,res)=>{
    })
 }
 
-export { getTeacherBySubjectCurriculum, getTeacherById, getGreatTeachers, reviewTeacher,getTeachersBySubjectAndName }
+export { getTeacherBySubjectCurriculum, getTeacherById, getGreatTeachers, reviewTeacher,getTeachersBySubjectAndName ,getTeacherDetails}

@@ -32,7 +32,8 @@ const QuoteSchema = new mongoose.Schema({
         default: 'Normal'
     },
     description:{
-        type:String
+        type:String,
+        default:null
     },
    
     schedule_status: {

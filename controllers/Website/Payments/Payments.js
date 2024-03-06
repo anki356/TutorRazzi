@@ -100,7 +100,8 @@ const payQuote = async (req, res, next) => {
             status: 'Pending',
             payment_status: 'Paid',
             quote_id:quoteResponse._id,
-            name:quoteResponse.class_name
+            name:quoteResponse.class_name,
+            details:quoteResponse.description
         }
 
         classArray.push(classObj)

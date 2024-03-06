@@ -465,7 +465,7 @@ const getRescheduledClasses=async(req,res,next)=>{
     let query={$and:[
           {
   
-            end_time :{$gte:new Date().toLocaleDateString()},
+            end_time :{$gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")},
           },{
             student_id:req.user._id,
   

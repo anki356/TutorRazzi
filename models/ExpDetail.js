@@ -10,15 +10,16 @@ required:true
         required:true
     },
     end_year:{
-        type:String
-        
+        type:String,
+        default:null
     },
     subject_curriculum:{
         type:String,
-      
+      default:null
     },
         description:{
 type:String,
+default:null
 
         }, createdAt: {
             type: String,

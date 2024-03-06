@@ -92,23 +92,55 @@ const requestExtraclass = async (req, res, next) => {
 }
 
 const requestTrialClass = async (req, res, next) => {
-   
+    const AcademicManangerResponse=await AcademicManager.findOne({
+        students:{
+             $elemMatch: {
+            $eq: req.user._id
+        }
+        }
+    })
+    if(AcademicManangerResponse!==null){
+
+    
     let classResponseArray = []
     let classResponse = await Class.findOne({
         student_id: req.user._id,
         "subject.name": req.body.subject ,
-        status: 'Done'
+        
     })
-   
+    let studentResponse=await Student.findOne({
+        user_id:req.user._id
+    })
     if (classResponse) {
-        throw new Error("Subject Trial Class already done")
+        throw new Error("Subject Trial Class already Requested or Done")
 
 
 
 
     }
+    
 
     await req.body.start_time.forEach(async (element) => {
+       if(moment().add(5,'h').add(30,'s').diff(element,'s')>0){
+        return res.json(responseObj(false,null,"Start Time cannot be in past"))
+       }
+        let classScheduled=await Class.find({
+            $and: [   { start_time:{$gte:element}},
+              {start_time:{
+                $lte:moment(element).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+              }},
+              {end_time:{$gte:element}},
+              {end_time:{
+                $lte:moment(element).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+              }},{$or:[{
+              teacher_id:req.body.teacher_id
+          },{
+              student_id:req.user._id
+          }]}]})
+        
+              if(classScheduled.length!==0){
+               throw new Error('This time slot has been already scheduled')  
+              }
         let newClassResponse = await Class.insertMany({
             teacher_id: req.body.teacher_id,
             student_id: req.user._id,
@@ -116,7 +148,7 @@ const requestTrialClass = async (req, res, next) => {
             end_time: moment(element).add(1, 'h').format("YYYY-MM-DDTHH:mm:ss"),
             subject: { name: req.body.subject },
             curriculum: { name: req.body.curriculum },
-            grade: { name: req.body.grade },
+            grade: { name: studentResponse.grade.name },
             class_type: "Trial",
             status: "Pending",
             is_rescheduled: false,
@@ -127,24 +159,20 @@ const requestTrialClass = async (req, res, next) => {
 
 
     });
-    const AcademicManangerResponse=await AcademicManager.findOne({
-        students:{
-             $elemMatch: {
-            $eq: req.user._id
-        }
-        }
-    })
+   
     const teacherResponse=await Teacher.findOne({
         user_id:req.body.teacher_id
     })
-    addNotifications(AcademicManangerResponse.user_id,"New Trial Class Requested","New Trial Class Requested By"+ req.user.name+" by teacher "+teacherResponse.preferred_name+" of subject "+req.body.subject)
-    addNotifications(req.body.teacher_id,"New Trial Class Requested","New Trial Class Requested By"+ req.user.name+" of subject "+req.body.subject)
-    res.json(responseObj(true, classResponseArray, "Trial Class request created Successfully"))
+    addNotifications(AcademicManangerResponse.user_id,"New Trial Class Requested","New Trial Class Requested By "+ req.user.name+" by teacher "+teacherResponse.preferred_name+" of subject "+req.body.subject)
+    addNotifications(req.body.teacher_id,"New Trial Class Requested","New Trial Class Requested By "+ req.user.name+" of subject "+req.body.subject)
+    res.json(responseObj(true, null, "Trial Class request created Successfully"))
+    }else{
+        return res.json(responseObj(false, null,"Academic Manager is not assigned to you"))
+    }
 
 
 
-
-}
+} 
 
 const getClassDetails = async (req, res, next) => {
     let classDetails = {}
@@ -870,13 +898,13 @@ const getLastTrialClass = async (req, res, next) => {
         })
        
         if(TrialResponse!==null){
-            return res.json(responseObj(true,null,"Trial Class already responded"))
+            return res.json(responseObj(false,null,"Trial Class already responded"))
         }
         
         res.json(responseObj(true, lastClassResponse.class_id, 'Last trial class details are fetched successfully'))
     }
     else{
-        return res.json(responseObj(true,null,"No Trial Class"))
+        return res.json(responseObj(false,null,"No Trial Class"))
     }
     
 

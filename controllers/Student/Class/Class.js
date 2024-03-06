@@ -25,6 +25,7 @@ import User from "../../../models/User.js"
 import Report from "../../../models/Report.js"
 import AcademicManager from "../../../models/AcademicManager.js"
 import axios from "axios"
+import MonthlyReport from "../../../models/MonthlyReport.js"
 const dislikeClass = async (req, res, next) => {
 
 

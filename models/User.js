@@ -54,13 +54,13 @@ UserSchema.plugin(MongooseDelete, {
     deletedAt : true,
     overrideMethods: 'all' 
   })
-UserSchema.methods.signJWT = function () {
+UserSchema.methods.signJWT =function () {
     const user = this;
     if (user) {
       user.password = undefined;
       user.createdAt = undefined;
     }
- 
+
     return jwt.sign({ user }, process.env.JWT_SECRET);
   }
   UserSchema.set('toJSON', { virtuals: true });

@@ -90,7 +90,8 @@ required:true
     },
    
     details:{
-        type:String
+        type:String,
+        default:""
     },
     rescheduled_by:{
         type:String,

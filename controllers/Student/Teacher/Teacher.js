@@ -6,6 +6,7 @@ import { responseObj } from "../../../util/response.js"
 import mongoose from 'mongoose'
 import Testimonial from "../../../models/Testimonial.js"
 import { addNotifications } from "../../../util/addNotification.js"
+import Class from "../../../models/Class.js"
 const ObjectID = mongoose.Types.ObjectId
 const getTeacherBySubjectCurriculum = async (req, res, next) => {
     const teacherResponse = await Teacher.aggregate([{
@@ -124,7 +125,14 @@ const getGreatTeachers = async (req, res, next) => {
     let subjects = studentResponse.subjects.map((data) => {
         return data.name
     })
-    
+    const classResponse=await Class.find({
+        student_id:req.user._id
+        })
+        console.log(subjects)
+     const classSubjects=classResponse.map((data)=>data.subject.name)
+       subjects= subjects.filter((data)=>!classSubjects.includes(data))
+        console.log(studentResponse.curriculum) 
+        console.log(subjects) 
     let teacherResponse = await Teacher.aggregate([
         {
             $match:{
@@ -134,6 +142,9 @@ const getGreatTeachers = async (req, res, next) => {
                         curriculum:studentResponse.curriculum.name,
                         // grade:studentResponse.grade.name
                     }
+                },
+                user_id:{
+                    $nin:classResponse.map((data)=>data.teacher_id)
                 }
             }
         },
@@ -178,6 +189,26 @@ const getGreatTeachers = async (req, res, next) => {
             }
         },
         {
+            $unwind: "$subjects"
+        },
+        {
+            $group: {
+                _id: {
+                    subject: "$subjects.subject",
+                    teacher_id: "$user_id"
+                },
+                teacher: { $first: "$$ROOT" }
+            }
+        },
+        {
+            $group: {
+                _id: "$_id.subject",
+                teachers: {
+                    $push: "$teacher"
+                }
+            }
+        },
+        {
             $sort: { averageRating: -1 }, 
         },
         {
@@ -186,7 +217,7 @@ const getGreatTeachers = async (req, res, next) => {
 
     ])
 
-
+console.log(teacherResponse)
     
     return res.json(responseObj(true, teacherResponse, ' Great Teachers'))
 }

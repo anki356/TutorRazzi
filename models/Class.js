@@ -212,6 +212,16 @@ ClassSchema.virtual('is_past').get(function(){
     
 
 })
+ClassSchema.virtual('class_status').get(function(){
+    
+    
+   if((this.status==="Pending"||this.status==='Scheduled')&&this.is_rescheduled) {
+        return "Rescheduled"
+    }
+    return this.status
+    
+
+})
 ClassSchema.plugin(mongoosePaginate)
 ClassSchema.plugin(mongooseAggregatePaginate)
 

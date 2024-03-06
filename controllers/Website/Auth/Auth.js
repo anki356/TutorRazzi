@@ -112,7 +112,7 @@ $set:{...req.body}
    
 const verifyOTP=async(req,res,next)=>{
 
-const otpResponse=await Otp.findOne({code:req.body.code})
+const otpResponse=await Otp.findOne({code:Number(req.body.code)})
 if(!otpResponse){
     throw new Error('Invalid or expired reset token.')
 }

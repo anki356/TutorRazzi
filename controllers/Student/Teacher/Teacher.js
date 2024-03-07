@@ -333,7 +333,7 @@ const getTeachersBySubjectAndName=async(req,res)=>{
             as: "classes",
             pipeline: [
                 { $match: {$and:[{ status: "Done" },{
-                    subject:req.query.subject
+                    "subject.name":req.query.subject
                 }]} }  // Add a $match stage to filter documents in the "from" collection
                 // Additional stages for the "from" collection aggregation pipeline if needed
             ]
@@ -356,13 +356,22 @@ const getTeachersBySubjectAndName=async(req,res)=>{
             foreignField: "_id",
             as: "users"
         }
+    },
+    {
+        $unwind:"$users"
     }, {
         $project: {
             user_id: 1,
             preferred_name: 1,
             exp:1,
             ratings: {
-                $avg: "$reviews.rating"
+                $avg: {
+                    $cond: [
+                        { $eq: [{ $size: "$reviews" }, 0] },
+                        0,
+                        { $avg: "$reviews.rating" }
+                    ]
+                }
             },
             reviews: {
                 $size: "$reviews"
@@ -370,7 +379,11 @@ const getTeachersBySubjectAndName=async(req,res)=>{
             no_of_classes: {
                 $size: "$classes"
             },
-            "users.profile_image":1
+            "users.profile_image":{ $cond: {
+                if: { $eq: ["$users.profile_image", null] },
+                then: null,
+                else: { $concat: [process.env.CLOUD_API+"/", "$users.profile_image"] }
+            }},
 
         }
     },{

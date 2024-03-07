@@ -946,11 +946,7 @@ const getClassesBasedOnDate=async (req,res)=>{
         name: 1,mobile_number:1,profile_image:1
       }
     })
-    let studentDetails=await Student.findOne({user_id:classDetails.student_id},{
-      grade:1,
-      curriculum:1,
-      school:1
-    })
+   
     const teacherDetails =await Teacher.aggregate([{
         $match: {
             user_id:new ObjectID(classDetails.teacher_id)
@@ -989,11 +985,14 @@ const getClassesBasedOnDate=async (req,res)=>{
     },
     {
         $unwind:"$users"
+    },
+    {
+        $unwind: "$exp_details" // Unwind the array of experience details
     }, {
         $project: {
             user_id: 1,
             preferred_name: 1,
-            exp:1,
+            exp: { $sum: "$exp_details.exp" },
             ratings: {
                 $avg: {
                     $cond: [
@@ -1019,7 +1018,7 @@ const getClassesBasedOnDate=async (req,res)=>{
     }])
    
     
-    let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
-    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,teacherDetails:teacherDetails[0] }, null))
+    // let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
+    res.json(responseObj(true, { classDetails: classDetails,teacherDetails:teacherDetails[0] }, null))
   }
 export {acceptClassRequest, getUpcomingClassDetails,getClassesBasedOnDate,dislikeClass, getLastTrialClass, likeClass, setReminder, getExtraClassQuotes, requestExtraclass,  uploadHomework, scheduleClass, requestTrialClass, getClassDetails, rescheduleClass, reviewClass, raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass, getQuotes, getPurchasedClasses, getPurchasedClassesByQuoteId }

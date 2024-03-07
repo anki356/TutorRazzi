@@ -58,7 +58,13 @@ curriculum:req.query.curriculum,
             preferred_name: 1,
             exp:1,
             ratings: {
-                $avg: "$reviews.rating"
+                $avg: {
+                    $cond: [
+                        { $eq: [{ $size: "$reviews" }, 0] },
+                        0,
+                        { $avg: "$reviews.rating" }
+                    ]
+                }
             },
             reviews: {
                 $size: "$reviews"
@@ -66,7 +72,11 @@ curriculum:req.query.curriculum,
             no_of_classes: {
                 $size: "$classes"
             },
-            "users.profile_image":1
+            "users.profile_image":{ $cond: {
+                if: { $eq: ["$users.profile_image", null] },
+                then: null,
+                else: { $concat: [process.env.CLOUD_API+"/", "$users.profile_image"] }
+            }},
 
         }
     }])

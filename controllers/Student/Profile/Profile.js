@@ -62,9 +62,14 @@ query={
 }
 let pending=0
 let completed=0
+let homworks=await HomeWork.find({
+  class_id:{
+    $in:ClassResponse
+  }
+})
    HomeWork.paginate(query,options,(err,result)=>{
     
-   result.docs.forEach((data)=>{
+   homworks.forEach((data)=>{
       if(data.status==='Pending'){
         pending+=1
       }

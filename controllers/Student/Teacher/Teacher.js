@@ -56,11 +56,14 @@ curriculum:req.query.curriculum,
     {
         $unwind:"$users"
     },
+    {
+        $unwind: "$exp_details" // Unwind the array of experience details
+    },
           {
         $project: {
             user_id: 1,
             preferred_name: 1,
-            exp:1,
+            exp: { $sum: "$exp_details.exp" },
             ratings: {
                 $avg: {
                     $cond: [
@@ -365,11 +368,16 @@ const getTeachersBySubjectAndName=async(req,res)=>{
     },
     {
         $unwind:"$users"
-    }, {
+    },
+    {
+        $unwind: "$exp_details" // Unwind the array of experience details
+    },
+    
+    {
         $project: {
             user_id: 1,
             preferred_name: 1,
-            exp:1,
+            exp: { $sum: "$exp_details.exp" },
             ratings: {
                 $avg: {
                     $cond: [

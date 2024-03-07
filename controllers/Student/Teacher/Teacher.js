@@ -9,7 +9,7 @@ import { addNotifications } from "../../../util/addNotification.js"
 import Class from "../../../models/Class.js"
 const ObjectID = mongoose.Types.ObjectId
 const getTeacherBySubjectCurriculum = async (req, res, next) => {
-    const teacherResponse = await Teacher.aggregate([{
+    const teacherResponse = Teacher.aggregate([{
         $match: {
             
                 subject_curriculum:{
@@ -85,8 +85,14 @@ curriculum:req.query.curriculum,
         }
     }])
 
-
-    res.json(responseObj(true, teacherResponse, ''))
+const options={
+    liit:req.query.limit,
+    page:req.query.page
+}
+Teacher.aggregatePaginate(teacherResponse,options,(err,result)=>{
+    res.json(responseObj(true, teacherResponse, result))
+})
+    
 }
 const getTeacherById = async (req, res, next) => {
 
@@ -323,7 +329,7 @@ const getTeachersBySubjectAndName=async(req,res)=>{
                 
         }
     
-    const teacherResponse = await Teacher.aggregate([{
+    const teacherResponse = Teacher.aggregate([{
         $match: query
     }, {
         $lookup: {
@@ -386,19 +392,15 @@ const getTeachersBySubjectAndName=async(req,res)=>{
             }},
 
         }
-    },{
-        $skip:offset
-    },{
-        $limit:Number(req.query.limit)
     }])
     
     let options={
-        limit:req.query.limit,
-        page:req.query.page
+        limit:req.query.limit||5,
+        page:req.query.page||1
     }
   
-   Teacher.paginate(query,options,(err,result)=>{
-    return res.json(responseObj(true,{teacherResponse,result},"Teachers data of required Subject are here"))
+   Teacher.paginate(teacherResponse,options,(err,result)=>{
+    return res.json(responseObj(true,result,"Teachers data of required Subject are here"))
    })
 }
 

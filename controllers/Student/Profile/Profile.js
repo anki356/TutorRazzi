@@ -97,7 +97,7 @@ const getUpcomingClasses = async (req, res, next) => {
     $and: [
       { end_time: { $gte: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss") } },
 
-      { teacher_id: req.user._id },
+      { student_id: req.user._id },
 
 
       { status: 'Scheduled' }

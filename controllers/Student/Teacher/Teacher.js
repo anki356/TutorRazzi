@@ -52,7 +52,11 @@ curriculum:req.query.curriculum,
             foreignField: "_id",
             as: "users"
         }
-    }, {
+    },
+    {
+        $unwind:"$users"
+    },
+          {
         $project: {
             user_id: 1,
             preferred_name: 1,

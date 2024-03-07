@@ -60,6 +60,7 @@ required:true
     },
     notes:{
         type:String,
+        default:null
     },
     recordings:{
         type:[String],
@@ -92,7 +93,7 @@ required:true
    
     details:{
         type:String,
-        default:""
+        default:null
     },
     rescheduled_by:{
         type:String,
@@ -105,7 +106,8 @@ required:true
         required: false
     },
 other_information:{
-    type:String
+    type:String,
+    default:null
 },
 meeting_id:{
     type:String

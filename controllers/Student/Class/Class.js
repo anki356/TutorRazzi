@@ -193,7 +193,7 @@ const getClassDetails = async (req, res, next) => {
     let classDetails = {}
     classDetails = await Class.findOne({ _id: req.query.class_id ,end_time:{
       $lte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
-    }}, { teacher_id:1,start_time: 1, end_time: 1, description: 1, grade: 1, subject: 1, notes: 1,  materials: 1,student_id:1  }).populate({
+    }}, { teacher_id:1,start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, notes: 1,  materials: 1,student_id:1  }).populate({
         path: 'teacher_id', select: {
             profile_image: 1, name: 1
         }

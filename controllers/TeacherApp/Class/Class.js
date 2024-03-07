@@ -127,6 +127,7 @@ let taskResponse=await Task.find({
     class_id:req.query.class_id,
     given_by:req.user._id
    })
+   
   res.json(responseObj(true, { classDetails: classDetails,resource_requests:resource_requests,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,ratings:ratings }, null))
 }
 

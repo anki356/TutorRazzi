@@ -88,9 +88,19 @@ _id:req.query.student_id
         $ne:null
     },
 class_type:"Non-Trial",
-end_time:{
-    $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
-}
+$or:[{
+    status:{
+    $nin:["Scheduled","Pending"]
+    }
+        },{
+          status:{
+            $in:["Scheduled","Pending"]
+          },
+          end_time:{
+            $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+          }
+        }]
+
   }
   let options={
     limit:req.query.limit,

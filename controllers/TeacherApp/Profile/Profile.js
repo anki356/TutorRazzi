@@ -476,11 +476,11 @@ const getTrialClasses = async (req, res, next) => {
       // status: 'Pending'
     },{$or:[{
 status:{
-$eq:"Done"
+$nin:["Scheduled","Pending"]
 }
     },{
       status:{
-        $eq:"Scheduled"
+        $in:["Scheduled","Pending"]
       },
       end_time:{
         $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")

@@ -29,9 +29,15 @@ import MonthlyReport from "../../../models/MonthlyReport.js"
 const dislikeClass = async (req, res, next) => {
 
 
-
-
-    const dislikeResponse = await Class.findOneAndUpdate({_id:req.body.class_id},{$set:{
+let dislikeResponse=await Class.findOne({
+    _id:req.body.class_id
+},{
+    response:1
+})
+if (dislikeResponse.response){
+    return res.json(responseObj(false,null,"Class Response Already marked"))
+}
+    dislikeResponse = await Class.findOneAndUpdate({_id:req.body.class_id},{$set:{
       
         response: "Disliked",
         reason_disliking: req.body.reason
@@ -55,6 +61,14 @@ const dislikeClass = async (req, res, next) => {
 }
 
 const likeClass = async (req, res, next) => {
+    let dislikeResponse=await Class.findOne({
+        _id:req.body.class_id
+    },{
+        response:1
+    })
+    if (dislikeResponse.response){
+        return res.json(responseObj(false,null,"Class Response Already marked"))
+    }
     const likeResponse = await Class.findOneAndUpdate({_id:req.body.class_id},{$set:{
       
         response: "Liked",

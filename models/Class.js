@@ -73,6 +73,7 @@ required:true
     response: {
         type: String,
         enum: ['Liked', 'Disliked'],
+        default:null
     },
     reason_disliking: {
         type: String

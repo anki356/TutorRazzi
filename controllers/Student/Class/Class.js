@@ -191,43 +191,48 @@ const requestTrialClass = async (req, res, next) => {
 
 const getClassDetails = async (req, res, next) => {
     let classDetails = {}
-    classDetails = await Class.findOne({ _id: req.query.class_id }).populate({
+    classDetails = await Class.findOne({ _id: req.query.class_id ,end_time:{
+      $lte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+    }}, { teacher_id:1,start_time: 1, end_time: 1, description: 1, grade: 1, subject: 1, notes: 1,  materials: 1,student_id:1  }).populate({
         path: 'teacher_id', select: {
             profile_image: 1, name: 1
         }
     })
- let teacherResponse=await Teacher.findOne({
-    user_id:classDetails.teacher_id
+    if(!classDetails){
+      return res.json(responseObj(false,null,"Incorrect Class"))
+    }
+//  let teacherResponse=await Teacher.findOne({
+//     user_id:classDetails.teacher_id
+//  },{
+//     exp:1,
+//     qualification:1
+//  }) 
+ const parentDetails=await Student.findOne({
+  user_id:classDetails.student_id
  },{
-    exp:1,
-    qualification:1
- }) 
- let reviews=await Review.countDocuments({
-    teacher_id:classDetails.teacher_id
- }) 
- let average_rating=await Review.aggregate([
-    {$match:{teacher_id:classDetails.teacher_id}},{
-        $group:{
-           _id:"$teacher_id",
-           avgRating:{$avg:"$rating"}
-    }}
- ])
+  parent_id:1
+ })
+ let classRatingsResponse=await Review.findOne({
+  class_id:req.query.class_id,
+  given_by:classDetails.student_id,
+  teacher_id:null
+})
+let teacherRatings=await Review.findOne({
+class_id:req.query.class_id,
+given_by:classDetails.student_id,
+teacher_id:classDetails.teacher_id
+})
 let homeworkResponse=await HomeWork.find({
     class_id:req.query.class_id
+}).populate({
+  path:"answer_document_id"
 })
 let taskResponse=await Task.find({
     class_id:req.query.class_id
 })
-let classReview=await Review.findOne({
-    class_id:req.query.class_id,
-    given_by:req.user._id
-  })
-  let teacherReview=await Review.findOne({
-    class_id:req.query.class_id,
-    given_by:req.user._id,
-    teacher_id:classDetails.teacher_id
-  })
-    res.json(responseObj(true, {classDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherResponse:teacherResponse,classReview:classReview,teacherReview:teacherReview,average_rating:average_rating,reviews:reviews}, "Class Details successfully fetched"))
+
+
+    res.json(responseObj(true, {classDetails:classDetails,ratingsResponse:classRatingsResponse?classRatingsResponse.rating:null,teacherRatings:teacherRatings?teacherRatings.rating:null,homeworkResponse,taskResponse}, "Class Details successfully fetched"))
 }
 
 const scheduleClass = async (req, res, next) => {
@@ -286,49 +291,50 @@ const scheduleClass = async (req, res, next) => {
 
 }
 
-const rescheduleClass = async (req, res, next) => {
-   
-    let classScheduled = await Class.find({
-        $and: [{
-            start_time: req.body.start_time,
-        }, {
-            $or: [{
-                teacher_id: req.body.teacher_id
-            }, {
-                student_id: req.user._id
-            }]
-        },{
-            status:"Scheduled"
-        }]
+const rescheduleClass=async(req,res,next)=>{
+    if(moment().add(5,'h').add(30,'s').diff(req.body.start_time,'s')>0){
+      return res.json(responseObj(false,null,"Start Time cannot be in past"))
+     }
+    let details=await Class.findOne({
+      _id:req.params._id
     })
-
-    if (classScheduled.length !== 0) {
-        throw new Error('This time slot has been already scheduled')
-    }
-
-    const rescheduleClassResponse = await Class.findOneAndUpdate({ _id: new ObjectID(req.params._id) }, {
-        $set: {
-            is_rescheduled: true,
-            start_time: moment(req.body.start_time).format("YYYY-MM-DDTHH:mm:ss"),
-            end_time: moment(req.body.start_time).add(1, 'h').format("YYYY-MM-DDTHH:mm:ss"),
-            rescheduled_by: 'student',
-            status: 'Pending'
+    let classScheduled=await Class.find({
+      $and: [   { start_time:{$gte:req.body.start_time}},
+        {start_time:{
+          $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+        }},
+        {end_time:{$gte:req.body.start_time}},
+        {end_time:{
+          $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+        }},{$or:[{
+        teacher_id:details.student_id
+    },{
+        student_id:req.user._id
+    }]}]})
+  console.log(classScheduled, "Hello");
+        if(classScheduled.length!==0){
+         throw new Error('This time slot has been already scheduled')  
         }
-    })
+  
+  const rescheduleClassResponse=await Class.findOneAndUpdate({_id:req.params._id},{$set:{
+    is_rescheduled:true,
+    start_time:moment(req.body.start_time).format("YYYY-MM-DDTHH:mm:ss"),
+    end_time:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss"),
+    rescheduled_by:'student',
+    status:'Pending'
+    }})
     const AcademicManangerResponse=await AcademicManager.findOne({
-        students:{
-             $elemMatch: {
+      students:{
+           $elemMatch: {
             $eq: req.user._id
         }
-        }
-    })
-const teacherDetails=await Teacher.findOne({
-    user_id:rescheduleClassResponse.teacher_id
-})
-    addNotifications(req.body.teacher_id,"Class ReScheduled","Class has been re-scheduled for student "+req.user.name+" on "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm" ))
-    res.json(responseObj(true, [], "Class ReScheduled Successfully"))
-addNotifications(AcademicManangerResponse.user_id,"Class ReScheduled","Class has been re-scheduled for student "+req.user.name+" on "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm" )+" by teacher "+teacherDetails.preferred_name )
-}
+      }
+  })
+    addNotifications(rescheduleClassResponse.teacher_id,"Class Rescheduled","Class of "+details.subject.name+" which was earlier scheduled  on "+moment(details.start_time).format("DD-MM-YYYY")+" at time "+moment(details.start_time).format("HH:mm:ss")+ " has been rescheduled  on "+moment(req.body.start_time).format("DD-MM-YYYY")+" at time "+moment(req.body.start_time).format("HH:mm:ss")+" by student "+req.user.name )
+    addNotifications(AcademicManangerResponse.user_id,"Class Rescheduled","Class of "+details.subject.name+" which was earlier scheduled  on "+moment(details.start_time).format("DD-MM-YYYY")+" at time "+moment(details.start_time).format("HH:mm:ss")+ " has been rescheduled  on "+moment(req.body.start_time).format("DD-MM-YYYY")+" at time "+moment(req.body.start_time).format("HH:mm:ss")+" by student "+req.user.name )
+    res.json(responseObj(true,null,"Rescheduled"))
+  
+  }
 
 const reviewClass = async (req, res, next) => {
     let classDetails=await Class.findOne({
@@ -609,7 +615,59 @@ const setReminder = async (req, res, next) => {
 
 const acceptClassRequest = async (req, res, next) => {
     let details=await Class.findOne({_id:req.params._id})
+  if(details.class_type==='Trial' && details.is_rescheduled===false){
+    let classDetails = await Class.find({
+      $and: [   { start_time:{$gte:details.start_time}},
+        {start_time:{
+          $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+        }},
+        {end_time:{$gte:details.start_time}},
+        {end_time:{
+          $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+        }}, {
+        $or: [{
+          teacher_id: details.teacher_id
+        }, {
+          student_id: req.user._id
+        }]
+      },{
+        status:"Scheduled"
+      }]
+    })
+    if (classDetails.length > 0) {
+      throw new Error("Class in this slot is booked already. Kindly Reschedule")
+    }
   
+    let classUpdateResponse=await  Class.updateMany({
+      student_id:req.user._id,
+      teacher_id:details.teacher_id,
+      class_type:"Trial",
+      "subject.name":details.subject.name
+    },{
+      $set:{
+        status:"Cancelled"
+      }
+    })
+    let classResponse = await Class.updateOne({
+      _id: req.params._id
+    }, {
+      $set: {
+        status: 'Scheduled'
+      }
+    })
+    const AcademicManangerResponse=await AcademicManager.findOne({
+      students:{
+           $elemMatch: {
+                $eq: req.user._id
+            }
+      }
+    })
+    addNotifications(details.teacher_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" on "+moment(details.start_time).format("DD-MM-YYYY")+" at time "+moment(details.start_time).format("HH:mm:ss")+ " by student"+ req.user.name)
+    
+    addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" on "+moment(details.start_time).format("DD-MM-YYYY")+ " at time "+moment(details.start_time).format("HH:mm:ss")+ " by student"+ req.user.name)
+  
+    return res.json(responseObj(true, null, "Accepted Class Request"))
+  }else{
     let classDetails= await Class.find({
       $and: [   { start_time:{$gte:details.start_time}},
         {start_time:{
@@ -619,14 +677,14 @@ const acceptClassRequest = async (req, res, next) => {
         {end_time:{
           $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
         }},{$or:[{
-      teacher_id:req.user._id
+      teacher_id:details.teacher_id
   },{
-      student_id:details.student_id
+      student_id:req.user._id
   }]},{
     status:"Scheduled"
   }]})
   if(classDetails.length!==0){
-  throw new Error("Slot Already Booked")
+  throw new Error("Slot Already Booked.Kindly Reschedule")
      
   }
   let classResponse=await Class.findOne(
@@ -646,7 +704,6 @@ const acceptClassRequest = async (req, res, next) => {
   status:'Scheduled'
   }
   });
-
   const AcademicManangerResponse=await AcademicManager.findOne({
     students:{
          $elemMatch: {
@@ -654,20 +711,14 @@ const acceptClassRequest = async (req, res, next) => {
           }
     }
   })
+  addNotifications(rescheduleacceptResponse.teacher_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" on "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+" at time "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+ " by student "+ req.user.name)
   
-   addNotifications(rescheduleacceptResponse.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" on "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+ " at "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
-  
-    addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" at time "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+ " at "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
-  
-  return res.json(responseObj(true,null,"Accepted Rescheduled Request"))
+  addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+rescheduleacceptResponse.subject.name+" on "+moment(rescheduleacceptResponse.start_time).format("DD-MM-YYYY")+" at time "+moment(rescheduleacceptResponse.start_time).format("HH:mm:ss")+ " by student "+ req.user.name)
   
   
-
+  return res.json(responseObj(true,[],"Accepted Rescheduled Request"))
   
-  // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
-  
-  
-    
+  }
     
   
   
@@ -951,20 +1002,21 @@ const getClassesBasedOnDate=async (req,res)=>{
         $match: {
             user_id:new ObjectID(classDetails.teacher_id)
         }
-    }, {
-        $lookup: {
-            from: "classes",
-            foreignField: "teacher_id",
-            localField: "user_id",
-            as: "classes",
-            pipeline: [
-                { $match: {$and:[{ status: "Done" },{
-                    "subject.name":req.query.subject
-                }]} }  // Add a $match stage to filter documents in the "from" collection
-                // Additional stages for the "from" collection aggregation pipeline if needed
-            ]
-        }
-        },
+    },
+    //  {
+    //     $lookup: {
+    //         from: "classes",
+    //         foreignField: "teacher_id",
+    //         localField: "user_id",
+    //         as: "classes",
+    //         pipeline: [
+    //             { $match: {$and:[{ status: "Done" },{
+    //                 "subject.name":req.query.subject
+    //             }]} }  // Add a $match stage to filter documents in the "from" collection
+    //             // Additional stages for the "from" collection aggregation pipeline if needed
+    //         ]
+    //     }
+    //     },
     
     {
         $lookup: {
@@ -1005,9 +1057,9 @@ const getClassesBasedOnDate=async (req,res)=>{
             reviews: {
                 $size: "$reviews"
             },
-            no_of_classes: {
-                $size: "$classes"
-            },
+            // no_of_classes: {
+            //     $size: "$classes"
+            // },
             "users.profile_image":{ $cond: {
                 if: { $eq: ["$users.profile_image", null] },
                 then: null,

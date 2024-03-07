@@ -650,7 +650,7 @@ let taskResponse=await Task.find({
       $lte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
     }})
     if(classDetails===null){
-      return res.json(responseObj(fasle,null,"Invalid Class Id"))
+      return res.json(responseObj(false,null,"Invalid Class Id"))
     }
     let homeworkResponse=await HomeWork.create(
        {title: req.body.title,

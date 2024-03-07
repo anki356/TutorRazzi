@@ -90,7 +90,7 @@ const options={
     page:req.query.page
 }
 Teacher.aggregatePaginate(teacherResponse,options,(err,result)=>{
-    res.json(responseObj(true, teacherResponse, result))
+    res.json(responseObj(true, result, "Teachers"))
 })
     
 }

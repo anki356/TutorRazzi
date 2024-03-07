@@ -399,7 +399,7 @@ const getTeachersBySubjectAndName=async(req,res)=>{
         page:req.query.page||1
     }
   
-   Teacher.paginate(teacherResponse,options,(err,result)=>{
+   Teacher.aggregatePaginate(teacherResponse,options,(err,result)=>{
     return res.json(responseObj(true,result,"Teachers data of required Subject are here"))
    })
 }

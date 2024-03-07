@@ -224,6 +224,15 @@ ClassSchema.virtual('class_status').get(function(){
     
 
 })
+ClassSchema.virtual('is_today').get(function(){
+    
+    
+    if(moment(this.start_time).isBetween(moment().add(5,'h').add(30,'m').startOf('day'),moment().add(5,'h').add(30,'m').endOf('day'))){
+return true
+    }
+     
+ return false
+ })
 ClassSchema.plugin(mongoosePaginate)
 ClassSchema.plugin(mongooseAggregatePaginate)
 

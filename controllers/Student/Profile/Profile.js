@@ -77,75 +77,72 @@ let completed=0
   
  
 }
-const getUpcomingClasses=async(req,res,next)=>{
+const getUpcomingClasses = async (req, res, next) => {
   
   
- 
- 
- 
-  let options={
-    limit:req.query.limit?Number(req.query.limit):5,
-    page:Number(req.query.page),
-    populate:{
+  let options = {
+    limit: req.query.limit ? Number(req.query.limit) : 5,
+    page: Number(req.query.page),
+    populate:[{
       path:'teacher_id',
-      select:{'name':1}
+      select:{
+        name:1
+      }
+    }],
+    select:{
+      "subject":1,"name":1,"start_time":1,"end_time":1
     }
-
   }
-  let query={$and:[
-   { start_time :{$gte:moment().format("YYYY-MM-DDTHH:mm:ss")}},
-  
-    {student_id:req.user._id},
+  let query = {
+    $and: [
+      { end_time: { $gte: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss") } },
 
-  
-    {status:'Scheduled'}
-  ]
+      { teacher_id: req.user._id },
 
-   
+
+      { status: 'Scheduled' }
+    ]
+
+
   }
   if(req.query.search){
-    query={$and:[
-      { start_time : { $gte: moment().format("YYYY-MM-DDTHH:mm:ss") }},
+    let teacher_ids=await User.find({
+      name:{
+        $regex: req.query.search, $options: 'i' 
+      }
+      })
      
-       {student_id:req.user._id},
-   
-     
-       {status:'Scheduled'},{
-        $or:
-          [
-            { "subject.name":{
-               $regex:req.query.search,
-               $options:'i'
-             }}, { "curriculum.name":{
-            
-              $regex:req.query.search,
-              $options:'i'
-            }},
-            { "grade.name":{
-                
-              $regex:req.query.search,
-              $options:'i'
-            }},{
-              name:{
-                
-                $regex:req.query.search,
-                $options:'i'
-              }
-            }
+    
+    query[ "$or"]=
+        [
+       
+          { "subject.name": { $regex: req.query.search, $options: 'i' } },
+          {"name":  {$regex: req.query.search, $options: 'i' }
            
-     
-     
-           ]
-        
-       }
-     ]
-   
-      
-     }
+          },
+          // {"student_id":{
+          //   $in:student_ids.map((data)=>data._id)
+          // }},
+          {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
+        ]
+       
   }
-  const classData = await Class.paginate(query,options);
-  const response = responseObj(true,classData,'')
-  return res.json(response);
+  if(req.query.date){
+    query["$and"].push({
+      start_time:{$gte:moment(req.query.date).format("YYYY-MM-DD")},
+      end_time:{
+        $lt:moment(req.query.date).add(1,'d').format("YYYY-MM-DD")
+      }
+    })
+  }
+  if(req.query.teacher_id){
+    query.teacher_id=req.query.teacher_id
+  }
+  Class.paginate(query, options, (err, results) => {
+    if (results) {
+      res.json(responseObj(true, results, null))
+    }
+  })
 
 }
 const getPastClasses=async(req,res,next)=>{

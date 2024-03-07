@@ -179,6 +179,9 @@ const getRescheduledClasses = async (req, res, next) => {
 
       },
       {
+        status:"Pending"
+      },
+      {
         is_rescheduled: true
       }]
   }

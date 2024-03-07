@@ -30,7 +30,7 @@ curriculum:req.query.curriculum,
             as: "classes",
             pipeline: [
                 { $match: {$and:[{ status: "Done" },{
-                    subject:req.query.subject
+                    "subject.name":req.query.subject
                 }]} }  // Add a $match stage to filter documents in the "from" collection
                 // Additional stages for the "from" collection aggregation pipeline if needed
             ]

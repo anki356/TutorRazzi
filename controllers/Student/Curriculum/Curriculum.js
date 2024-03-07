@@ -25,10 +25,6 @@ const getCurriculum=async (req,res,next)=>{
 const getSubjects=async (req,res,next)=>{
   
     let subjects=await Subject.find({
-        name:{
-            $regex: req.query.subject,
-            $options:'i'
-        }
     })
 res.json(responseObj(true,subjects,''))
         

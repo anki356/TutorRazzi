@@ -1,5 +1,5 @@
 import express from 'express'
-import { getClassDetails, requestTrialClass,rescheduleClass,getPurchasedClasses, reviewClass,raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass,  uploadHomework, getQuotes, scheduleClass, requestExtraclass, getExtraClassQuotes, getPurchasedClassesByQuoteId, likeClass, getLastTrialClass, dislikeClass, getClassesBasedOnDate, getUpcomingClassDetails, acceptClassRequest } from '../../../controllers/Student/Class/Class.js'
+import { getClassDetails, requestTrialClass,rescheduleClass,getPurchasedClasses, reviewClass,raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass,  uploadHomework, getQuotes, scheduleClass, requestExtraclass, getExtraClassQuotes, getPurchasedClassesByQuoteId, likeClass, getLastTrialClass, dislikeClass, getClassesBasedOnDate, getUpcomingClassDetails, acceptClassRequest, markTaskDone, reviewTeacher } from '../../../controllers/Student/Class/Class.js'
 import { authVerify } from '../../../controllers/Student/Auth/Auth.js'
 import { addHomework, setReminder } from '../../../controllers/TeacherApp/Class/Class.js'
 import upload from "../../../util/upload.js"
@@ -15,6 +15,15 @@ body('grade').notEmpty().withMessage("Curriculum cannot be empty"),
 body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time"),
 
 ]
+const reviewChain=[
+    body('teacher_id').notEmpty().withMessage("Teacher ID is required"),
+    body('class_id').notEmpty().withMessage("Class Id is required"),
+    body('ratings').notEmpty().withMessage("Ratings is required").isFloat({
+        min:1,max:5
+    }).withMessage("Rating should be between 1 and 5")
+]
+router.patch('review-teacher-class',authVerify,reviewChain,validationError,reviewTeacher)
+router.patch("/mark-task-done/:_id",authVerify,markTaskDone)
 const rescheduleValidationChain=[
     param('_id').notEmpty().withMessage("Invalid Class"),
 

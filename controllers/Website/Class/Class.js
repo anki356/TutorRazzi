@@ -281,6 +281,12 @@ const getTasks=async(req,res)=>{
 res.json(responseObj(true, {taskResponse:taskResponse}, "Task Details successfully fetched"))
 }
 const reviewTeacher = async (req, res, next) => {
+  let classDetails=await Class.findOne({
+    _id : req.body.class_id
+  })
+  if(classDetails===null){
+    throw new Error("Incorrect Class ID")
+  }
   let reviewResponse=await Review.findOne({
     class_id:req.body.class_id,
     given_by:req.user._id,
@@ -299,7 +305,7 @@ const reviewTeacher = async (req, res, next) => {
    return res.json(responseObj(false,null,"You have already reviewed"))
   }
    
- 
+  addNotifications(classDetails.teacher_id, "You are  Reviewed","You are reviewed for class of "+classDetails.subject.name+" Reviewed as "+ req.body.ratings+ "by "+req.user.name)
   return res.json(responseObj(true,reviewResponse,"Teacher Review Recorded"))
   
 

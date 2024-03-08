@@ -26,6 +26,7 @@ import Report from "../../../models/Report.js"
 import AcademicManager from "../../../models/AcademicManager.js"
 import axios from "axios"
 import MonthlyReport from "../../../models/MonthlyReport.js"
+import upload from "../../../util/upload.js"
 const dislikeClass = async (req, res, next) => {
 
 
@@ -336,46 +337,75 @@ const rescheduleClass=async(req,res,next)=>{
   
   }
 
-const reviewClass = async (req, res, next) => {
+  const reviewClass = async (req, res, next) => {
+    let classDetails=await Class.findOne({
+      _id : req.body.class_id
+    })
+    if(classDetails===null){
+      throw new Error("Incorrect Class ID")
+    }
+    let reviewResponse=await Review.findOne({
+      class_id:req.body.class_id,
+      given_by:req.user._id
+    })
+  
+    if(reviewResponse===null){
+      reviewResponse = await Review.insertMany({
+        class_id: req.body.class_id,
+        message: req.body?.message,
+        rating: req.body.ratings,
+        given_by:req.user._id
+    })
+    }
+    else{
+      return res.json(responseObj(false,null,"You have already reviewed"))
+    }
+  
+    const AcademicManangerResponse=await AcademicManager.findOne({
+      students:{
+           $elemMatch: {
+            $eq: req.user._id
+        }
+      }
+  })
+  
+ 
+    // addNotifications(AcademicManangerResponse.user_id,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
+    
+   addNotifications(AcademicManangerResponse.user_id,"A Class Reviewed","A class of "+classDetails.subject.name+" Reviewed as "+ req.body.ratings+ "by "+req.user.name )
+   addNotifications(classDetails.teacher_id, "A Class Reviewed","A class of "+classDetails.subject.name+" Reviewed as "+ req.body.ratings+ "by "+req.user.name)
+    res.json(responseObj(true, reviewResponse, "Review Created Successfully"))
+}
+const reviewTeacher = async (req, res, next) => {
     let classDetails=await Class.findOne({
         _id : req.body.class_id
       })
       if(classDetails===null){
         throw new Error("Incorrect Class ID")
       }
-      let reviewResponse=await Review.findOne({
-        class_id:req.body.class_id,
+    let reviewResponse=await Review.findOne({
+      class_id:req.body.class_id,
+      given_by:req.user._id,
+      teacher_id:req.body.teacher_id
+    })
+    if(!reviewResponse){
+      reviewResponse = await Review.insertMany({
+        message: req.body.message?req.body.message:'',
+        rating: req.body.ratings,
+        teacher_id: req.body.teacher_id,
+        class_id: req.body.class_id,
         given_by:req.user._id
-      })
-      console.log(reviewResponse)
-      if(reviewResponse===null){
-         reviewResponse=await Review.insertMany({
-          class_id:req.body.class_id,
-          message:req.body?.message,
-          rating:req.body.rating,
-          given_by:req.user._id
-      })
-      }
-      else{
-    reviewResponse=await Review.updateOne({
-      _id:reviewResponse._id
-    },{
-      $set:{
-        message:req.body?.message,
-        rating:req.body.rating,
-      }
     })
-      }
- 
-    const teacherDetails=await Class.findOne({
-        _id:req.body.class_id
-    })
-
-    addNotifications(teacherDetails.teacher_id,"Class Reviewed","Class  for student "+req.user.name+" for subject "+classDetails.subject+" on "+moment(classDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(classDetails.start_time).format("HH:mm" )+" has been reviewed as rating "+req.body.rating)
-
-    res.json(responseObj(true, reviewResponse, "Review Created Successfully"))
-}
-
+    }
+    else{
+     return res.json(responseObj(false,null,"You have already reviewed"))
+    }
+     
+    addNotifications(classDetails.teacher_id, "You are  Reviewed","You are reviewed for class of "+classDetails.subject.name+" Reviewed as "+ req.body.ratings+ "by "+req.user.name)
+    return res.json(responseObj(true,reviewResponse,"Teacher Review Recorded"))
+    
+  
+  }
 const raiseRequestResource = async (req, res, next) => {
    
     let resourcerequestcount = await ResourceRequest.countDocuments()
@@ -777,63 +807,77 @@ let classDetails=await Class.findOne({
 }
 
 const markTaskDone = async (req, res, next) => {
-   let taskResponse=await Task.findOneAndUpdate({
-    _id:req.params._id
-   },{
-    $set:{
-        status:"Done"
+    let taskResponse=await Task.findOneAndUpdate({
+     _id:req.params._id
+    },{
+     $set:{
+         status:"Done"
+     }
+    })
+    if(taskResponse===null){
+      return res.json(responseObj(false,null,"Invalid Task Id"))
     }
+    const teacherDetails=await Class.findOne({
+     _id:taskResponse.class_id
+  })
+  const AcademicManangerResponse=await AcademicManager.findOne({
+     students:{
+          $elemMatch: {
+             $eq: req.user._id
+         }
+     }
+  })
+  addNotifications(teacherDetails.teacher_id,"Task marked Done"," Task has been marked as done given to "+req.user.name+ " in class for subject "+teacherDetails.subject.name+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(teacherDetails.start_time).format("HH:mm:ss" )+ " with name "+taskResponse.title)
+  addNotifications(AcademicManangerResponse.user_id,"Task marked Done"," Task has been marked as done given to "+req.user.name+ " in class for subject "+teacherDetails.subject.name+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(teacherDetails.start_time).format("HH:mm:ss" )+ " with name "+taskResponse.title)
+     res.json(responseObj(true, [], "Task Marked Done"))
+    
+  }
+const uploadHomework = async (req, res, next) => {
+
+    if(!req.files?.document){
+      return res.json(responseObj(false,null,"No File Found"))
+    }
+    let homeworkResponse=await HomeWork.findOne({
+      _id:req.params._id
+   })
+   if(homeworkResponse===null){
+     return res.json(responseObj(false,null,"Invalid Homework Id"))
+   }
+    let fileName=await upload(req.files.document)
+  
+     let documentResponse = await Document.create({
+         name: fileName
+     })
+  
+  if(homeworkResponse.answer_document_id!==null&&homeworkResponse.answer_document_id!==undefined ){
+   let  documentTobeDeleted=await Document.findOne(
+         {_id:homeworkResponse.answer_document_id}
+     )
+   unlinkFile(documentTobeDeleted.name)  
+  }
+    homeworkResponse=await HomeWork.findOneAndUpdate({
+     _id:req.params._id
+   },{
+     $set:{
+         status:"Resolved",
+         answer_document_id:documentResponse._id,
+         is_reupload:false
+     }
    })
    const teacherDetails=await Class.findOne({
-    _id:taskResponse.class_id
-})
-const AcademicManangerResponse=await AcademicManager.findOne({
-    students:{
-         $elemMatch: {
-            $eq: req.user._id
-        }
-    }
-})
-addNotifications(teacherDetails.teacher_id,"Task marked Done"," Task has been marked as done given to "+req.user.name+ " in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ "with name "+taskResponse.title)
-addNotifications(AcademicManangerResponse.user_id,"Task marked Done"," Task has been marked as done given to "+req.user.name+ " in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ " with name "+taskResponse.title)
-    res.json(responseObj(true, [], "Task Marked Done"))
-   
-}
-const uploadHomework = async (req, res, next) => {
-    let documentResponse = await Document.create({
-        name: req.files[0].filename
-    })
-let homeworkResponse=await HomeWork.findOne({
-    _id:req.params._id
-})
-if(homeworkResponse.answer_document_id!==null&&homeworkResponse.answer_document_id!==undefined ){
-  let  documentTobeDeleted=await Document.findOne(
-        {_id:homeworkResponse.answer_document_id}
-    )
-  unlinkFile(documentTobeDeleted.name)  
-}
-   homeworkResponse=await HomeWork.findOneAndUpdate({
-    _id:req.params._id
-  },{
-    $set:{
-        status:"Resolved",
-        answer_document_id:documentResponse._id
-    }
+     _id:homeworkResponse.class_id
   })
-  const teacherDetails=await Class.findOne({
-    _id:homeworkResponse.class_id
-})
-const AcademicManangerResponse=await AcademicManager.findOne({
-    students:{
-         $elemMatch: {
-            $eq: req.user._id
-        }
-    }
-})
-addNotifications(teacherDetails.teacher_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ " with name "+homeworkResponse.title )
-addNotifications(AcademicManangerResponse.user_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ "at "+moment(teacherDetails.start_time).format("HH:mm" )+ " with name "+homeworkResponse.title )
-    res.json(responseObj(true, [], "Home work uploaded"))
-}
+  const AcademicManangerResponse=await AcademicManager.findOne({
+     students:{
+          $elemMatch: {
+             $eq: req.user._id
+         }
+     }
+  })
+  addNotifications(teacherDetails.teacher_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject.name+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(teacherDetails.start_time).format("HH:mm:ss" )+ " with name "+homeworkResponse.title )
+  addNotifications(AcademicManangerResponse.user_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject.name+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(teacherDetails.start_time).format("HH:mm:ss")+ " with name "+homeworkResponse.title )
+     res.json(responseObj(true, null, "Home work uploaded"))
+  }
 
 const getQuotes = async (req, res, next) => {
    
@@ -1073,4 +1117,4 @@ const getClassesBasedOnDate=async (req,res)=>{
     // let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
     res.json(responseObj(true, { classDetails: classDetails,teacherDetails:teacherDetails[0] }, null))
   }
-export {acceptClassRequest, getUpcomingClassDetails,getClassesBasedOnDate,dislikeClass, getLastTrialClass, likeClass, setReminder, getExtraClassQuotes, requestExtraclass,  uploadHomework, scheduleClass, requestTrialClass, getClassDetails, rescheduleClass, reviewClass, raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass, getQuotes, getPurchasedClasses, getPurchasedClassesByQuoteId }
+export {acceptClassRequest, getUpcomingClassDetails,getClassesBasedOnDate,dislikeClass, getLastTrialClass, likeClass, setReminder, getExtraClassQuotes, requestExtraclass,  uploadHomework, scheduleClass, requestTrialClass, getClassDetails, rescheduleClass, reviewClass, raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass, getQuotes, getPurchasedClasses, getPurchasedClassesByQuoteId,markTaskDone,reviewTeacher }

@@ -32,7 +32,7 @@ const rescheduleClass=async(req,res,next)=>{
       {end_time:{
         $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
       }},{$or:[{
-      teacher_id:details.student_id
+      teacher_id:details.teacher_id
   },{
       student_id:req.user._id
   }]}]})

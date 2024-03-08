@@ -237,18 +237,22 @@ let taskResponse=await Task.find({
 }
 
 const scheduleClass = async (req, res, next) => {
-   
-    let classScheduled = await Class.find({
-        $and: [{
-            start_time: req.body.start_time,
-        }, {
-            $or: [{
-                teacher_id: req.body.teacher_id
-            }, {
-                student_id: req.user._id
-            }]
-        }]
-    })
+    if(moment().add(5,'h').add(30,'s').diff(req.body.start_time,'s')>0){
+        return res.json(responseObj(false,null,"Start Time cannot be in past"))
+       }
+    let classScheduled=await Class.find({
+        $and: [   { start_time:{$gte:req.body.start_time}},
+          {start_time:{
+            $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+          }},
+          {end_time:{$gte:req.body.start_time}},
+          {end_time:{
+            $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
+          }},{$or:[{
+          teacher_id:req.body.student_id
+      },{
+          student_id:req.user._id
+      }]}]})
     if (classScheduled.length !== 0) {
         throw new Error('This time slot has been already scheduled')
     }
@@ -308,11 +312,11 @@ const rescheduleClass=async(req,res,next)=>{
         {end_time:{
           $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
         }},{$or:[{
-        teacher_id:details.student_id
+        teacher_id:details.teacher_id
     },{
         student_id:req.user._id
     }]}]})
-  console.log(classScheduled, "Hello");
+
         if(classScheduled.length!==0){
          throw new Error('This time slot has been already scheduled')  
         }

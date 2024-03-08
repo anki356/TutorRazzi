@@ -41,19 +41,7 @@ createdAt: {
 versionKey: false})
 ExamSchema.plugin(mongoosepaginate)
 ExamSchema.set('toJSON', { virtuals: true });
-ExamSchema.virtual('start_date').get(function () {
-    if(this.start_time!==undefined&&this.start_time!==null){
-        return moment(this.start_time).format("DD-MM-YYYY")
-    }
-})
-ExamSchema.virtual('start_time_string').get(function () {
-    if(this.start_time!==undefined&&this.start_time!==null){
-        return moment(this.start_time).format("HH:mm:ss")
-    }
-})
-ExamSchema.virtual('end_time_string').get(function () {
-    if(this.end_time!==undefined&&this.end_time!==null){
-        return moment(this.end_time).format("HH:mm:ss")
-    }
-})
+
+
+
 export default mongoose.model("Exam",ExamSchema)

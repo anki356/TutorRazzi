@@ -26,14 +26,15 @@ const studentValidation=[
     body('grade').notEmpty().withMessage("Grade is Required"),
     body('subject').isArray().notEmpty().withMessage("Subject in Array Format is Required"),
     body('age').notEmpty().withMessage("Age is Required"),
-    body('parent_email_address').notEmpty().withMessage("Parent Email Id is required"),
-    body('parent_mobile_number').notEmpty().withMessage("Parent Mobile Number is required"),
+    // body('parent_email_address').notEmpty().withMessage("Parent Email Id is required"),
+    // body('parent_mobile_number').notEmpty().withMessage("Parent Mobile Number is required"),
     body('school').notEmpty().withMessage("School Is Required"),
     body('address').notEmpty().withMessage("Address Is Required"),
     body('curriculum').notEmpty().withMessage("Curriculum Is Required"),
-    body('pincode').notEmpty().withMessage("Pincode is Required"),
+    // body('pincode').notEmpty().withMessage("Pincode is Required"),
+    body('mobile_number').notEmpty().withMessage("Pincode is Required"),
 
 
 ]
-router.patch("/profile",authVerify,editUserProfile)
+router.patch("/profile",authVerify,studentValidation,validationError,editUserProfile)
 export default router

@@ -437,7 +437,7 @@ const editUserProfile=async(req,res)=>{
       curriculum:{
           name:req.body.curriculum
       },
-      pincode:req.body.pincode
+      // pincode:req.body.pincode
     }
   })
 

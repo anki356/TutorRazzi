@@ -22,7 +22,7 @@ const reviewChain=[
         min:1,max:5
     }).withMessage("Rating should be between 1 and 5")
 ]
-router.patch('review-teacher-class',authVerify,reviewChain,validationError,reviewTeacher)
+router.post('/review-teacher-class',authVerify,reviewChain,validationError,reviewTeacher)
 router.patch("/mark-task-done/:_id",authVerify,markTaskDone)
 const rescheduleValidationChain=[
     param('_id').notEmpty().withMessage("Invalid Class"),

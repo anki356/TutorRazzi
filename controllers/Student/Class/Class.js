@@ -1048,7 +1048,7 @@ const getPurchasedClassesByQuoteId = async (req, res, next) => {
         page: Number(req.query.page),
         select: [
 
-            "subject", "start_time", "status", "teacher_id"
+            "subject", "start_time", "status", "teacher_id","is_rescheduled","rescheduled_by"
         ],
         populate: {
             path: "teacher_id",

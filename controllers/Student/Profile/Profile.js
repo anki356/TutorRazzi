@@ -15,6 +15,7 @@ import Parent from "../../../models/Parent.js"
 import makeId from "../../../util/makeId.js"
 import bcrypt from 'bcrypt'
 import sendEmail from "../../../util/sendEmail.js"
+import upload from "../../../util/upload.js"
 const getTotalClasses=async(req,res,next)=>{
  
 const getTotalClassesResponse= await Class.aggregate([
@@ -396,13 +397,23 @@ const getWatchTime=async(req,res,next)=>{
 res.json(responseObj(true,watchtime,''))
 }
 const editUserProfile=async(req,res)=>{
+  if(req.files?.download){
+
+    let fileName=await upload(req.files?.download)
+    User.updateOne({
+      _id:req.user._id
+    },{
+      $set:{
+       profile_image:fileName
+      }
+    })
+  }
   User.updateOne({
     _id:req.user._id
   },{
     $set:{
-      profile_image:req.files[0].filename,
-      name:req.body.name,
-      mobile_number:req.body.mobile_number
+    mobile_number:req.body.mobile_number,
+    name:req.body.name,
     }
   })
   // let password= await  bcrypt.hash(makeId(5), 10)

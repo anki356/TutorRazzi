@@ -9,8 +9,10 @@ const examValidationChain=[
     
     body('subject').notEmpty().withMessage("Subject is necessary"),
     body('syllabus').notEmpty().withMessage("Syllabus is necessary"),
-    body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time"),
-    body('end_time').notEmpty().isAfter(new Date().toDateString()).withMessage("End Time must be After current time"),
+    body('start_time').notEmpty().withMessage("Start Time is required"),
+    body('end_time').notEmpty().withMessage("End Time is required"),
+    body('start_date').notEmpty().withMessage("Start Date is required"),
+
 ]
 router.patch("/exams",authVerify,examValidationChain,validationError,addExams)
 export default router

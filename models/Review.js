@@ -11,7 +11,7 @@ const ReviewSchema = new mongoose.Schema({
     given_by: { type: mongoose.SchemaTypes.ObjectId, ref: 'User' },
     message: {
         type: String,
-        
+        default:null
     },
     rating: {
         type: Number,

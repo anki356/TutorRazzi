@@ -390,7 +390,7 @@ const reviewTeacher = async (req, res, next) => {
     })
     if(!reviewResponse){
       reviewResponse = await Review.insertMany({
-        message: req.body.message?req.body.message:'',
+        message: req.body.message?req.body.message:null,
         rating: req.body.ratings,
         teacher_id: req.body.teacher_id,
         class_id: req.body.class_id,

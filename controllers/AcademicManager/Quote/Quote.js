@@ -33,7 +33,7 @@ const addQuote=async(req,res,next)=>{
         payment_type:"Credit",
         quote_id:response[0]._id
     })
-    addNotifications(req.body.student_id,"Extra Class Quotes added","Extra Class Quotes added for class_name"+req.body.class_name)
+    addNotifications(req.body.student_id," Quotes added","Quotes added for class_name "+req.body.class_name)
 
     res.json(responseObj(true,{response,paymentResponse},null))
 }

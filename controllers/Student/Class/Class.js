@@ -1031,12 +1031,17 @@ const getPurchasedClasses = async (req, res, next) => {
         select: [
             "subject_curriculum_grade", "teacher_id", "hours", "class_type", "schedule_status"
         ],
-        populate: {
+        populate: [{
             path: 'teacher_id',
             select: {
                 name: 1
             }
-        }
+        },{
+            path: "due_date_class_id",
+            select: {
+                end_time: 1
+            }
+        }]
 
     }
     await Quote.paginate(query, options).then((results) => {
@@ -1053,12 +1058,12 @@ const getPurchasedClassesByQuoteId = async (req, res, next) => {
 
             "subject", "start_time", "status", "teacher_id","is_rescheduled","rescheduled_by"
         ],
-        populate: {
+        populate: [{
             path: "teacher_id",
             select: {
                 name: 1
             }
-        }
+        }]
 
     }
     Class.paginate({ quote_id: new ObjectID(req.query._id) }, options).then((result, err) => {

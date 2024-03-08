@@ -357,14 +357,21 @@ let query = {
   student_id: { $in: academicManagerResponse.students },
   teacher_id: { $in: academicManagerResponse.teachers },
   class_type: "Trial",
-  end_time:{
-    $gte: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss"),
-  },
-  status:{
-    $ne:"Cancelled"
-  }
+  $or:[{
+    status:{
+    $nin:["Scheduled","Pending"]
+    }
+      },{
+        status:{
+          $in:["Scheduled","Pending"]
+        },
+        end_time:{
+          $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+        }
+      }]
   
 };
+
 
 if(req.query.date) {
   query["start_time"] = {

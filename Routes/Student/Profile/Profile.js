@@ -19,13 +19,13 @@ router.get("/get-rescheduled-classes",authVerify,getRescheduledClasses)
 router.get("/get-trial-classes",authVerify,getTrialClasses)
 const studentValidation=[
     body('name').notEmpty().withMessage("Name is Required"),
-    body('gender').notEmpty().withMessage("Gender is Required"),
+    // body('gender').notEmpty().withMessage("Gender is Required"),
     body('city').notEmpty().withMessage("City is Required"),
     body('state').notEmpty().withMessage("State is Required"),
     body('country').notEmpty().withMessage("Country is Required"),
     body('grade').notEmpty().withMessage("Grade is Required"),
     body('subject').isArray().notEmpty().withMessage("Subject in Array Format is Required"),
-    body('age').notEmpty().withMessage("Age is Required"),
+    // body('age').notEmpty().withMessage("Age is Required"),
     // body('parent_email_address').notEmpty().withMessage("Parent Email Id is required"),
     // body('parent_mobile_number').notEmpty().withMessage("Parent Mobile Number is required"),
     body('school').notEmpty().withMessage("School Is Required"),

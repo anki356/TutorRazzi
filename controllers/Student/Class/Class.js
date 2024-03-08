@@ -884,7 +884,7 @@ const getQuotes = async (req, res, next) => {
     const quoteResponse = await Quote.find({
         student_id: req.user._id,
         status: 'Pending'
-    }, { teacher_id: 1, subject_curriculum_grade: 1, amount: 1, hours: 1 }).populate({
+    }, { teacher_id: 1,class_name : 1, amount: 1, hours: 1 }).populate({
         path: "teacher_id", select: {
             name: 1
         }

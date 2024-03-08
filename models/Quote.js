@@ -80,6 +80,12 @@ QuoteSchema.virtual('grade_name').get(function(){
         return this.subject_curriculum_grade.grade;
     }
 })
+QuoteSchema.virtual('teacher_name').get(function(){
+    if(this.teacher_id){
+
+        return this.teacher_id.name;
+    }
+})
 QuoteSchema.virtual('curriculum_name').get(function(){
     if(this.subject_curriculum_grade){
 

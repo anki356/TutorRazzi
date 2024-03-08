@@ -1,5 +1,5 @@
 import express from 'express'
-import { getClassDetails, requestTrialClass,rescheduleClass,getPurchasedClasses, reviewClass,raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass,  uploadHomework, getQuotes, scheduleClass, requestExtraclass, getExtraClassQuotes, getPurchasedClassesByQuoteId, likeClass, getLastTrialClass, dislikeClass, getClassesBasedOnDate, getUpcomingClassDetails, acceptClassRequest, markTaskDone, reviewTeacher } from '../../../controllers/Student/Class/Class.js'
+import { getClassDetails, requestTrialClass,rescheduleClass,getPurchasedClasses, reviewClass,raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass,  uploadHomework, getQuotes, scheduleClass, requestExtraclass, getExtraClassQuotes, getPurchasedClassesByQuoteId, likeClass, getLastTrialClass, dislikeClass, getClassesBasedOnDate, getUpcomingClassDetails, acceptClassRequest, markTaskDone, reviewTeacher, getQuoteById } from '../../../controllers/Student/Class/Class.js'
 import { authVerify } from '../../../controllers/Student/Auth/Auth.js'
 import { addHomework, setReminder } from '../../../controllers/TeacherApp/Class/Class.js'
 import upload from "../../../util/upload.js"
@@ -31,6 +31,7 @@ const rescheduleValidationChain=[
     body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time"),
    
     ]
+    router.get("/quote-by-id",authVerify,getQuoteById)
 router.post("/request-Trial-Class",authVerify,trialClassValidationChain,validationError,requestTrialClass)
 router.get("/get-Class-Details",authVerify,getClassDetails)
 router.patch("/reschedule-class/:_id",authVerify,rescheduleValidationChain,validationError,rescheduleClass)

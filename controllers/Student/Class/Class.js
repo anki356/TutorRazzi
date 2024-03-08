@@ -891,7 +891,83 @@ const getQuotes = async (req, res, next) => {
     })
     res.json(responseObj(true, quoteResponse, 'Quotes are fetched successfully'))
 }
+const getQuoteById = async (req, res, next) => {
+   
+    const quoteResponse = await Quote.findOne({
+       _id:req.query.id
+    }, { teacher_id: 1,class_name : 1, amount: 1, class_count: 1 })
+    const teacherDetails =await Teacher.aggregate([{
+        $match: {
+            user_id:new ObjectID(quoteResponse.teacher_id)
+        }
+    },
+    //  {
+    //     $lookup: {
+    //         from: "classes",
+    //         foreignField: "teacher_id",
+    //         localField: "user_id",
+    //         as: "classes",
+    //         pipeline: [
+    //             { $match: {$and:[{ status: "Done" },{
+    //                 "subject.name":req.query.subject
+    //             }]} }  // Add a $match stage to filter documents in the "from" collection
+    //             // Additional stages for the "from" collection aggregation pipeline if needed
+    //         ]
+    //     }
+    //     },
+    
+    {
+        $lookup: {
+            from: "reviews",
+            foreignField: "teacher_id",
+            localField: "user_id",
+            as: "reviews"
 
+        }
+
+    },{
+        $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "_id",
+            as: "users"
+        }
+    },
+    {
+        $unwind:"$users"
+    },
+    {
+        $unwind: "$exp_details" // Unwind the array of experience details
+    }, {
+        $project: {
+            user_id: 1,
+            preferred_name: 1,
+            exp: { $sum: "$exp_details.exp" },
+            ratings: {
+                $avg: {
+                    $cond: [
+                        { $eq: [{ $size: "$reviews" }, 0] },
+                        0,
+                        { $avg: "$reviews.rating" }
+                    ]
+                }
+            },
+            reviews: {
+                $size: "$reviews"
+            },
+            // no_of_classes: {
+            //     $size: "$classes"
+            // },
+            "users.profile_image":{ $cond: {
+                if: { $eq: ["$users.profile_image", null] },
+                then: null,
+                else: { $concat: [process.env.CLOUD_API+"/", "$users.profile_image"] }
+            }},
+
+        }
+    }])
+    res.json(responseObj(true, {quoteResponse,teacherDetails:teacherDetails[0]}, 'Quotes are fetched successfully'))
+}
 const getExtraClassQuotes = async (req, res, next) => {
     
     const quoteResponse = await Quote.find({
@@ -1117,4 +1193,4 @@ const getClassesBasedOnDate=async (req,res)=>{
     // let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
     res.json(responseObj(true, { classDetails: classDetails,teacherDetails:teacherDetails[0] }, null))
   }
-export {acceptClassRequest, getUpcomingClassDetails,getClassesBasedOnDate,dislikeClass, getLastTrialClass, likeClass, setReminder, getExtraClassQuotes, requestExtraclass,  uploadHomework, scheduleClass, requestTrialClass, getClassDetails, rescheduleClass, reviewClass, raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass, getQuotes, getPurchasedClasses, getPurchasedClassesByQuoteId,markTaskDone,reviewTeacher }
+export {acceptClassRequest, getUpcomingClassDetails,getClassesBasedOnDate,dislikeClass, getLastTrialClass, likeClass, setReminder, getExtraClassQuotes, requestExtraclass,  uploadHomework, scheduleClass, requestTrialClass, getClassDetails, rescheduleClass, reviewClass, raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass, getQuotes, getPurchasedClasses, getPurchasedClassesByQuoteId,markTaskDone,reviewTeacher,getQuoteById }

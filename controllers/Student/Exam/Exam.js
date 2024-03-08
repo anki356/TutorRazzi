@@ -7,7 +7,8 @@ const addExams=async(req,res,next)=>{
     const studentExamInsertResponse=await Exam.create({student_id:req.user._id ,subject:{name:req.body.subject},
         start_time:req.body.start_time,
         end_time:req.body.end_time,
-        syllabus:req.body.syllabus
+        syllabus:req.body.syllabus,
+        start_date:req.body.start_date
     })
   return  res.json(responseObj(true,studentExamInsertResponse,'Exam Created'))
 }

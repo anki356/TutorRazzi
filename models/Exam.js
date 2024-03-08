@@ -15,7 +15,10 @@ type:mongoose.Schema.Types.ObjectId,
 required:true,
 ref:'User'
 },
-
+start_date:{
+    type:String,
+    required:true
+},
 start_time:{
     type:String,
     required:true

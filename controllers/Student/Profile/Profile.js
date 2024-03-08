@@ -401,52 +401,17 @@ const editUserProfile=async(req,res)=>{
   },{
     $set:{
       profile_image:req.files[0].filename,
-      name:req.body.name
+      name:req.body.name,
+      mobile_number:req.body.mobile_number
     }
   })
-  let password= await  bcrypt.hash(makeId(5), 10)
- let parentResponse=await User.create({
-email:req.body.parent_email_address,
-password:password,
-mobile_number:req.body.parent_mobile_number,
-role:'parent'
- })
- sendEmail(req.body.parent_email_address,"New Account Created","Your Account is created and password is "+password)
+  // let password= await  bcrypt.hash(makeId(5), 10)
+
+ 
  let studentResponse=await Student.findOne({
   user_id:req.user._id
  })
- if(studentResponse===null){
 
- 
- studentResponse=await Student.create({
-      preferred_name:req.body.name,
-      user_id:req.user._id,
-      gender:req.body.gender,
-      city:req.body.city,
-      state:req.body.state,
-      country:req.body.country,
-      grade:{name:req.body.grade},
-      age:req.body.age,
-      parent_id:parentResponse._id,
-      school:req.body.school,
-      address:req.body.address,
-      subjects:[
-          {
-              name:req.body.subject[0]
-          },{
-              name:req.body.subject[1]
-          },{
-              name:req.body.subject[2]
-          }
-      ],
-      curriculum:{
-          name:req.body.curriculum
-      },
-      pincode:req.body.pincode
-
-  })
-}
-else{
   studentResponse =await Student.updateOne({
     user_id:req.user._id
   },{
@@ -475,13 +440,13 @@ else{
       pincode:req.body.pincode
     }
   })
-}
-  return res.json(responseObj(true,studentResponse,"Student Added"))
+
+  return res.json(responseObj(true,null,"Student Profile Edited"))
 }
 const getUserProfile=async(req,res,next)=>{
   let userprofile={};
  
-  userprofile=await Student.findOne({user_id:req.user._id},{preferred_name:1,grade:1,school:1,address:1,city:1,state:1,country:1,subjects:1}).populate({path:"user_id",select:{
+  userprofile=await Student.findOne({user_id:req.user._id},{preferred_name:1,curriculum:1,grade:1,school:1,address:1,city:1,state:1,country:1,subjects:1}).populate({path:"user_id",select:{
     email:1,mobile_number:1,profile_image:1
   }}).populate({path:'parent_id',select:{
       email:1,mobile_number:1

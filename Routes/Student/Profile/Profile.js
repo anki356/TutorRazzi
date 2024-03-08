@@ -35,5 +35,5 @@ const studentValidation=[
 
 
 ]
-router.patch("/profile",[[[[[studentValidation,validationError],authVerify]]],editUserProfile])
+router.patch("/profile",authVerify,editUserProfile)
 export default router

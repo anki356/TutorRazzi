@@ -240,6 +240,9 @@ const scheduleClass = async (req, res, next) => {
     if(moment().add(5,'h').add(30,'s').diff(req.body.start_time,'s')>0){
         return res.json(responseObj(false,null,"Start Time cannot be in past"))
        }
+       let details=await Class.findOne({
+        _id:req.params._id
+      })
     let classScheduled=await Class.find({
         $and: [   { start_time:{$gte:req.body.start_time}},
           {start_time:{
@@ -249,7 +252,7 @@ const scheduleClass = async (req, res, next) => {
           {end_time:{
             $lte:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
           }},{$or:[{
-          teacher_id:req.body.student_id
+          teacher_id:details.teacher_id
       },{
           student_id:req.user._id
       }]}]})
@@ -288,7 +291,7 @@ const scheduleClass = async (req, res, next) => {
     const teacherResponse=await Teacher.findOne({
         user_id:scheduleClassResponse.teacher_id
     })
-    addNotifications(req.body.teacher_id,"Class Scheduled Successfully","Class has been scheduled for student "+req.user.name+" on "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm" ))
+    addNotifications(scheduleClassResponse.teacher_id,"Class Scheduled Successfully","Class has been scheduled for student "+req.user.name+" on "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm" ))
     addNotifications(AcademicManangerResponse.user_id,"Class Scheduled Successfully","Class has been scheduled for student "+req.user.name+" on "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm" )+" by teacher"+ teacherResponse.preferred_name)
     res.json(responseObj(true, scheduleClassResponse, "Class Scheduled Successfully"))
 

@@ -758,6 +758,6 @@ $nin:["Scheduled","Pending"]
     ]
   }
   const totalRescheduledClasses=await Class.countDocuments(query)
-  return res.json(responseObj(false,{totalTrialClass,totalRescheduledClasses,totalPastClasses,totalUpcomingClasses},"Total of all Types of Classes"))
+  return res.json(responseObj(true,{totalTrialClass,totalRescheduledClasses,totalPastClasses,totalUpcomingClasses},"Total of all Types of Classes"))
 }
 export {editDegreeDetails,editExpDetails,getAllCurriculums,getSubjectCurriculum,getDetails,getTrialClassesRequests, editProfile, getUpcomingClasses,getTotal, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain,editSubjectCurriculum };

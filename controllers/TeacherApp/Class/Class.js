@@ -963,7 +963,7 @@ let hasNextPage=Number(page)<totalPages
 let prevPage=hasPrevPage?Number(page)-1:null
 let nextPage=hasNextPage?Number(page)+1:null
 
-return res.json(responseObj(true,{docs,totalDocs,totalPages,hasPrevPage,hasNextPage,prevPage,nextPage},"All Class Materials"))
+return res.json(responseObj(true,{docs,totalDocs,totalPages,hasPrevPage,hasNextPage,prevPage,nextPage,limit:Number(limit),page:Number(page),pagingCounter:Number(page)},"All Class Materials"))
 
 }
 export {acceptClassRequest,getUpcomingClassDetails,scheduleClass,resolveResourceRequests,getHomeworks,getTasks,getMaterials, requestReUpload,getClassesBasedOnDate,reviewClass,setReminder,uploadClassMaterial, acceptRescheduledClass,getClassDetails, addTask, rescheduleClass, getRescheduledClasses, addHomework, addNotesToClass, joinClass, leaveClass, getPastClasses,addOtherInfo }

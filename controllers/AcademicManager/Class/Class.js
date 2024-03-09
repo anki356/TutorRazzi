@@ -23,17 +23,21 @@ import axios from "axios"
 const joinClass = async (req, res, next) => {
   let classResponse = await Class.findOne({
       _id: req.body.class_id,
-      status:"Scheduled"
+      // status:"Scheduled"
   }, {
       start_time: 1,
       end_time: 1,
       student_id:1,
       subject:1,
       meeting_id:1,
-      teacher_id:1
+      teacher_id:1,
+      status:1
   })
 if(classResponse===null){
   return res.json(responseObj(false,null,"Invalid Class"))
+}
+if(classResponse.status!=="Scheduled"){
+  return res.json(responseObj(false,null,"Class Status is "+classResponse.status))
 }
 if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('You cannot Join Class at this time')
   }
@@ -104,7 +108,7 @@ const markTaskDone=async(req,res)=>{
 _id:req.params._id
   })
   if(taskDetails===null){
-    return res.json(responseObj(false,null,"Task is not present"))
+    return res.json(responseObj(false,null,"Invalid Task"))
   }
   await Task.updateOne({
     _id:req.params._id
@@ -117,6 +121,7 @@ _id:req.params._id
 }
 const acceptTrialClassRequest = async (req, res, next) => {
   let details=await Class.findOne({_id:req.params._id})
+ 
   let classDetails = await Class.find({
     $and: [{
       start_time: details.start_time,
@@ -161,6 +166,9 @@ const acceptTrialClassRequest = async (req, res, next) => {
 
 const acceptClassRequest = async (req, res, next) => {
   let details=await Class.findOne({_id:req.params._id})
+  if(details===null){
+    return res.json(responseObj(false,null,"Invalid Class ID"))
+  }
 if(details.class_type==='Trial' && details.is_rescheduled===false){
   let classDetails = await Class.find({
     $and: [   { start_time:{$gte:details.start_time}},
@@ -264,6 +272,9 @@ const rescheduleClass=async(req,res,next)=>{
   let details=await Class.findOne({
     _id:req.params._id
   })
+  if(details===null){
+    return res.json(responseObj(false,null,"Invalid Class ID"))
+  }
   let classScheduled=await Class.find({
     $and: [   { start_time:{$gte:req.body.start_time}},
       {start_time:{
@@ -304,6 +315,9 @@ const addExtraClassQuote = async (req, res, next) => {
    },{
     grade:1
    })
+   if(gradeDetails===null){
+    return res.json(responseObj(false,null,"Invalid Student ID"))
+  }
     const extraClassQuoteResponse = await Quote.insertMany({
         class_count: req.body.class_count,
         amount: req.body.amount,
@@ -332,7 +346,9 @@ addNotifications(req.body.student_id,"Extra Class Quotes added","Extra Class Quo
 
 const getTrialClasses = async (req, res) => {
   const academicManagerResponse = await AcademicManager.findOne({ user_id: req.user._id }, { teachers: 1, students: 1 })
-   
+  if(academicManagerResponse===null){
+    return res.json(responseObj(false,null,"Invalid Academic Manager"))
+  } 
 let options = {
     limit: req.query.limit,
     page: req.query.page,
@@ -405,7 +421,7 @@ if(req.query.search) {
     {"teacher_id":{$in:teacher_ids.map((data)=>data._id)}}
   ];
 }
-console.log("Query:", JSON.stringify(query, null, 2));
+
 Class.paginate(query, options, (err, classResponse) => {
   if(err) {
     console.error(err);
@@ -419,6 +435,9 @@ Class.paginate(query, options, (err, classResponse) => {
 
 const getRescheduledClasses=async (req, res) => {
     const academicManagerResponse = await AcademicManager.findOne({ user_id: req.user._id }, { teachers: 1, students: 1 })
+    if(academicManagerResponse===null){
+      return res.json(responseObj(false,null,"Invalid Academic Manager"))
+    }
     let options = {
         limit: req.query.limit,
         page: req.query.page,
@@ -490,6 +509,9 @@ $gte : moment(req.query.date).format("YYYY-MM-DD"),$lt:moment(req.query.date).ad
 
 const getResourceRequests=async(req,res)=>{
     const academicManagerResponse= await AcademicManager.findOne({user_id:req.user._id},{teachers:1,students:1})
+    if(academicManagerResponse===null){
+      return res.json(responseObj(false,null,"Invalid Academic Manager"))
+    }
     const classResponse=await Class.find({
         student_id:{
             $in:academicManagerResponse.students,
@@ -547,6 +569,9 @@ const notifyTeacher=async(req,res)=>{
   let details=await ResourceRequest.findOne({
     _id:req.body.resource_request_id
   })
+  if(details===null){
+    return res.json(responseObj(false,null,"Invalid Resource Request"))
+  }
   let classDetails=await Class.findOne({
     _id:details.class_id
   }).populate({
@@ -560,6 +585,9 @@ const notifyTeacher=async(req,res)=>{
       "name":1
     }
   })
+  if(classDetails===null){
+    return res.json(responseObj(false,null,"No Class Asscociated with resource request"))
+  }
     const content=teacherResourceRequests(classDetails.student_id.name,details.message,classDetails.teacher_id.name,classDetails.subject.name,classDetails.grade.name)
     const teacherResponse=await User.findOne({_id:classDetails.teacher_id},{email:1})
     console.log(teacherResponse)
@@ -574,6 +602,9 @@ const notifyStudent=async(req,res)=>{
   let details=await HomeWork.findOne({
     _id:req.body.homework_id
   })
+  if(details===null){
+    return res.json(responseObj(false,null,"Homework not found"))
+  }
   let classDetails=await Class.findOne({
     _id:details.class_id
   }).populate({

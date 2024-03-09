@@ -444,19 +444,27 @@ let taskResponse=await Task.find({
   }
   const joinClass = async (req, res, next) => {
     let classResponse = await Class.findOne({
-        _id: req.body.class_id,
-        teacher_id:req.user._id,
-        status:"Scheduled"
-    }, {
-        start_time: 1,
-        end_time: 1,
-        student_id:1,
-        subject:1,
-        meeting_id:1
-    })
-  if(classResponse===null){
-    return res.json(responseObj(false,null,"Invalid Class"))
-  }
+      _id: req.body.class_id,
+      // teacher_id:req.user._id,
+      // status:"Scheduled"
+  }, {
+      start_time: 1,
+      end_time: 1,
+      student_id:1,
+      subject:1,
+      meeting_id:1,
+      teacher_id:1,
+      status:1
+  })
+if(classResponse===null){
+  return res.json(responseObj(false,null,"Invalid Class"))
+}
+if(classResponse.teacher_id!==req.user.id){
+  return res.json(responseObj(false,null,"Invalid Teacher Id"))
+}
+if(classResponse.status!=="Scheduled"){
+  return res.json(responseObj(false,null,"Class Status is "+classResponse.status))
+}
   if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('You cannot Join Class at this time')
     }
     console.log(classResponse.subject.name);

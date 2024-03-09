@@ -693,4 +693,71 @@ const editExpDetails=async(req,res)=>{
   })
   return res.json(responseObj(true, { teacherResponse }, null))
 }
-export {editDegreeDetails,editExpDetails,getAllCurriculums,getSubjectCurriculum,getDetails,getTrialClassesRequests, editProfile, getUpcomingClasses, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain,editSubjectCurriculum };
+const getTotal=async(req,res)=>{
+  let query = {
+    $and: [{
+      teacher_id: req.user._id,
+      class_type: 'Trial',
+      // status: 'Pending'
+    },{$or:[{
+status:{
+$nin:["Scheduled","Pending"]
+}
+    },{
+      status:{
+        $in:["Scheduled","Pending"]
+      },
+      end_time:{
+        $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+      }
+    }]}]
+  }
+  const totalTrialClass=await Class.countDocuments(query)
+  query = {
+    $and: [
+      { end_time: { $gte: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss") } },
+
+      { teacher_id: req.user._id },
+
+
+      { status: 'Scheduled' }
+    ]
+
+
+  }
+  const totalUpcomingClasses=await Class.countDocuments(query)
+  query = {
+    $and: [
+      {
+
+        start_time: { $lt:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss") },
+      }, {
+        teacher_id: req.user._id,
+
+      },
+      {
+        status: 'Done'
+      }
+    ]
+
+  }
+  const totalPastClasses=await Class.countDocuments(query)
+  query = {
+    $and: [
+      {
+
+        end_time: { $gte: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")},
+      }, {
+        teacher_id: req.user._id,
+
+      },
+      {
+        is_rescheduled: true
+      },
+   { status:"Pending"}
+    ]
+  }
+  const totalRescheduledClasses=await Class.countDocuments(query)
+  return res.json(responseObj(false,{totalTrialClass,totalRescheduledClasses,totalPastClasses,totalUpcomingClasses},"Total of all Types of Classes"))
+}
+export {editDegreeDetails,editExpDetails,getAllCurriculums,getSubjectCurriculum,getDetails,getTrialClassesRequests, editProfile, getUpcomingClasses,getTotal, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain,editSubjectCurriculum };

@@ -958,8 +958,8 @@ classMaterials = await Class.findOne(
 );
 let docs=classMaterials
 let totalPages=Math.ceil(totalDocs/Number(limit))
-let hasPrevPage=page>1
-let hasNextPage=page<totalPages
+let hasPrevPage=Number(page)>1
+let hasNextPage=Number(page)<totalPages
 let prevPage=hasPrevPage?Number(page)-1:null
 let nextPage=hasNextPage?Number(page)+1:null
 

@@ -90,7 +90,7 @@ const scheduleClass = async (req, res, next) => {
 
 const getClassDetails = async (req, res, next) => {
   let classDetails = {}
-  classDetails = await Class.findOne({ _id: req.query.class_id,end_time:{$lte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")} }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,  materials: 1, recordings: 1,class_type:1 }).populate({
+  classDetails = await Class.findOne({ _id: req.query.class_id,end_time:{$lte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")} }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,  materials: { $slice: [1* 3, 3] }, recordings: 1,class_type:1 }).populate({
     path: 'teacher_id', select: {
      name: 1,profile_image:1
     }
@@ -111,10 +111,10 @@ const getClassDetails = async (req, res, next) => {
     class_id:req.query.class_id
 }).populate({
   path:"answer_document_id"
-})
+}).limit(3)
 let taskResponse=await Task.find({
     class_id:req.query.class_id
-})
+}).limit(3)
   
   // let reminderResponse = await Reminder.findOne({ class_id: new ObjectId(req.query.class_id) })
   let resource_requests=await ResourceRequest.find({
@@ -908,4 +908,59 @@ return res.json(responseObj(true,null,"Accepted Rescheduled Request"))
 
 
 }
-export {acceptClassRequest,getUpcomingClassDetails,scheduleClass,resolveResourceRequests, requestReUpload,getClassesBasedOnDate,reviewClass,setReminder,uploadClassMaterial, acceptRescheduledClass,getClassDetails, addTask, rescheduleClass, getRescheduledClasses, addHomework, addNotesToClass, joinClass, leaveClass, getPastClasses,addOtherInfo }
+const getHomeworks=async(req,res)=>{
+ let query={
+  class_id:req.query.class_id
+ }
+ let {limit,page}=req.query
+ let options={
+  limit,page
+ }
+ HomeWork.paginate(query,options,(err,result)=>{
+  if(result.docs.length===0){
+    return res.json(false,null,"No Homework Found")
+  }
+  return res.json(true,result,"All Homeworks in the Class")
+ })
+// res.json(responseObj(true, {homeworkResponse:homeworkResponse}, "HomeWork Details successfully fetched"))
+}
+const getTasks=async(req,res)=>{
+  let query={
+    class_id:req.query.class_id
+   }
+   let {limit,page}=req.query
+   let options={
+    limit,page
+   }
+   Task.paginate(query,options,(err,result)=>{
+    if(result.docs.length===0){
+      return res.json(false,null,"No Task Found")
+    }
+    return res.json(true,result,"All tasks in the Class")
+   })
+}
+const getMaterials=async(req,res)=>{
+let classMaterials=await Class.findOne({
+  _id:req.query.class_id
+}).select({"materials":1})
+if(classMaterials===null){
+  return res.json(responseObj(false,null,"Invalid Class Id"));
+}
+if (!classMaterials.materials.length>0) {
+  return res.json(responseObj(false,null,"No Materials Found"));
+}
+let {limit,page}=req.query
+
+let totalDocs=classMaterials.materials.length
+classMaterials = await Class.findOne({  _id:req.query.class_id}, { materials: { $slice: [(page - 1) * limit, limit] } });
+let docs=classMaterials
+let totalPages=Math.ceil(totalDocs/Number(limit))
+let hasPrevPage=page>1
+let hasNextPage=page<totalPages
+let prevPage=hasPrevPage?Number(page)-1:null
+let nextPage=hasNextPage?Number(page)+1:null
+
+return res.json(responseObj(true,{docs,totalDocs,totalPages,hasPrevPage,hasNextPage,prevPage,nextPage},"All Class Materials"))
+
+}
+export {acceptClassRequest,getUpcomingClassDetails,scheduleClass,resolveResourceRequests,getHomeworks,getTasks,getMaterials, requestReUpload,getClassesBasedOnDate,reviewClass,setReminder,uploadClassMaterial, acceptRescheduledClass,getClassDetails, addTask, rescheduleClass, getRescheduledClasses, addHomework, addNotesToClass, joinClass, leaveClass, getPastClasses,addOtherInfo }

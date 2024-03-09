@@ -918,9 +918,9 @@ const getHomeworks=async(req,res)=>{
  }
  HomeWork.paginate(query,options,(err,result)=>{
   if(result.docs.length===0){
-    return res.json(false,null,"No Homework Found")
+    return res.json(responseObj(false,null,"No Homework Found"))
   }
-  return res.json(true,result,"All Homeworks in the Class")
+  return res.json(responseObj(true,result,"All Homeworks in the Class"))
  })
 // res.json(responseObj(true, {homeworkResponse:homeworkResponse}, "HomeWork Details successfully fetched"))
 }
@@ -934,9 +934,9 @@ const getTasks=async(req,res)=>{
    }
    Task.paginate(query,options,(err,result)=>{
     if(result.docs.length===0){
-      return res.json(false,null,"No Task Found")
+      return res.json(responseObj(false,null,"No Task Found"))
     }
-    return res.json(true,result,"All tasks in the Class")
+    return res.json(responseObj(true,result,"All tasks in the Class"))
    })
 }
 const getMaterials=async(req,res)=>{

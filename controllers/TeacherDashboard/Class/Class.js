@@ -459,7 +459,20 @@ let taskResponse=await Task.find({
 if(classResponse===null){
   return res.json(responseObj(false,null,"Invalid Class"))
 }
-if(classResponse.teacher_id!==req.user.id){
+classResponse = await Class.findOne({
+  _id: req.body.class_id,
+  teacher_id:req.user._id,
+  // status:"Scheduled"
+}, {
+  start_time: 1,
+  end_time: 1,
+  student_id:1,
+  subject:1,
+  meeting_id:1,
+  teacher_id:1,
+  status:1
+})
+if(classResponse===null){
   return res.json(responseObj(false,null,"Invalid Teacher Id"))
 }
 if(classResponse.status!=="Scheduled"){

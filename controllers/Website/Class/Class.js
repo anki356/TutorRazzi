@@ -15,6 +15,10 @@ import unlinkFile from "../../../util/unlinkFile.js";
 import { addNotifications } from "../../../util/addNotification.js";
 import User from "../../../models/User.js";
 import upload from "../../../util/upload.js";
+import axios from "axios";
+import Attendance from "../../../models/Attendance.js";
+import Report from "../../../models/Report.js";
+import MonthlyReport from "../../../models/MonthlyReport.js";
 const objectId=mongoose.Types.ObjectId
 const rescheduleClass=async(req,res,next)=>{
   if(moment().add(5,'h').add(30,'s').diff(req.body.start_time,'s')>0){
@@ -633,4 +637,189 @@ addNotifications(teacherDetails.teacher_id,"Home work uploaded"," Home work uplo
 addNotifications(AcademicManangerResponse.user_id,"Home work uploaded"," Home work uploaded given to "+req.user.name+" in class for subject "+teacherDetails.subject.name+" on "+ moment(teacherDetails.start_time).format("DD-MM-YYYY")+ " at "+moment(teacherDetails.start_time).format("HH:mm:ss")+ " with name "+homeworkResponse.title )
    res.json(responseObj(true, [], "Home work uploaded"))
 }
-  export {setReminder,acceptClassRequest,rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass,markTaskDone,reviewTeacher,uploadHomework,getHomeworks,getTasks}
+const joinClass = async (req, res, next) => {
+  let classResponse = await Class.findOne({
+      _id: req.body.class_id,
+      // student_id:req.user._id,
+      // status:"Scheduled",
+     
+  },  {
+    start_time: 1,
+    end_time: 1,
+    student_id:1,
+    subject:1,
+    meeting_id:1,
+    teacher_id:1,
+    status:1
+})
+if(classResponse===null){
+return res.json(responseObj(false,null,"Invalid Class"))
+}
+classResponse = await Class.findOne({
+_id: req.body.class_id,
+student_id:req.user._id,
+// status:"Scheduled"
+}, {
+start_time: 1,
+end_time: 1,
+student_id:1,
+subject:1,
+meeting_id:1,
+teacher_id:1,
+status:1
+})
+if(classResponse===null){
+return res.json(responseObj(false,null,"Invalid Student Id"))
+}
+if(classResponse.status!=="Scheduled"){
+return res.json(responseObj(false,null,"Class Status is "+classResponse.status))
+}
+if ((moment().utc().isBefore(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('Class has not Started Yet')
+}
+if ((moment().utc().isAfter(moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('Class has been Finished')
+}
+
+ 
+ let reportResponse=await MonthlyReport.findOne({
+      student_id:req.user._id,
+      teacher_id:classResponse.teacher_id,
+      month:moment().month(),
+      year:moment().year(),
+      subject:classResponse.subject.name
+ })
+let attendanceResponse=await Attendance.findOne({
+  teacher_id:classResponse.teacher_id,
+  class_id:req.body.class_id
+ })
+
+ if(reportResponse===null&&attendanceResponse!==null){
+
+  const   MonthlyReportResponse=await MonthlyReport.create({
+      student_id:req.user._id,
+      teacher_id:classResponse.teacher_id,
+      month:moment().month(),
+      year:moment().year(),
+      subject:classResponse.subject.name, 
+      reports:[{
+
+title:"Academic Performance",
+sub_title:"Subject Knowledge and Understanding",
+
+
+
+
+
+  },{
+      title:"Academic Performance",
+      sub_title:"Class Participation and Engagement",
+      
+     
+      
+  },{
+      title:"Academic Performance",
+      sub_title:"Homework and Assignments Completion",
+     
+     
+     
+  },{
+      title:"Academic Performance",
+      sub_title:"Problem-Solving and Critical Thinking Skills",
+     
+      
+  },{
+      title:"Learning Attitude",
+      sub_title:"Motivation and Enthusiasm",
+     
+      
+  },{  title:"Learning Attitude",
+  sub_title:"Initiative and Self Direction",
+ 
+  },{
+      title:"Learning Attitude",
+      sub_title:"Collaboration and Teamwork",
+    
+      
+  },{
+      title:"Communication Skills",
+      sub_title:"Verbal Communication",
+      
+      
+  },{
+      title:"Communication Skills",
+      sub_title:"Written Communication",
+      
+      
+  },{
+      title:"Personal Growth",
+      sub_title:"Time Management",
+     
+      
+  },{
+      title:"Personal Growth",
+      sub_title:"Organization and Preparedness",
+      
+     
+  },{
+      title:"Personal Growth",
+      sub_title:"Responsibility and Accountability",
+     
+      
+  }]})
+ }
+  attendanceResponse = await Attendance.insertMany({
+      check_in_datetime: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss"),
+      student_id: req.user._id,
+      class_id: req.body.class_id,
+
+  })
+  const organizationId = '6894d463-40a7-4240-93dc-bb30ef741dbd';
+  const apiKey = 'ac00320ed5f57433dfa8';
+  
+  // Combine organizationId and apiKey with a colon
+  const credentials = `${organizationId}:${apiKey}`;
+  
+  // Encode credentials to Base64
+  const encodedCredentials = btoa(credentials);
+  if(classResponse.meeting_id){
+      console.log("hello")
+      axios.post(`https://api.dyte.io/v2/meetings/${classResponse.meeting_id}/participants`,{name:'student',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+          headers:{
+           'Authorization': `Basic ${encodedCredentials}`,
+          }
+      }).then((response)=>{
+          return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+      }).catch(err=>{
+       console.log(err)
+      }) 
+  }
+  else{
+      axios.post("https://api.dyte.io/v2/meetings",{ record_on_start:true},{
+          headers:{
+              'Authorization': `Basic ${encodedCredentials}`,
+          }
+        }).then(async(response)=>{
+         await Class.updateOne({
+          _id:req.body.class_id
+         },{
+          $set:{
+              meeting_id:response.data.data.id
+          }
+         })
+         
+         axios.post(`https://api.dyte.io/v2/meetings/${response.data.data.id}/participants`,{name:'student',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+             headers:{
+              'Authorization': `Basic ${encodedCredentials}`,
+             }
+         }).then((response)=>{
+             return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+         }).catch(err=>{
+          console.log(err)
+         })
+      })
+  }
+  
+ 
+
+
+}
+  export {setReminder,acceptClassRequest,rescheduleClass,getPastClasses,getUpcomingClasses,getClassDetails,getUpcomingClassDetails,getRescheduledClasses,getTrialClasses,reviewClass,markTaskDone,reviewTeacher,uploadHomework,getHomeworks,getTasks,joinClass}

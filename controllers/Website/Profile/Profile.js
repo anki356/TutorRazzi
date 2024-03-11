@@ -175,6 +175,15 @@ user=await User.create({
   name:req.body.name
 })
   }
+  else{
+    await User.updateOne({
+      _id:user._id
+    },{
+      $set:{
+        password:hash
+      }
+    })
+  }
   if(user.role!=='parent'){
     return res.json(responseObj(false,null,"Email Already Exist for other User"))
   }

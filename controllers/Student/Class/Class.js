@@ -459,26 +459,47 @@ addNotifications(AcademicManangerResponse.user_id,"Resource Requested ",`${req.u
 const joinClass = async (req, res, next) => {
     let classResponse = await Class.findOne({
         _id: req.body.class_id,
-        student_id:req.user._id,
-        status:"Scheduled",
+        // student_id:req.user._id,
+        // status:"Scheduled",
        
-    }, {
-        start_time: 1,
-        end_time: 1,
-        teacher_id:1,
-        subject:1,
-        meeting_id:1
-    })
-if(classResponse===null){
-    return res.json(responseObj(false,null,"Invalid Class"))
-}
-console.log(classResponse.start_time)
-// console.log(moment().utc(),moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").utc(), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").utc())
-    if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {
-        throw new Error('You cannot Join Class at this time')
-    }
-    console.log(classResponse.subject.name);
-   let reportResponse=await Report.findOne({
+    },  {
+      start_time: 1,
+      end_time: 1,
+      student_id:1,
+      subject:1,
+      meeting_id:1,
+      teacher_id:1,
+      status:1
+  })
+  if(classResponse===null){
+  return res.json(responseObj(false,null,"Invalid Class"))
+  }
+  classResponse = await Class.findOne({
+  _id: req.body.class_id,
+  student_id:req.user._id,
+  // status:"Scheduled"
+  }, {
+  start_time: 1,
+  end_time: 1,
+  student_id:1,
+  subject:1,
+  meeting_id:1,
+  teacher_id:1,
+  status:1
+  })
+  if(classResponse===null){
+  return res.json(responseObj(false,null,"Invalid Student Id"))
+  }
+  if(classResponse.status!=="Scheduled"){
+  return res.json(responseObj(false,null,"Class Status is "+classResponse.status))
+  }
+  if ((moment().utc().isBefore(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('Class has not Started Yet')
+  }
+  if ((moment().utc().isAfter(moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('Class has been Finished')
+  }
+  
+   
+   let reportResponse=await MonthlyReport.findOne({
         student_id:req.user._id,
         teacher_id:classResponse.teacher_id,
         month:moment().month(),
@@ -491,7 +512,7 @@ console.log(classResponse.start_time)
    })
   
    if(reportResponse===null&&attendanceResponse!==null){
-
+  
     const   MonthlyReportResponse=await MonthlyReport.create({
         student_id:req.user._id,
         teacher_id:classResponse.teacher_id,
@@ -499,14 +520,14 @@ console.log(classResponse.start_time)
         year:moment().year(),
         subject:classResponse.subject.name, 
         reports:[{
-
-title:"Academic Performance",
-sub_title:"Subject Knowledge and Understanding",
-
-
-
-
-
+  
+  title:"Academic Performance",
+  sub_title:"Subject Knowledge and Understanding",
+  
+  
+  
+  
+  
     },{
         title:"Academic Performance",
         sub_title:"Class Participation and Engagement",
@@ -568,7 +589,7 @@ sub_title:"Subject Knowledge and Understanding",
         check_in_datetime: moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss"),
         student_id: req.user._id,
         class_id: req.body.class_id,
-
+  
     })
     const organizationId = '6894d463-40a7-4240-93dc-bb30ef741dbd';
     const apiKey = 'ac00320ed5f57433dfa8';
@@ -617,9 +638,9 @@ sub_title:"Subject Knowledge and Understanding",
     }
     
    
-
-
-}
+  
+  
+  }
 
 const leaveClass = async (req, res, next) => {
    

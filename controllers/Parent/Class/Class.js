@@ -393,7 +393,7 @@ res.json(responseObj(true,rescheduleacceptResponse,null))
 }
 const getLastTrialClass = async (req, res, next) => {
    
-    const lastClassResponse = await Attendance.findOne({ student_id: req.query.student_id }).populate({'path':'class_id',select:{
+    const lastClassResponse = await Attendance.findOne({ student_id: req.user._id }).populate({'path':'class_id',select:{
         start_time:1,subject:1,teacher_id:1,
     },populate:{
         path:"teacher_id",
@@ -414,13 +414,13 @@ const getLastTrialClass = async (req, res, next) => {
         })
        
         if(TrialResponse!==null){
-            return res.json(responseObj(true,null,"Trial Class already responded"))
+            return res.json(responseObj(false,null,"Trial Class already responded"))
         }
         
         res.json(responseObj(true, lastClassResponse.class_id, 'Last trial class details are fetched successfully'))
     }
     else{
-        return res.json(responseObj(true,null,"No Trial Class"))
+        return res.json(responseObj(false,null,"No Trial Class"))
     }
     
 

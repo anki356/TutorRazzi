@@ -111,11 +111,20 @@ const reviewTeacher = async (req, res, next) => {
 
 }
 const getGreatTeachers = async (req, res, next) => {
-    const studentResponse = await Student.findOne({ user_id: req.query.student_id }, { subjects: 1,curriculum:1,grade:1 })
+   
+    const studentResponse = await Student.findOne({ user_id: req.user._id }, { subjects: 1,curriculum:1,grade:1 })
 
     let subjects = studentResponse.subjects.map((data) => {
         return data.name
     })
+    const classResponse=await Class.find({
+        student_id:req.user._id
+        })
+        console.log(subjects)
+     const classSubjects=classResponse.map((data)=>data.subject.name)
+       subjects= subjects.filter((data)=>!classSubjects.includes(data))
+        console.log(studentResponse.curriculum) 
+        console.log(subjects) 
     let teacherResponse = await Teacher.aggregate([
         {
             $match:{
@@ -125,6 +134,9 @@ const getGreatTeachers = async (req, res, next) => {
                         curriculum:studentResponse.curriculum.name,
                         // grade:studentResponse.grade.name
                     }
+                },
+                user_id:{
+                    $nin:classResponse.map((data)=>data.teacher_id)
                 }
             }
         },
@@ -145,30 +157,69 @@ const getGreatTeachers = async (req, res, next) => {
                 as: "users"
             }
         },
+{
+    $unwind:"$users"
+},
         {
             $project: {
                 user_id: 1,
                 preferred_name: 1,
-                "users.profile_image":1,
+                "users.profile_image":{ $cond: {
+                    if: { $eq: ["$users.profile_image", null] },
+                    then: null,
+                    else: { $concat: [process.env.CLOUD_API+"/", "$users.profile_image"] }
+                }},
+                subjects: {
+                    $filter: {
+                      input: "$subject_curriculum",  
+                      as: "item",
+                      cond: { $in: ["$$item.subject", subjects] }
+                    }
+                  },
                 exp:1,
                 ratings: {
-                    $avg: "$reviews.rating"
+                    $avg: {
+                        $cond: [
+                            { $eq: [{ $size: "$reviews" }, 0] },
+                            0,
+                            { $avg: "$reviews.rating" }
+                        ]
+                    }
                 },
                 reviews: {
                     $size: "$reviews"
                 },
-                subjects: {
-                    $filter: {
-                      input: "$subject_curriculum_grade",  // Replace with the actual name of your array field
-                      as: "item",
-                      cond: { $in: ["$$item.subject", subjects] }
-                    }
-                  }
     
             }
         },
         {
-            $sort: { averageRating: -1 }, 
+            $unwind: "$subjects"
+        },
+        {
+            $group: {
+                _id: {
+                    subject: "$subjects.subject",
+                    teacher_id: "$user_id"
+                },
+                teacher: { $first: "$$ROOT" }
+            }
+        },
+        {
+            $group: {
+                _id: "$_id.subject",
+                teachers: {
+                    $push: "$teacher"
+                }
+            }
+        },
+        {
+            $group: {
+                _id: null,
+                allTeachers: { $push: "$teachers" }
+            }
+        },
+        {
+            $sort: { ratings: -1 }, 
         },
         {
             $limit: req.query.limit ? req.query.limit : 5
@@ -176,9 +227,11 @@ const getGreatTeachers = async (req, res, next) => {
 
     ])
 
-
-    //chat gpt
-    return res.json(responseObj(true, teacherResponse, ''))
+if(teacherResponse.length===0){
+return res.json(responseObj(false, [], ' No Teachers Found'))
+}
+    
+    return res.json(responseObj(true, teacherResponse, ' Great Teachers'))
 }
 const getTeachersBySubjectAndName=async(req,res)=>{
     let offset=(Number(req.query.page)-1)*Number(req.query.limit)

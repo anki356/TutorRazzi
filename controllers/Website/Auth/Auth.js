@@ -44,6 +44,7 @@ const SignIn=async(req,res,next)=>{
     if (!user ||user.role!==req.body.key ) {
         throw new Error("Invalid credentials or no user exist.");
     }
+    console.log(user.password)
 if(!user.password){
     throw new Error("Please Complete Your Onboarding");  
 }

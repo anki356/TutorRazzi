@@ -652,5 +652,15 @@ return res.json(responseObj(true,{"totalRescheduledClasses":recheduledClasses.le
     })
     res.json(responseObj(true,students,"All Students linked to parent"))
   }
-
-export {getAllPayments,getHomeworks,editUserProfile,getAllExams,getTotalClasesToday,getWatchHourweekly,getTotalClassesScheduled,getClassAttendedToday,getUpcomingClasses,getPendingPaymentClasses,getAttendance,getUserProfile,getPastClasses,getRescheduledClasses,getTrialClasses,getHomework,getAllStudents};
+  const selectStudent=async(req,res)=>{
+    let user=await User.findOne({
+      _id:req.body.student_id
+    })
+    const token = user.signJWT();
+    res.json(responseObj(true,{
+        access_token:token,
+        user:user
+        
+    },"Token with Student Details Attached",null) )
+  }
+export {getAllPayments,selectStudent,getHomeworks,editUserProfile,getAllExams,getTotalClasesToday,getWatchHourweekly,getTotalClassesScheduled,getClassAttendedToday,getUpcomingClasses,getPendingPaymentClasses,getAttendance,getUserProfile,getPastClasses,getRescheduledClasses,getTrialClasses,getHomework,getAllStudents};

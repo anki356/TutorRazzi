@@ -257,7 +257,7 @@ const getUpcomingClasses=async(req,res,next)=>{
   const getWatchHourweekly=async (req,res,next)=>{
     
     let weeklyHoursResponseArray=[]
-   
+   console.log(req.user._id)
     for(let i=0;i<7;i++){
         
     
@@ -292,7 +292,7 @@ const getUpcomingClasses=async(req,res,next)=>{
                 }
             }
         ])
-      
+      console.log(weeklyHoursResponse)
         if(weeklyHoursResponse.length>0){
 
             weeklyHoursResponseArray.push({
@@ -323,11 +323,11 @@ totalWeeklyHours+=data.totalWatchHours
                 {
                     student_id:new ObjectID(req.user._id)
                 },{
-                    start_time :{$gte:moment(req.body.start_time).startOf('week').set('h',0).set('m',0).set('s',0).format("YYYY-MM-DDTHH:mm:ss")},
+                    start_time :{$gte:moment(req.query.start_time).startOf('week').set('h',0).set('m',0).set('s',0).format("YYYY-MM-DDTHH:mm:ss")},
 
                 },{
                     end_time:{
-                        $lte:moment(req.body.start_time).endOf('week').set('h',0).set('m',0).set('s',0).format("YYYY-MM-DDTHH:mm:ss")
+                        $lte:moment(req.query.start_time).endOf('week').set('h',0).set('m',0).set('s',0).format("YYYY-MM-DDTHH:mm:ss")
                     }
                 },{
                     is_rescheduled:true

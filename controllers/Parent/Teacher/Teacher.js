@@ -1,3 +1,4 @@
+import Class from "../../../models/Class.js"
 import Review from "../../../models/Review.js"
 import Student from "../../../models/Student.js"
 import Teacher from "../../../models/Teacher.js"

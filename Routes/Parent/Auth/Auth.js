@@ -1,5 +1,5 @@
 import express from "express";
-import { SignUp,SignIn, changePassword, verifyEmail, verifyOTP } from "../../../controllers/Parent/Auth/Auth.js";
+import { SignUp,SignIn, changePassword, verifyEmail, verifyOTP, authVerify } from "../../../controllers/Parent/Auth/Auth.js";
 import validationError from "../../../middleware/validationError.js";
 import { body } from "express-validator";
 const router=express.Router()
@@ -14,7 +14,7 @@ body('password').notEmpty().withMessage('Password is required field.')
 
 router.post("/SignUp",loginValidationChain,validationError,SignUp)
 router.post("/SignIn",loginValidationChain,validationError,SignIn)
-router.patch("/change-Password",passwordValidationChain,validationError,changePassword)
+router.patch("/change-Password",authVerify,passwordValidationChain,validationError,changePassword)
 router.post("/verify-Email",loginValidationChain,validationError,verifyEmail)
 router.post("/verify-OTP",verifyOTP)
 export default router

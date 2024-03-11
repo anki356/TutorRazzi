@@ -949,10 +949,13 @@ const getTasks=async(req,res)=>{
     limit,page
    }
    Task.paginate(query,options,(err,result)=>{
-    if(result.docs.length===0){
-      return res.json(responseObj(false,null,"No Task Found"))
+    if(result){
+      if(result.docs.length===0){
+        return res.json(responseObj(false,null,"No Task Found"))
+      }
+      return res.json(responseObj(true,result,"All tasks in the Class"))
     }
-    return res.json(responseObj(true,result,"All tasks in the Class"))
+   
    })
 }
 const getMaterials=async(req,res)=>{

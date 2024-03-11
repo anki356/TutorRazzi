@@ -57,7 +57,7 @@ HomeWorkSchema.virtual('student_name').get(function(){
     }
 })
 HomeWorkSchema.virtual('days_left').get(function(){
-    if(this.due_date!==undefined&& moment().diff(this.due_date,'d')<=0){
+    if(this.due_date!==undefined&& moment().add(5,'h').add(30,'m').diff(moment(this.due_date),'d')<=0){
         const now = moment();
         const duration = moment(this.due_date).diff(moment(), 'd');
         

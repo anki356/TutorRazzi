@@ -345,7 +345,7 @@ const overallPerformance = async (req, res, next) => {
   }
 ])
 
-  res.json(responseObj(true, { totalEarnings: total_earnings_response.length > 0 ? total_earnings_response[0].totalEarnings : 0, weeklyPaymentResponseArray: weeklyPaymentResponseArray, totalHoursResponse: totalHoursResponse, totalBookingsResponse: totalBookingsResponse.length > 0 ? totalBookingsResponse[0].totalBookings : 0 }, null))
+  res.json(responseObj(true, { totalEarnings: total_earnings_response.length > 0 ? total_earnings_response[0].totalEarnings : 0, weeklyPaymentResponseArray: weeklyPaymentResponseArray, totalHoursResponse: attendanceResponse, totalBookingsResponse: totalBookingsResponse.length > 0 ? totalBookingsResponse[0].totalBookings : 0 }, null))
 }
 const getTotalStudents = async (req, res, next) => {
   let query = {

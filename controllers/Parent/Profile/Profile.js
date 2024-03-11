@@ -648,7 +648,7 @@ return res.json(responseObj(true,{"totalRescheduledClasses":recheduledClasses.le
     let students=await Student.find({
       parent_id:req.user._id
     },{
-      user_id:1,preferred_name:1
+      user_id:1,preferred_name:1,profile_image:1
     })
     res.json(responseObj(true,students,"All Students linked to parent"))
   }

@@ -319,12 +319,9 @@ const overallPerformance = async (req, res, next) => {
 
   }
   let totalHoursResponse = 0;
-  const attendanceResponse = await Attendance.find({ teacher_id: req.user._id }, { "check_in_datetime": 1, "check_out_datetime": 1 })
+  const attendanceResponse = await Class.countDocuments({ teacher_id: req.user._id,status:"Done" })
 
-  attendanceResponse.forEach((data, index) => {
-    totalHoursResponse += moment(data['check_out_datetime']).diff(moment(data['check_in_datetime']), 'H')
-  })
-
+ 
   const totalBookingsResponse = await Class.aggregate([{
     $match: {
       $and: [{

@@ -478,8 +478,10 @@ if(classResponse===null){
 if(classResponse.status!=="Scheduled"){
   return res.json(responseObj(false,null,"Class Status is "+classResponse.status))
 }
-  if (!(moment().utc().isBetween(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m'), moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('You cannot Join Class at this time')
-    }
+if ((moment().utc().isBefore(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('Class has not Started Yet')
+}
+if ((moment().utc().isAfter(moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('Class has been Finished')
+}
     console.log(classResponse.subject.name);
    let reportResponse=await MonthlyReport.findOne({
         student_id:classResponse.student_id,

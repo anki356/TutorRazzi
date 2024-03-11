@@ -261,35 +261,32 @@ const getUpcomingClasses=async(req,res,next)=>{
     for(let i=0;i<7;i++){
         
     
-        const weeklyHoursResponse=await Attendance.aggregate([
+        const weeklyHoursResponse=await Class.aggregate([
             {
                 $match:{
                     $and:[
     
-                        {"check_out_datetime":{
+                        {"end_time":{
                             $lt:moment(req.query.start_date).startOf('week').add(i+1,'d').set('h',0).set('m',0).set('s',0).format("YYYY-MM-DDTHH:mm:ss")
                         }},
-                        {"check_in_datetime":{
+                        {"start_time":{
                             $gte :moment(req.query.start_date).startOf('week').set('h',0).set('m',0).set('s',0).add(i,'d').format("YYYY-MM-DDTHH:mm:ss")}},
                             {
-                                student_id:new ObjectID(req.query.student_id)
-                            }
+                                student_id:new ObjectID(req.user._id)
+                            },
+                            { status:'Done'}
                         
+                      
                     ]
                 }
+                
             },
             {
                 $group: {
                     _id:moment(req.query.start_date).startOf('week').set('h',0).set('m',0).set('s',0).add(i,'d').format("YYYY-MM-DDTHH:mm:ss"),
                     totalWatchHours: {
-                    $sum:{
-                        $divide: [{ $subtract: [{
-                          $toDate: '$check_out_datetime' // Convert string to date
-                        },
-                        {
-                          $toDate: '$check_in_datetime' // Convert string to date
-                        }] }, 3600000] // Convert milliseconds to hours
-                    }
+                    $sum:1// Convert milliseconds to hours
+                    
                   },
 
                 }
@@ -321,11 +318,10 @@ totalWeeklyHours+=data.totalWatchHours
   const getAttendance=async(req,res,next)=>{
     
    
-    let recheduledClasses=await Class.aggregate([
-        {$match:{
+    let recheduledClasses=await Class.countDocuments({
             $and:[
                 {
-                    student_id:new ObjectID(req.query.student_id)
+                    student_id:new ObjectID(req.user._id)
                 },{
                     start_time :{$gte:moment(req.body.start_time).startOf('week').set('h',0).set('m',0).set('s',0).format("YYYY-MM-DDTHH:mm:ss")},
 
@@ -337,8 +333,7 @@ totalWeeklyHours+=data.totalWatchHours
                     is_rescheduled:true
                 }
             ]
-        }},
-    ])
+        })
  
 
 
@@ -348,11 +343,10 @@ let totalAbsent=0
 let week_days=["Sun","Mon","Tues","Wed","Thurs","Fri","Sat"]
 for (let i=0;i<7;i++){
  
-    let scheduledClasses=await Class.aggregate([
-        {$match:{
+    let scheduledClasses=await Class.countDocuments({
             $and:[
                 {
-                    student_id:new ObjectID(req.query.student_id)
+                    student_id:new ObjectID(req.user._id)
                 },{
                     start_time :{$gte:moment(req.query.start_time).startOf('week').add(i,'d').set('h',0).set('m',0).set('s',0).format("YYYY-MM-DDTHH:mm:ss")},
 
@@ -366,30 +360,25 @@ for (let i=0;i<7;i++){
                   $in:['Scheduled','Done']
                 }}
             ]
-        }},
-    ])
+        }
+    )
  
-  let  attendanceResponse=await Attendance.aggregate([
+  let  attendanceResponse=await Class.aggregate([
         {
             $match:{
                 $and:[
                    {
-                    check_in_datetime:{
+                    end_time:{
                         $gte:moment(req.query.start_time).startOf('week').set('h',0).set('m',0).set('s',0).add(i,'d').format("YYYY-MM-DDTHH:mm:ss")
                     }
                    } ,{
-                    check_out_datetime:{
+                    start_time:{
                         $lte:moment(req.query.start_time).startOf('week').set('h',0).set('m',0).set('s',0).add(i+1,'d').format("YYYY-MM-DDTHH:mm:ss")
                     }
                    },{
                     student_id:new ObjectID(req.query.student_id)
-                   },{
-                    class_id:{
-                        $in:scheduledClasses.map((data)=>{
-                            return data._id
-                        })
-                    }
-                   }
+                   },
+                   {status:'Done'}
                 ]
             }
         },

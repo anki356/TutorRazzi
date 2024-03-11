@@ -19,6 +19,7 @@ import HomeWork from "../../../models/HomeWork.js"
 import Task from "../../../models/Task.js"
 import ExtraClassRequest from "../../../models/ExtraClassRequest.js"
 import Reminder from "../../../models/Reminder.js"
+import { addNotifications } from "../../../util/addNotification.js"
 const requestTrialClass = async (req, res, next) => {
    
     let classResponseArray = []
@@ -429,27 +430,64 @@ const getLastTrialClass = async (req, res, next) => {
 const dislikeClass = async (req, res, next) => {
 
 
+    let dislikeResponse=await Class.findOne({
+        _id:req.body.class_id
+    },{
+        response:1
+    })
+    if (dislikeResponse.response){
+        return res.json(responseObj(false,null,"Class Response Already marked"))
+    }
+        dislikeResponse = await Class.findOneAndUpdate({_id:req.body.class_id},{$set:{
+          
+            response: "Disliked",
+            reason_disliking: req.body.reason
+        }})
+        const AcademicManangerResponse=await AcademicManager.findOne({
+            students:{
+                 $elemMatch: {
+                $eq: req.user._id
+            }
+            }
+        })
+        const teacherResponse=await Teacher.findOne({
+            user_id:dislikeResponse.teacher_id
+        })
+        addNotifications(dislikeResponse.teacher_id,"Class has been disliked"," Class has been disliked by "+req.user.name+" for subject "+dislikeResponse.subject+" on "+ moment(dislikeResponse.start_time).format("DD-MM-YYYY")+ "at "+moment(dislikeResponse.start_time).format("HH:mm" ))
+        addNotifications(AcademicManangerResponse.user_id,"Class has been disliked"," Class has been disliked by "+req.user.name+"by teacher"+teacherResponse.preferred_name  +" for subject "+dislikeResponse.subject+" on "+ moment(dislikeResponse.start_time).format("DD-MM-YYYY")+ "at "+moment(dislikeResponse.start_time).format("HH:mm" ))
+        res.json(responseObj(true, [], " Dislike Response saved Successfully", []))
+    
+    
+    
+    }
 
-
-    const dislikeResponse = await Class.updateOne({_id:req.body.class_id},{$set:{
-      
-        response: "Disliked",
-        reason_disliking: req.body.reason
-    }})
-    res.json(responseObj(true, [], " Dislike Response saved Successfully", []))
-
-
-
-}
-
-const likeClass = async (req, res, next) => {
-    const likeResponse = await Class.updateOne({_id:req.body.class_id},{$set:{
-      
-        response: "Liked",
-    }})
-    res.json(responseObj(true, [], "Like Response Saved Successful"))
-}
-
+    const likeClass = async (req, res, next) => {
+        let dislikeResponse=await Class.findOne({
+            _id:req.body.class_id
+        },{
+            response:1
+        })
+        if (dislikeResponse.response){
+            return res.json(responseObj(false,null,"Class Response Already marked"))
+        }
+        const likeResponse = await Class.findOneAndUpdate({_id:req.body.class_id},{$set:{
+          
+            response: "Liked",
+        }})
+        const AcademicManangerResponse=await AcademicManager.findOne({
+            students:{
+                 $elemMatch: {
+                $eq: req.user._id
+            }
+            }
+        })
+        const teacherResponse=await Teacher.findOne({
+            user_id:likeResponse.teacher_id
+        })
+        addNotifications(likeResponse.teacher_id,"Class has been Liked"," Class has been Liked by "+req.user.name+" for subject "+likeResponse.subject+" on "+ moment(likeResponse.start_time).format("DD-MM-YYYY")+ "at "+moment(likeResponse.start_time).format("HH:mm" ))
+        res.json(responseObj(true, [], "Like Response Saved Successful"))
+        addNotifications(AcademicManangerResponse.user_id,"Class has been Liked"," Class has been Liked by "+req.user.name+"by teacher"+teacherResponse.preferred_name  +" for subject "+likeResponse.subject+" on "+ moment(likeResponse.start_time).format("DD-MM-YYYY")+ "at "+moment(likeResponse.start_time).format("HH:mm" ))
+    }
 const getUpcomingClassDetails=async(req,res)=>{
     let classDetails = {}
     classDetails = await Class.findOne({ _id: req.query.class_id }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject_id: 1, teacher_id: 1, notes: 1 }).populate({

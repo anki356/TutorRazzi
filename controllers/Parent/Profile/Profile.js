@@ -376,7 +376,7 @@ for (let i=0;i<7;i++){
                         $lte:moment(req.query.start_time).startOf('week').set('h',0).set('m',0).set('s',0).add(i+1,'d').format("YYYY-MM-DDTHH:mm:ss")
                     }
                    },{
-                    student_id:new ObjectID(req.query.student_id)
+                    student_id:new ObjectID(req.user._id)
                    },
                    {status:'Done'}
                 ]
@@ -397,12 +397,13 @@ for (let i=0;i<7;i++){
         }
     ])
    
-    if (attendanceResponse.length===0&& scheduledClasses.length===0){
+    if (attendanceResponse.length===0&& scheduledClasses===0){
         attendanceDataArray.push({
             date:moment(req.query.start_time).startOf('week').set('h',0).set('m',0).set('s',0).add(i,'d').format("YYYY-MM-DDTHH:mm:ss"),
             day:week_days[i],
             "attendance": null
         })
+
     }
     else if(attendanceResponse.length===0){
    
@@ -412,18 +413,18 @@ for (let i=0;i<7;i++){
             "attendance": false
         }),
       
-        totalAbsent+=scheduledClasses.length
+        totalAbsent+=scheduledClasses
     }
     else{
         attendanceDataArray.push({
             date:attendanceResponse[0].date,
             day:week_days[i],
-            attendance:scheduledClasses.length===attendanceResponse[0].count
+            attendance:scheduledClasses===attendanceResponse[0].count
             
             
         })
         totalPresent+=attendanceResponse[0].count
-        totalAbsent+=scheduledClasses.length-attendanceResponse[0].count
+        totalAbsent+=scheduledClasses-attendanceResponse[0].count
     }
 }
 

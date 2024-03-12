@@ -90,6 +90,10 @@ console.log(query)
         {
             $unwind: '$user'
         },
+        {
+            $unwind: '$teachers'
+        },
+
         
 
         {

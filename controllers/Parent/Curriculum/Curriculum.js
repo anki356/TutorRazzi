@@ -23,10 +23,12 @@ const getCurriculum=async (req,res,next)=>{
     }
     const getSubjects=async (req,res,next)=>{
   
-        let subjects=await Subject.find({
-        })
-    res.json(responseObj(true,subjects,''))
-            
+        const subject_curriculum=await SubjectCurriculum.find({
+            curriculum:req.query.curriculum,
+            subject:req.query.subject
+         })
+         let subjects=subject_curriculum.map((data)=>data.subject)
+         return res.json(responseObj(true,subjects,"Subject Curriculum"))     
        
     }
     const getGrades=async(req,res,next)=>{

@@ -173,12 +173,12 @@ console.log(query)
    if (totalDocs===0) {
     return res.json(responseObj(true,[],"No users"));
 }
-students[0].uniqueEntries.slice((Number(page)-1)*Number(limit),Number(limit))
+let array=students[0].uniqueEntries.slice((Number(page)-1)*Number(limit),(Number(page)-1)*Number(limit)+Number(limit))
    let totalPages=Math.ceil(totalDocs/Number(limit))
    let hasPrevPage=page>1
    let hasNextPage=page<totalPages
    let prevPage=hasPrevPage?Number(page)-1:null
    let nextPage=hasNextPage?Number(page)+1:null
-    return res.json(responseObj(true,{docs:students[0].uniqueEntries,totalDocs:totalDocs,limit:limit,page:page,pagingCounter:page,totalPages:totalPages,hasNextPage:hasNextPage,hasPrevPage:hasPrevPage,prevPage:prevPage,nextPage:nextPage},"All users"));
+    return res.json(responseObj(true,{docs:array,totalDocs:totalDocs,limit:limit,page:page,pagingCounter:page,totalPages:totalPages,hasNextPage:hasNextPage,hasPrevPage:hasPrevPage,prevPage:prevPage,nextPage:nextPage},"All users"));
 }
  export {getAll}  

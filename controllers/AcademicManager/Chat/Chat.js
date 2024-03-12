@@ -4,25 +4,27 @@ import {responseObj} from "../../../util/response.js"
 import mongoose from "mongoose";
 const ObjectId=mongoose.Types.ObjectId
 const getAll=async (req,res)=>{
-    const { limit, page, search } = req.query;
+    const { search } = req.query;
 
-    const options = {
-        limit,
-        page,
-    }
+    // const options = {
+    //     limit,
+    //     page,
+    // }
 
     let query={
         user_id:new ObjectId(req.user._id)
     }
 
-    const orConditions = [];
-
-    // if (search) {
-    //     orConditions.push(
-    //         { 'students.name': { $regex: search,$options:"i" } },
-    //         { 'teachers.name': { $regex: search,$options:"i" } },
-    //     );
-    // }
+    let orConditions = [];
+let querySecond
+    if (search) {
+       querySecond={
+        name:{
+            $regex:search,
+            $options:"i"
+        }
+       }
+    }
 
     if (orConditions.length > 0) {
         query.$or = orConditions;
@@ -30,8 +32,9 @@ const getAll=async (req,res)=>{
 console.log(query)
 const students = await AcademicManager.aggregate([
     {
-            $match: query
-        },
+        $match: query
+    },
+   
     {
         $lookup: {
             from: 'users',
@@ -39,6 +42,12 @@ const students = await AcademicManager.aggregate([
             foreignField: '_id',
             as: 'user',
             pipeline: [
+            {
+$match:
+    querySecond
+
+            },
+
                 {
                     $addFields: { profile: { $concat: [process.env.CLOUD_API+"/", '$profile_image'] } }
                 },
@@ -48,6 +57,7 @@ const students = await AcademicManager.aggregate([
             ],
         },
     },
+   
    
     {
         $addFields: {
@@ -99,10 +109,19 @@ const students = await AcademicManager.aggregate([
     
  
 ]);
+orConditions = [];
+if (search) {
+   querySecond={"name": {$regex: search,$options:"i"}}
+}
+if (orConditions.length > 0) {
+    query.$or = orConditions;
+}
+console.log(querySecond,query)
     const teachers = await AcademicManager.aggregate([
         {
-                $match: query
-            },
+            $match: query
+        },
+       
         {
             $lookup: {
                 from: 'users',
@@ -110,6 +129,7 @@ const students = await AcademicManager.aggregate([
                 foreignField: '_id',
                 as: 'user',
                 pipeline: [
+                    {$match:querySecond},
                     {
                         $addFields: { profile: { $concat: [process.env.CLOUD_API+"/", '$profile_image'] } }
                     },
@@ -119,7 +139,7 @@ const students = await AcademicManager.aggregate([
                 ],
             },
         },
-       
+      
         {
             $addFields: {
                 nonEmptyFields: {
@@ -172,21 +192,31 @@ const students = await AcademicManager.aggregate([
     ]);
 console.log(students)    
 let array=[]
-
+if(students.length===0){
+    students.push({
+        uniqueEntries:[]
+    })
+}
+if(teachers.length===0){
+    teachers.push({
+        uniqueEntries:[]
+    })
+}
 array=students[0].uniqueEntries.concat(teachers[0].uniqueEntries)
 
 
-let totalDocs=array.length
-if (totalDocs===0) {
- return res.json(responseObj(true,[],"No users"));
-}
-let totalPages=Math.ceil(totalDocs/Number(limit))
-array=array.slice((Number(page)-1)*Number(limit),(Number(page)-1)*Number(limit)+Number(limit))
-let hasPrevPage=page>1
-let hasNextPage=page<totalPages
-let prevPage=hasPrevPage?Number(page)-1:null
-let nextPage=hasNextPage?Number(page)+1:null
- return res.json(responseObj(true,{docs:array,totalDocs:totalDocs,limit:limit,page:page,pagingCounter:page,totalPages:totalPages,hasNextPage:hasNextPage,hasPrevPage:hasPrevPage,prevPage:prevPage,nextPage:nextPage},"All users"));
+// let totalDocs=array.length
+// if (totalDocs===0) {
+//  return res.json(responseObj(true,[],"No users"));
+// }
+// let totalPages=Math.ceil(totalDocs/Number(limit))
+// // array=array.slice((Number(page)-1)*Number(limit),(Number(page)-1)*Number(limit)+Number(limit))
+// let hasPrevPage=page>1
+// let hasNextPage=page<totalPages
+// let prevPage=hasPrevPage?Number(page)-1:null
+// let nextPage=hasNextPage?Number(page)+1:null
+//  return res.json(responseObj(true,{docs:array,totalDocs:totalDocs,limit:limit,page:page,pagingCounter:page,totalPages:totalPages,hasNextPage:hasNextPage,hasPrevPage:hasPrevPage,prevPage:prevPage,nextPage:nextPage},"All users"));
+return res.json(responseObj(true,{docs:array},"All users"));
 
 }
  export {getAll}  

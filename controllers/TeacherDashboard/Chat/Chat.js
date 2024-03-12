@@ -3,21 +3,25 @@ import {responseObj} from "../../../util/response.js"
 import mongoose from "mongoose";
 const ObjectId=mongoose.Types.ObjectId
 const getAll=async (req,res)=>{
-    const { limit, page, search } = req.query;
+    const {  search } = req.query;
 
-    const options = {
-        limit,
-        page,
-    }
+    // const options = {
+    //     limit,
+    //     page,
+    // }
 console.log(req.user._id)
     const query = { teacher_id: new ObjectId(req.user._id) };
 
     const orConditions = [];
 
+    let querySecond
     if (search) {
-        orConditions.push(
-            { 'student_id.name': { $regex: search,$options:"i"  } },
-        );
+       querySecond={
+        name:{
+            $regex:search,
+            $options:"i"
+        }
+       }
     }
 
     if (orConditions.length > 0) {
@@ -26,8 +30,9 @@ console.log(req.user._id)
 console.log(query)
     const students = await Class.aggregate([
         {
-                $match: query
-            },
+            $match: query
+        },
+       
         {
             $lookup: {
                 from: 'users',
@@ -35,6 +40,7 @@ console.log(query)
                 foreignField: '_id',
                 as: 'user',
                 pipeline: [
+                    {$match:querySecond},
                     {
                         $addFields: { profile: { $concat: [process.env.CLOUD_API+"/", '$profile_image'] } }
                     },
@@ -44,7 +50,7 @@ console.log(query)
                 ],
             },
         },
-       
+      
         {
             $addFields: {
                 nonEmptyFields: {
@@ -97,8 +103,8 @@ console.log(query)
     ]);
     const studentsTotal = await Class.aggregate([
         {
-                $match: query
-            },
+            $match: query
+        },
         {
             $lookup: {
                 from: 'users',
@@ -106,6 +112,7 @@ console.log(query)
                 foreignField: '_id',
                 as: 'user',
                 pipeline: [
+                    {$match:querySecond},
                     {
                         $addFields: { profile: { $concat: [process.env.APP_URL, '$profile_image'] } }
                     },
@@ -167,18 +174,21 @@ console.log(query)
     ]);
     
 
-   
+  if(students.length===0) {
+    return res.json(responseObj(true,[],"No users"));
+  }
     
    let totalDocs=studentsTotal[0].uniqueEntries.length
    if (totalDocs===0) {
     return res.json(responseObj(true,[],"No users"));
 }
-let array=students[0].uniqueEntries.slice((Number(page)-1)*Number(limit),(Number(page)-1)*Number(limit)+Number(limit))
-   let totalPages=Math.ceil(totalDocs/Number(limit))
-   let hasPrevPage=page>1
-   let hasNextPage=page<totalPages
-   let prevPage=hasPrevPage?Number(page)-1:null
-   let nextPage=hasNextPage?Number(page)+1:null
-    return res.json(responseObj(true,{docs:array,totalDocs:totalDocs,limit:limit,page:page,pagingCounter:page,totalPages:totalPages,hasNextPage:hasNextPage,hasPrevPage:hasPrevPage,prevPage:prevPage,nextPage:nextPage},"All users"));
+let array=students[0].uniqueEntries
+//    let totalPages=Math.ceil(totalDocs/Number(limit))
+//    let hasPrevPage=page>1
+//    let hasNextPage=page<totalPages
+//    let prevPage=hasPrevPage?Number(page)-1:null
+//    let nextPage=hasNextPage?Number(page)+1:null
+    // return res.json(responseObj(true,{docs:array,totalDocs:totalDocs,limit:limit,page:page,pagingCounter:page,totalPages:totalPages,hasNextPage:hasNextPage,hasPrevPage:hasPrevPage,prevPage:prevPage,nextPage:nextPage},"All users"));
+    return res.json(responseObj(true,{docs:array},"All users"));
 }
  export {getAll}  

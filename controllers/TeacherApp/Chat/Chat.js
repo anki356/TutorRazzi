@@ -72,7 +72,7 @@ console.log(query)
         {
             $unwind: '$user'
         },
-        
+      
 
         {
             $replaceRoot: {
@@ -85,12 +85,7 @@ console.log(query)
                 },
             },
         },
-        {
-            $skip: (Number(page) - 1) * Number(limit)
-        },
-        {
-            $limit:Number(limit)
-        },
+      
         {
             $group: {
                 _id: "$user._id",
@@ -172,12 +167,13 @@ console.log(query)
     ]);
     
 
-  
+   
     
    let totalDocs=studentsTotal[0].uniqueEntries.length
    if (totalDocs===0) {
-    return res.json(responseObj(false,null,"No users"));
+    return res.json(responseObj(true,[],"No users"));
 }
+students[0].uniqueEntries.slice((Number(page)-1)*Number(limit),Number(limit))
    let totalPages=Math.ceil(totalDocs/Number(limit))
    let hasPrevPage=page>1
    let hasNextPage=page<totalPages

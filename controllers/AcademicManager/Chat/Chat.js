@@ -28,7 +28,7 @@ const getAll=async (req,res)=>{
         query.$or = orConditions;
     }
 console.log(query)
-    const students = AcademicManager.aggregate([
+    const students = await AcademicManager.aggregate([
        
         {
             $lookup: {
@@ -104,12 +104,6 @@ teacher:{$mergeObjects: [{ $arrayElemAt: ['$nonEmptyFields', 0] }, "$teachers"]}
                     academic_manager: req.user._id,
                 },
             },
-        },
-        {
-            $skip: (Number(page) - 1) * Number(limit)
-        },
-        {
-            $limit:Number(limit)
         },
         {
             $match: query
@@ -214,7 +208,8 @@ teacher:{$mergeObjects: [{ $arrayElemAt: ['$nonEmptyFields', 0] }, "$teachers"]}
 ]);
     
 
-   
+students[0].uniqueEntries.slice((Number(page)-1)*Number(limit),Number(limit))
+  
 let totalDocs=studentsTotal[0].uniqueEntries.length
 if (totalDocs===0) {
  return res.json(responseObj(true,[],"No users"));

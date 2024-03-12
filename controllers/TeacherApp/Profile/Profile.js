@@ -204,9 +204,9 @@ const getUpcomingClasses = async (req, res, next) => {
         [
        
           { "subject.name": { $regex: req.query.search, $options: 'i' } },
-          {"name":  {$regex: req.query.search, $options: 'i' }
+          // {"name":  {$regex: req.query.search, $options: 'i' }
            
-          },
+          // },
           {"student_id":{
             $in:student_ids.map((data)=>data._id)
           }},
@@ -498,9 +498,9 @@ $nin:["Scheduled","Pending"]
     query["$or"] = [
      
       { "subject.name": { $regex: req.query.search, $options: 'i' } },
-      {"name":  {$regex: req.query.search, $options: 'i' }
+      // {"name":  {$regex: req.query.search, $options: 'i' }
        
-      },
+      // },
       {"student_id":{
         $in:student_ids.map((data)=>data._id)
       }},

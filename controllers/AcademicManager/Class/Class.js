@@ -414,9 +414,9 @@ if(req.query.search) {
   query["$or"] = [
    
     { "subject.name": { $regex: req.query.search, $options: 'i' } },
-    {"name":  {$regex: req.query.search, $options: 'i' }
+    // {"name":  {$regex: req.query.search, $options: 'i' }
      
-    },
+    // },
     {"student_id":{
       $in:student_ids.map((data)=>data._id)
     }},
@@ -493,9 +493,9 @@ $gte : moment(req.query.date).format("YYYY-MM-DD"),$lt:moment(req.query.date).ad
       query["$or"] = [
        
         { "subject.name": { $regex: req.query.search, $options: 'i' } },
-        {"name":  {$regex: req.query.search, $options: 'i' }
+        // {"name":  {$regex: req.query.search, $options: 'i' }
          
-        },
+        // },
         {"student_id":{
           $in:student_ids.map((data)=>data._id)
         }},
@@ -757,9 +757,9 @@ const getUpcomingClasses=async(req,res,next)=>{
           [
          
             { "subject.name": { $regex: req.query.search, $options: 'i' } },
-            {"name":  {$regex: req.query.search, $options: 'i' }
+            // {"name":  {$regex: req.query.search, $options: 'i' }
              
-            },
+            // },
             {"student_id":{
               $in:student_ids.map((data)=>data._id)
             }},
@@ -828,9 +828,9 @@ const getUpcomingClasses=async(req,res,next)=>{
       query["$or"]= [
          
             { "subject.name": { $regex: req.query.search, $options: 'i' } },
-            {"name":  {$regex: req.query.search, $options: 'i' }
+            // {"name":  {$regex: req.query.search, $options: 'i' }
              
-            },
+            // },
             {"student_id":{
               $in:student_ids.map((data)=>data._id)
             }},

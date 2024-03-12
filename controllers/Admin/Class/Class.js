@@ -51,9 +51,9 @@ start_time:1
       query["$or"] = [
        
         { "subject.name": { $regex: req.query.search, $options: 'i' } },
-        {"name":  {$regex: req.query.search, $options: 'i' }
+        // {"name":  {$regex: req.query.search, $options: 'i' }
          
-        },
+        // },
         {"student_id":{
           $in:student_ids.map((data)=>data._id)
         }},
@@ -106,9 +106,9 @@ start_time:1
       query["$or"] = [
        
         { "subject.name": { $regex: req.query.search, $options: 'i' } },
-        {"name":  {$regex: req.query.search, $options: 'i' }
+        // {"name":  {$regex: req.query.search, $options: 'i' }
          
-        },
+        // },
         {"student_id":{
           $in:student_ids.map((data)=>data._id)
         }},
@@ -153,9 +153,9 @@ start_time:1
       query["$or"] = [
        
         { "subject.name": { $regex: req.query.search, $options: 'i' } },
-        {"name":  {$regex: req.query.search, $options: 'i' }
+        // {"name":  {$regex: req.query.search, $options: 'i' }
          
-        },
+        // },
         {"student_id":{
           $in:student_ids.map((data)=>data._id)
         }},
@@ -219,9 +219,9 @@ start_time:1
             query["$or"] = [
              
               { "subject.name": { $regex: req.query.search, $options: 'i' } },
-              {"name":  {$regex: req.query.search, $options: 'i' }
+              // {"name":  {$regex: req.query.search, $options: 'i' }
                
-              },
+              // },
               {"student_id":{
                 $in:student_ids.map((data)=>data._id)
               }},

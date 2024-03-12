@@ -60,9 +60,9 @@ const getUpcomingClasses = async (req, res, next) => {
         [
        
           { "subject.name": { $regex: req.query.search, $options: 'i' } },
-          {"name":  {$regex: req.query.search, $options: 'i' }
+          // {"name":  {$regex: req.query.search, $options: 'i' }
            
-          },
+          // },
           {"student_id":{
             $in:student_ids.map((data)=>data._id)
           }},
@@ -128,9 +128,9 @@ const getPastClasses = async (req, res, next) => {
          [
        
           { "subject.name": { $regex: req.query.search, $options: 'i' } },
-          {"name":  {$regex: req.query.search, $options: 'i' }
+          // {"name":  {$regex: req.query.search, $options: 'i' }
            
-          },
+          // },
           {"student_id":{
             $in:student_ids.map((data)=>data._id)
           }},
@@ -199,9 +199,9 @@ const getRescheduledClasses = async (req, res, next) => {
     query["$or"] = [
      
       { "subject.name": { $regex: req.query.search, $options: 'i' } },
-      {"name":  {$regex: req.query.search, $options: 'i' }
+      // {"name":  {$regex: req.query.search, $options: 'i' }
        
-      },
+      // },
       {"student_id":{
         $in:student_ids.map((data)=>data._id)
       }},
@@ -256,9 +256,9 @@ const getTrialClassesRequests = async (req, res, next) => {
     query["$or"] = [
      
       { "subject.name": { $regex: req.query.search, $options: 'i' } },
-      {"name":  {$regex: req.query.search, $options: 'i' }
+      // {"name":  {$regex: req.query.search, $options: 'i' }
        
-      },
+      // },
       {"student_id":{
         $in:student_ids.map((data)=>data._id)
       }},

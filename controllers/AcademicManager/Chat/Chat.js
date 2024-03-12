@@ -39,7 +39,23 @@ console.log(query)
                 as: 'user',
                 pipeline: [
                     {
-                        $addFields: { profile: { $concat: [process.env.APP_URL, '$profile_image'] } }
+                        $addFields: { profile: { $concat: [process.env.CLOUD_API+"/", '$profile_image'] } }
+                    },
+                    {
+                        $project: { name: 1, _id: 1, role: 1,profile:1 }
+                    },
+                ],
+            },
+        },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'teachers',
+                foreignField: '_id',
+                as: 'teachers',
+                pipeline: [
+                    {
+                        $addFields: { profile: { $concat: [process.env.CLOUD_API+"/", '$profile_image'] } }
                     },
                     {
                         $project: { name: 1, _id: 1, role: 1,profile:1 }
@@ -54,6 +70,7 @@ console.log(query)
                     $filter: {
                         input: [
                             { $arrayElemAt: ["$user", 0] },
+                            {$arrayElemAt: ["$teachers", 0]}
                         ],
                         as: 'field',
                         cond: { $ne: ['$$field', []] },
@@ -84,6 +101,7 @@ console.log(query)
                     // counselor: '$counselor',
                     _id: { $arrayElemAt: ['$nonEmptyFields._id', 0] },
                     student: { $mergeObjects: [{ $arrayElemAt: ['$nonEmptyFields', 0] }, "$user"] },
+teacher:{$mergeObjects: [{ $arrayElemAt: ['$nonEmptyFields', 0] }, "$teachers"]},
                     academic_manager: req.user._id,
                 },
             },

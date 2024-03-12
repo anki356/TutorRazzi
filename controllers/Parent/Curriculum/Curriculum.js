@@ -1,6 +1,7 @@
 import Curriculum from "../../../models/Curriculum.js";
 import Grade from "../../../models/Grade.js";
 import Subject from "../../../models/Subject.js";
+import SubjectCurriculum from "../../../models/SubjectCurriculum.js";
 import { responseObj } from "../../../util/response.js";
 
 const getCurriculum=async (req,res,next)=>{

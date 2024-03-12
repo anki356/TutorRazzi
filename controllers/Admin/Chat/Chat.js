@@ -11,21 +11,21 @@ const getAll=async (req,res)=>{
     }
 
     let query={
-        user_id:new ObjectId(req.user._id)
+        // user_id:new ObjectId(req.user._id)
     }
 
     const orConditions = [];
 
-    if (search) {
-        orConditions.push(
-            { 'students.name': { $regex: search,$options:"i" } },
-            { 'teachers.name': { $regex: search,$options:"i" } },
-        );
-    }
+    // if (search) {
+    //     orConditions.push(
+    //         { 'students.name': { $regex: search,$options:"i" } },
+    //         { 'teachers.name': { $regex: search,$options:"i" } },
+    //     );
+    // }
 
-    if (orConditions.length > 0) {
-        query.$or = orConditions;
-    }
+    // if (orConditions.length > 0) {
+    //     query.$or = orConditions;
+    // }
 console.log(query)
     const students = await Class.aggregate([
        

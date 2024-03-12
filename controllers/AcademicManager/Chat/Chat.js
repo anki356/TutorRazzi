@@ -17,12 +17,12 @@ const getAll=async (req,res)=>{
 
     const orConditions = [];
 
-    if (search) {
-        orConditions.push(
-            { 'students.name': { $regex: search,$options:"i" } },
-            { 'teachers.name': { $regex: search,$options:"i" } },
-        );
-    }
+    // if (search) {
+    //     orConditions.push(
+    //         { 'students.name': { $regex: search,$options:"i" } },
+    //         { 'teachers.name': { $regex: search,$options:"i" } },
+    //     );
+    // }
 
     if (orConditions.length > 0) {
         query.$or = orConditions;

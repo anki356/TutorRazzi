@@ -91,19 +91,20 @@ const getAll= async (req, res) => {
             $replaceRoot: {
               newRoot:
               {
-                chatUser: { $arrayElemAt: ['$nonEmptyFields', 0]  },
+                chatUser: { $mergeObjects: [{ $arrayElemAt: ['$nonEmptyFields', 0] }, "$teachers","$students"] },
+
               },
             },
           },
         ]);
-      
-        const data = await Class.aggregatePaginate(counselors, options);
-      
-        if (!data) {
-          const response = responseObj(true, data, 'No Data Found');
-          return res.json(response);
-        }
-        const response = responseObj(true, data, '');
-          return res.json(response);
+        Class.aggregatePaginate(counselors,options,(err,result)=>{
+            if(result){
+                if(result.totalDocs===0){
+                    return res.json(responseObj(false,null,"No users"));
+                }
+            }
+            return res.json(responseObj(true,result,"All users"));
+        })  
+       
 }
  export {getAll}  

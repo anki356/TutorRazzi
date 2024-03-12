@@ -1,5 +1,5 @@
 import express from 'express'
-import { getClassDetails,requestExtraclass,acceptRescheduledClass,getExtraClassQuotes, requestTrialClass,scheduleClass,rescheduleClass, reviewClass,raiseRequestResource,getClassQuotes, joinClass, leaveClass, getPurchasedClasses, getPurchasedClassesByQuoteId, setReminder, getClassesBasedOnDate, getLastTrialClass, likeClass, dislikeClass, getUpcomingClassDetails } from '../../../controllers/Parent/Class/Class.js'
+import { getClassDetails,requestExtraclass,getExtraClassQuotes, requestTrialClass,scheduleClass,rescheduleClass, reviewClass,raiseRequestResource,getClassQuotes, joinClass, leaveClass, getPurchasedClasses, getPurchasedClassesByQuoteId, setReminder, getClassesBasedOnDate, getLastTrialClass, likeClass, dislikeClass, getUpcomingClassDetails, acceptClassRequest } from '../../../controllers/Parent/Class/Class.js'
 import { authVerify } from '../../../controllers/Parent/Auth/Auth.js'
 import validationError from '../../../middleware/validationError.js'
 import { body,param,query } from 'express-validator'
@@ -53,7 +53,7 @@ router.get("/purchased-classes-by-quote_id",authVerify,getPurchasedClassesByQuot
 router.patch("/schedule-class/:id",authVerify,scheduleClassValidation,validationError,scheduleClass)
 router.post("/reminder",authVerify,classValidatonChain,validationError,setReminder)
 router.post("/request-extra-class",authVerify,extraClassValidationChain,validationError,requestExtraclass)
-router.patch("/accept-rescheduled-class/:_id",authVerify,rescheduleValidationChain,validationError,acceptRescheduledClass)
+router.patch("/accept-class/:_id",authVerify,rescheduleValidationChain,validationError,acceptClassRequest)
 router.get("/extra-classes-quotes",authVerify,getExtraClassQuotes)
 const dateValidationChain=[
     query("date").notEmpty().withMessage("Date is Required"),

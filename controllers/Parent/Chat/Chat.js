@@ -10,13 +10,13 @@ const getAll=async (req,res)=>{
         page,
     }
 console.log(req.user._id)
-    const query = { teacher_id: new ObjectId(req.user._id) };
+    const query = { student_id: new ObjectId(req.user._id) };
 
     const orConditions = [];
 
     if (search) {
         orConditions.push(
-            { 'student_id.name': { $regex: search,$options:"i"  } },
+            { 'teacher_id.name': { $regex: search,$options:"i"  } },
         );
     }
 
@@ -24,14 +24,14 @@ console.log(req.user._id)
         query.$or = orConditions;
     }
 
-    const students = Class.aggregate([
+    const teachers =  Class.aggregate([
         {
                 $match: query
             },
         {
             $lookup: {
                 from: 'users',
-                localField: 'student_id',
+                localField: 'taecher_id',
                 foreignField: '_id',
                 as: 'user',
                 pipeline: [
@@ -85,6 +85,7 @@ console.log(req.user._id)
                 },
             },
         },
+       
         {
             $group: {
                 _id: "$user._id",
@@ -164,20 +165,14 @@ console.log(req.user._id)
        
      
     // ]);
-    
-
-    // if (!students.length>0) {
-    //     return res.json(responseObj(true,[],"No users"));
-    // }
-    
-Class.aggregatePaginate(students,options,(err,result)=>{
-    if(result){
-        if(result.totalDocs===0){
-            return res.json(responseObj(false,null,"No users"));
+    Class.aggregatePaginate(students,options,(err,result)=>{
+        if(result){
+            if(result.totalDocs===0){
+                return res.json(responseObj(false,null,"No users"));
+            }
         }
-    }
-    return res.json(responseObj(true,result,"All users"));
-})
-    
-}
+        return res.json(responseObj(true,result,"All users"));
+    })  
+
+   }
  export {getAll}  

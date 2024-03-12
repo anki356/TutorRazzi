@@ -27,7 +27,7 @@ const getAll=async (req,res)=>{
         query.$or = orConditions;
     }
 console.log(query)
-    const students = await AcademicManager.aggregate([
+    const students = AcademicManager.aggregate([
         {
                 $match: query
             },
@@ -87,12 +87,6 @@ console.log(query)
                     academic_manager: req.user._id,
                 },
             },
-        },
-        {
-            $skip: (Number(page) - 1) * Number(limit)
-        },
-        {
-            $limit:Number(limit)
         },
         {
             $group: {
@@ -175,16 +169,14 @@ console.log(query)
     // ]);
     
 
-    if (!students.length>0) {
-        return res.json(responseObj(true,[],"No users"));
-    }
-    
-   let totalDocs=students[0].uniqueEntries.length
-   let totalPages=Math.ceil(totalDocs/Number(limit))
-   let hasPrevPage=page>1
-   let hasNextPage=page<totalPages
-   let prevPage=hasPrevPage?Number(page)-1:null
-   let nextPage=hasNextPage?Number(page)+1:null
-    return res.json(responseObj(true,{docs:students[0].uniqueEntries,totalDocs:totalDocs,limit:limit,page:page,pagingCounter:page,totalPages:totalPages,hasNextPage:hasNextPage,hasPrevPage:hasPrevPage,prevPage:prevPage,nextPage:nextPage},"All users"));
+   
+    Class.aggregatePaginate(students,options,(err,result)=>{
+        if(result){
+            if(result.totalDocs===0){
+                return res.json(responseObj(false,null,"No users"));
+            }
+        }
+        return res.json(responseObj(true,result,"All users"));
+    })
 }
  export {getAll}  

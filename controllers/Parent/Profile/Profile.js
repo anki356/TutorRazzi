@@ -550,14 +550,7 @@ return res.json(responseObj(true,{"totalRescheduledClasses":recheduledClasses,"a
       return res.json(responseObj(true,result,null))
     })
   }
-  const getHomeworks=async(req,res,next)=>{
-    let homeworkData=[]
-    let classResponse=await Class.find({student_id:new ObjectID(req.query.student_id)})
-    homeworkData=await HomeWork.find({class_id:{
-      $in:classResponse.map((data)=>data._id)
-    }})
-   return  res.json(responseObj(true,homeworkData,null))
-  }
+  
   const getUserProfile=async(req,res,next)=>{
     let userprofile={};
     
@@ -565,7 +558,7 @@ return res.json(responseObj(true,{"totalRescheduledClasses":recheduledClasses,"a
   
     return res.json(responseObj(true,userprofile,null))
   }
-  const getHomework=async(req,res,next)=>{
+  const getHomeworks=async(req,res,next)=>{
  
     let query={
       student_id:req.user._id
@@ -674,4 +667,4 @@ return res.json(responseObj(true,{"totalRescheduledClasses":recheduledClasses,"a
         
     },"Token with Student Details Attached",null) )
   }
-export {getAllPayments,selectStudent,getHomeworks,editUserProfile,getAllExams,getTotalClasesToday,getWatchHourweekly,getTotalClassesScheduled,getClassAttendedToday,getUpcomingClasses,getPendingPaymentClasses,getAttendance,getUserProfile,getPastClasses,getRescheduledClasses,getTrialClasses,getHomework,getAllStudents};
+export {getAllPayments,selectStudent,getHomeworks,editUserProfile,getAllExams,getTotalClasesToday,getWatchHourweekly,getTotalClassesScheduled,getClassAttendedToday,getUpcomingClasses,getPendingPaymentClasses,getAttendance,getUserProfile,getPastClasses,getRescheduledClasses,getTrialClasses,getAllStudents};

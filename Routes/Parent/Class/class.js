@@ -9,7 +9,7 @@ const trialClassValidationChain=[
     body('subject').notEmpty().withMessage("Subject cannot be empty"),
     body('curriculum').notEmpty().withMessage("Curriculum cannot be empty"),
     body('grade').notEmpty().withMessage("Curriculum cannot be empty"),
-    body("student_id").notEmpty().withMessage("Student id required"),
+    // body("student_id").notEmpty().withMessage("Student id required"),
     body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time"),
     
     ]

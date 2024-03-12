@@ -3,14 +3,15 @@ import Grade from "../../../models/Grade.js";
 import Subject from "../../../models/Subject.js";
 import { responseObj } from "../../../util/response.js";
 
-
 const getCurriculum=async (req,res,next)=>{
     if(req.query.curriculum){
 
-        await Curriculum.collection.createIndex({name:"text"})
-        const curriculums=await Curriculum.find({
-            $text: { $search: req.query.curriculum}
-        }).collation({ locale: 'en', strength: 2 })
+        const curriculums= await Curriculum.find({
+           name:{
+            $regex:req.query.curriculum,
+            $options:"i"
+           }
+        })
         return res.json(responseObj(true,curriculums,''))
     }
    const curriculums= await Curriculum.find().limit(5)
@@ -20,27 +21,26 @@ const getCurriculum=async (req,res,next)=>{
     
    
     }
-const getSubjects=async (req,res,next)=>{
+    const getSubjects=async (req,res,next)=>{
   
-    await Subject.collection.createIndex({name:"text"})
-    const subjects=await Subject.find({
-        $text: { $search: req.query.subject, $caseSensitive: false , $language: "en"},
+        let subjects=await Subject.find({
+        })
+    res.json(responseObj(true,subjects,''))
+            
        
-      })
-res.json(responseObj(true,subjects,''))
-        
-   
-}
-const getGrades=async(req,res,next)=>{
-    if(req.query.grade){
-
-        await Grade.collection.createIndex({name:"text"})
-        const grades=await Grade.find({
-            $text: { $search: req.query.grade}
-          })
-  return   res.json(responseObj(true,grades,'Grades Are Fetched Successfully'))
     }
-    const grades= await Grade.find().limit(5)
-    return   res.json(responseObj(true,grades,'Grades Are Fetched Successfully')) 
-}
+    const getGrades=async(req,res,next)=>{
+        if(req.query.grade){
+            const grades= await Grade.find({
+                name:{
+                 $regex:req.query.grade,
+                 $options:"i"
+                }
+             })
+            
+      return   res.json(responseObj(true,grades,'Grades Are Fetched Successfully'))
+        }
+        const grades= await Grade.find().limit(5)
+        return   res.json(responseObj(true,grades,'Grades Are Fetched Successfully')) 
+    }
 export {getCurriculum,getSubjects,getGrades}

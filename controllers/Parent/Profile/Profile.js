@@ -429,7 +429,7 @@ for (let i=0;i<7;i++){
 }
 
 
-return res.json(responseObj(true,{"totalRescheduledClasses":recheduledClasses.length,"attendance":attendanceDataArray,"totalAbsent":totalAbsent,"totalPresent":totalPresent},null))
+return res.json(responseObj(true,{"totalRescheduledClasses":recheduledClasses,"attendance":attendanceDataArray,"totalAbsent":totalAbsent,"totalPresent":totalPresent},null))
   }
   const getPastClasses=async(req,res,next)=>{
     
@@ -566,21 +566,42 @@ return res.json(responseObj(true,{"totalRescheduledClasses":recheduledClasses.le
     return res.json(responseObj(true,userprofile,null))
   }
   const getHomework=async(req,res,next)=>{
+ 
     let query={
-      student_id:new ObjectID(req.query.student_id)
+      student_id:req.user._id
     }
+    let ClassResponse=await Class.find(query,{_id:1})
     const options={
       limit:Number(req.query.limit),
       page:Number(req.query.page),
-      select:[
-        'homework'
-      ]
-    }
-     Class.paginate(query,options,(err,result)=>{
-      return res.json(responseObj(true,result,null))
-     })
      
+    }
+  query={
+    class_id:{
+      $in:ClassResponse
+    }
+  }
+  let pending=0
+  let completed=0
+  let homworks=await HomeWork.find({
+    class_id:{
+      $in:ClassResponse
+    }
+  })
+     HomeWork.paginate(query,options,(err,result)=>{
+      
+     homworks.forEach((data)=>{
+        if(data.status==='Pending'){
+          pending+=1
+        }
+        else{
+          completed+=1
+        }
+      })
+      res.json(responseObj(true,{result:result,pending:pending,completed:completed},null))
+     })
     
+   
   }
 
   const editUserProfile=async (req,res)=>{

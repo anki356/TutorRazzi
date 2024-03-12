@@ -11,7 +11,7 @@ const reviewValidation=[
 
 
 ]
-router.get("/get-Teacher-By-Subject-Curriculum-Grade",authVerify,getTeacherBySubjectCurriculum)
+router.get("/get-Teacher-By-Subject-Curriculum",authVerify,getTeacherBySubjectCurriculum)
 router.get("/get-Teacher-By-Id",authVerify,getTeacherById)
 router.get("/get-Teacher-Details",authVerify,getTeacherDetails)
 router.get("/get-great-teachers",authVerify,getGreatTeachers)

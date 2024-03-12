@@ -6,36 +6,30 @@ import Testimonial from "../../../models/Testimonial.js"
 import { responseObj } from "../../../util/response.js"
 import mongoose from 'mongoose'
 const ObjectID=mongoose.Types.ObjectId
-const getTeacherBySubjectCurriculumGrade=async(req,res,next)=>{
-    
-    const teacherResponse = await Teacher.aggregate([{
+const getTeacherBySubjectCurriculum = async (req, res, next) => {
+    const teacherResponse = Teacher.aggregate([{
         $match: {
-            subject_curriculum:{
-                $elemMatch:{
+            
+                subject_curriculum:{
+                    $elemMatch:{
 subject:req.query.subject,
 curriculum:req.query.curriculum,
 // grade:req.query.grade
+                    }
                 }
-            }
+            
+            
         }
-    },{
-        $lookup: {
-            from: "users",
-            localField: "user_id",
-            foreignField: "_id",
-            as: "users"
-        }
-    },
-     {
+    }, {
         $lookup: {
             from: "classes",
             foreignField: "teacher_id",
             localField: "user_id",
             as: "classes",
             pipeline: [
-               { $match: {$and:[{ status: "Done" },{
-                    subject:req.query.subject
-                }]} }   // Add a $match stage to filter documents in the "from" collection
+                { $match: {$and:[{ status: "Done" },{
+                    "subject.name":req.query.subject
+                }]} }  // Add a $match stage to filter documents in the "from" collection
                 // Additional stages for the "from" collection aggregation pipeline if needed
             ]
 
@@ -49,12 +43,33 @@ curriculum:req.query.curriculum,
 
         }
 
-    }, {
+    },{
+        $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "_id",
+            as: "users"
+        }
+    },
+    {
+        $unwind:"$users"
+    },
+    {
+        $unwind: "$exp_details" // Unwind the array of experience details
+    },
+          {
         $project: {
             user_id: 1,
             preferred_name: 1,
+            exp: { $sum: "$exp_details.exp" },
             ratings: {
-                $avg: "$reviews.rating"
+                $avg: {
+                    $cond: [
+                        { $eq: [{ $size: "$reviews" }, 0] },
+                        0,
+                        { $avg: "$reviews.rating" }
+                    ]
+                }
             },
             reviews: {
                 $size: "$reviews"
@@ -62,41 +77,64 @@ curriculum:req.query.curriculum,
             no_of_classes: {
                 $size: "$classes"
             },
-            "users.profile_image":1,
-            exp:1,
-           
+            "users.profile_image":{ $cond: {
+                if: { $eq: ["$users.profile_image", null] },
+                then: null,
+                else: { $concat: [process.env.CLOUD_API+"/", "$users.profile_image"] }
+            }},
 
         }
     }])
 
-
-    return res.json(responseObj(true, teacherResponse, ''))
-
-
-   
+const options={
+    liit:req.query.limit,
+    page:req.query.page
 }
-const getTeacherById=async(req,res,next)=>{
+Teacher.aggregatePaginate(teacherResponse,options,(err,result)=>{
+    res.json(responseObj(true, result, "Teachers"))
+})
+    
+}
+const getTeacherById = async (req, res, next) => {
+
     const { id } = req.query
-    const teacherResponse = await Teacher.find({ user_id: id }).populate({ path: 'user_id' })
-    const testimonialResponse=await Testimonial.find({teacher_id:teacherResponse.user_id})
-    const reviewResponse=await Review.aggregate([
-        {
-            $match:{
-                teacher_id :new ObjectID(id),
-            }
-        },{
-            $project:{
-                _id:"$teacher_id",
-                ratings:{
-                    $avg:"$rating"
-                },
-                reviews:{
-                    $sum:1
-                }
+    const teacherResponse = await Teacher.findOne({ user_id: id },{
+        "exp_details":1,"bio":1,"subject_curriculum":1
+    }).populate({ path: 'user_id' ,select:{
+        "name":1,"profile_image":1
+    }})
+const reviewResponse=await Review.aggregate([
+    {
+        $match:{
+            teacher_id :new ObjectID(id),
+        }
+    },{
+        $project:{
+            _id:"$teacher_id",
+            ratings:{
+                $avg:"$rating"
+            },
+            reviews:{
+                $sum:1
             }
         }
-    ])
-    return res.json(responseObj(true, {teacherResponse:teacherResponse,testimonialResponse:testimonialResponse,reviewResponse:reviewResponse}, "Teacher Details"))
+    }
+])
+let ratings=0
+let reviews=0
+if(reviewResponse.length>0){
+     ratings=reviewResponse[0].ratings,
+    reviews=reviewResponse[0].reviews
+}
+if(teacherResponse===null){
+    return res.json(responseObj(false, null,"No Details Found"))
+}
+    //  const testimonialResponse=await Testimonial.find({teacher_id:id})
+    return res.json(responseObj(true, {teacherResponse:teacherResponse,ratings,reviews}, "Teacher Details"))
+
+
+
+
 }
 const reviewTeacher = async (req, res, next) => {
    
@@ -238,7 +276,7 @@ const getTeachersBySubjectAndName=async(req,res)=>{
     let offset=(Number(req.query.page)-1)*Number(req.query.limit)
     let query={}
     if(req.query.subject){
-        query.subject_curriculum_grade={
+        query.subject_curriculum={
             $elemMatch:{
                 subject:{
                     $regex:req.query.subject,
@@ -246,7 +284,6 @@ const getTeachersBySubjectAndName=async(req,res)=>{
                 }
             }
         }
-
     }
     
     if (req.query.name){
@@ -255,7 +292,7 @@ const getTeachersBySubjectAndName=async(req,res)=>{
                 
         }
     
-    const teacherResponse = await Teacher.aggregate([{
+    const teacherResponse = Teacher.aggregate([{
         $match: query
     }, {
         $lookup: {
@@ -264,9 +301,9 @@ const getTeachersBySubjectAndName=async(req,res)=>{
             localField: "user_id",
             as: "classes",
             pipeline: [
-                {$match: {$and:[{ status: "Done" },{
-                    subject:req.query.subject
-                }]}  }// Add a $match stage to filter documents in the "from" collection
+                { $match: {$and:[{ status: "Done" },{
+                    "subject.name":req.query.subject
+                }]} }  // Add a $match stage to filter documents in the "from" collection
                 // Additional stages for the "from" collection aggregation pipeline if needed
             ]
         }
@@ -288,14 +325,27 @@ const getTeachersBySubjectAndName=async(req,res)=>{
             foreignField: "_id",
             as: "users"
         }
-    }, {
+    },
+    {
+        $unwind:"$users"
+    },
+    {
+        $unwind: "$exp_details" // Unwind the array of experience details
+    },
+    
+    {
         $project: {
             user_id: 1,
             preferred_name: 1,
-            subject_curriculum_grade:1,
-            exp:1,
+            exp: { $sum: "$exp_details.exp" },
             ratings: {
-                $avg: "$reviews.rating"
+                $avg: {
+                    $cond: [
+                        { $eq: [{ $size: "$reviews" }, 0] },
+                        0,
+                        { $avg: "$reviews.rating" }
+                    ]
+                }
             },
             reviews: {
                 $size: "$reviews"
@@ -303,22 +353,58 @@ const getTeachersBySubjectAndName=async(req,res)=>{
             no_of_classes: {
                 $size: "$classes"
             },
-            "users.profile_image":1
+            "users.profile_image":{ $cond: {
+                if: { $eq: ["$users.profile_image", null] },
+                then: null,
+                else: { $concat: [process.env.CLOUD_API+"/", "$users.profile_image"] }
+            }},
 
         }
-    },{
-        $skip:offset
-    },{
-        $limit:Number(req.query.limit)
     }])
     
     let options={
-        limit:req.query.limit,
-        page:req.query.page
+        limit:req.query.limit||5,
+        page:req.query.page||1
     }
   
-   Teacher.paginate(query,options,(err,result)=>{
-    return res.json(responseObj(true,{teacherResponse,result},"Teachers data of required Subject are here"))
+   Teacher.aggregatePaginate(teacherResponse,options,(err,result)=>{
+    return res.json(responseObj(true,result,"Teachers data of required Subject are here"))
    })
 }
-export {getTeacherBySubjectCurriculumGrade,getTeacherById,getGreatTeachers,reviewTeacher,getTeachersBySubjectAndName}
+
+const getTeacherDetails=async(req,res)=>{
+    let details
+  if(req.query.parameter==='about'){
+    details=await Teacher.findOne({
+      user_id:req.query.id
+    },{
+      "preferred_name":1,"city":1,"state":1,"country":1,"degree":1,"subject_curriculum":1
+    }).populate({
+      path:"user_id",
+      select:{
+        "email":1,"mobile_number":1
+      }
+    })
+  }
+  else if(req.query.parameter==='exp_details'){
+    details=await Teacher.findOne({
+      user_id:req.query.id
+    },{
+      "exp_details":1
+    }) 
+  
+  }
+  else if(req.query.parameter==='testimonials'){
+  details=await Testimonial.find({
+    teacher_id:req.query.id
+  })
+  }
+  else{
+    return res.json(responseObj(false,null,"Please Specify Parameter"))
+  }
+  if(details===null){
+    return res.json(responseObj(false, null,"No Details Found"))
+}
+  return res.json(responseObj(true,details,"Teacher Profile Details"))
+  }
+export {getTeacherDetails,getTeacherBySubjectCurriculum,getTeacherById,getGreatTeachers,reviewTeacher,getTeachersBySubjectAndName}

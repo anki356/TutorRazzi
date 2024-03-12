@@ -7,7 +7,7 @@ const router = express.Router()
 const paymentValidation=[
     param('_id').notEmpty().withMessage("Invalid Quote"),  
     body('amount').notEmpty().withMessage("Amount is Required"),
-    body("tax").notEmpty().withMessage("Tax is Required"),
+    // body("tax").notEmpty().withMessage("Tax is Required"),
    body("net_amount").notEmpty().withMessage("Net Amount is Required"),
    body("trx_ref_no").notEmpty().withMessage("Transaction Reference Number is Required")
 ]

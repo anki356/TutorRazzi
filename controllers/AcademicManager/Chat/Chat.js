@@ -182,7 +182,9 @@ teacher:{$mergeObjects: [{ $arrayElemAt: ['$nonEmptyFields', 0] }, "$teachers"]}
     {
         $unwind: '$user'
     },
-    
+    {
+        $unwind: '$teachers'
+    },
 
     {
         $replaceRoot: {

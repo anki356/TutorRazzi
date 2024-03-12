@@ -48,7 +48,7 @@ console.log(query)
         {
             $lookup: {
                 from: 'users',
-                localField: 'teachers',
+                localField: 'teacher',
                 foreignField: '_id',
                 as: 'teachers',
                 pipeline: [
@@ -184,7 +184,9 @@ teacher:{$mergeObjects: [{ $arrayElemAt: ['$nonEmptyFields', 0] }, "$teachers"]}
     {
         $unwind: '$user'
     },
-    
+    {
+        $unwind: '$teachers'
+    },
 
     {
         $replaceRoot: {

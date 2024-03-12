@@ -16,15 +16,15 @@ const getAll=async (req,res)=>{
     }
 
     let orConditions = [];
-let querySecond
-    if (search) {
-       querySecond={
-        name:{
-            $regex:search,
-            $options:"i"
-        }
-       }
+let querySecond={}
+if (search!==""&&search!==null) {
+    querySecond={
+     name:{
+         $regex:search,
+         $options:"i"
+     }
     }
+ }
 
     if (orConditions.length > 0) {
         query.$or = orConditions;
@@ -110,9 +110,7 @@ $match:
  
 ]);
 orConditions = [];
-if (search) {
-   querySecond={"name": {$regex: search,$options:"i"}}
-}
+
 if (orConditions.length > 0) {
     query.$or = orConditions;
 }

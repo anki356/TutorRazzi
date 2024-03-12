@@ -14,8 +14,8 @@ console.log(req.user._id)
 
     const orConditions = [];
 
-    let querySecond
-    if (search) {
+    let querySecond={}
+    if (search!==""&&search!==null) {
        querySecond={
         name:{
             $regex:search,

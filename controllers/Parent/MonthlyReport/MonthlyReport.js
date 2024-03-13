@@ -84,8 +84,8 @@ const getMonthlyReportDetails = async (req, res) => {
 
 const getAllSubjects = async (req, res) => {
     let subjects = await Class.find({
-        teacher_id: req.user._id,
-        student_id: req.query.student_id,
+        // teacher_id: ,
+        student_id: req.user._id,
         status: "Done"
     }, {
         subject: 1

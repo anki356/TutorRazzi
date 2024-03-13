@@ -687,7 +687,7 @@ return res.json(responseObj(true,{"totalRescheduledClasses":recheduledClasses,"a
     })
     if(req.body.parent_mobile_number){
       await User.updateOne({
-        _id:studentDetails.parent_id
+        _id:studentResponse.parent_id
       },{
         $set:{
           mobile_number:req.body.parent_mobile_number

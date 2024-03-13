@@ -29,7 +29,7 @@ const getMonthlyReport = async (req, res, next) => {
     }
     let pipeline=MonthlyReport.aggregate([
         {$match:{
-            student_id: new ObjectID(req.query.student_id),
+            student_id: new ObjectID(req.user._id),
         // teacher_id: new ObjectID(req.user._id),
         subject: req.query.subject  
         }},

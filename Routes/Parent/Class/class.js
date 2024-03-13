@@ -63,7 +63,7 @@ router.get("/purchased-classes-by-quote_id",authVerify,getPurchasedClassesByQuot
 router.patch("/schedule-class/:id",authVerify,scheduleClassValidation,validationError,scheduleClass)
 router.post("/reminder",authVerify,classValidatonChain,validationError,setReminder)
 router.post("/request-extra-class",authVerify,extraClassValidationChain,validationError,requestExtraclass)
-router.patch("/accept-class/:_id",authVerify,rescheduleValidationChain,validationError,acceptClassRequest)
+router.patch("/accept-class/:_id",authVerify,acceptClassRequest)
 router.get("/extra-classes-quotes",authVerify,getExtraClassQuotes)
 const dateValidationChain=[
     query("date").notEmpty().withMessage("Date is Required"),

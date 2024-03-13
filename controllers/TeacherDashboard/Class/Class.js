@@ -1060,7 +1060,7 @@ const credentials = `${organizationId}:${apiKey}`;
 console.log(meetingDetails.meeting_id)
 // Encode credentials to Base64
 const encodedCredentials = btoa(credentials);
-axios.get(`https://api.dyte.io/v2/recordings/active-recording/${meetingDetails.meeting_id}`,{
+axios.get(`https://api.dyte.io/v2/recordings?meeting_id=${meetingDetails.meeting_id}`,{
   headers:{
    'Authorization': `Basic ${encodedCredentials}`,
   }

@@ -157,6 +157,9 @@ const rescheduleClass=async(req,res,next)=>{
     let details=await Class.findOne({
       _id:req.params._id
     })
+    if(details===null){
+        return res.json(responseObj(false,null,"Class not found"))
+    }
     let classScheduled=await Class.find({
       $and: [   { start_time:{$gte:req.body.start_time}},
         {start_time:{

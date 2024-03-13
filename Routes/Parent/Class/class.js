@@ -39,7 +39,7 @@ const trialClassValidationChain=[
         ]
 router.post("/request-Trial-Class",authVerify,trialClassValidationChain,validationError,requestTrialClass)
 router.get("/get-Class-Details",authVerify,getClassDetails)
-router.patch("/reschedule-class/:_id",authVerify,rescheduleValidationChain,validationError,rescheduleClass)
+router.patch("/reschedule-class/:_id",authVerify ,rescheduleClass)
 
 const classReviewValidationChain=[
     body('class_id').notEmpty().withMessage("Invalid Class"),

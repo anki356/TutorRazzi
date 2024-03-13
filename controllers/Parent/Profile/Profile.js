@@ -10,6 +10,7 @@ import unlinkFile from "../../../util/unlinkFile.js"
 import HomeWork from "../../../models/HomeWork.js"
 import Payment from "../../../models/Payment.js"
 import Exam from "../../../models/Exam.js"
+import upload from "../../../util/upload.js"
 const ObjectID=mongoose.Types.ObjectId
 const getAllExams=async(req,res,next)=>{
   let query={

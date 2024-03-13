@@ -1048,5 +1048,13 @@ const getUpcomingClassDetails=async(req,res)=>{
   let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
   res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,teacherDetails:teacherDetails }, null))
 }
-  export {getUpcomingClassDetails,uploadClassMaterial,resolveResourceRequests,scheduleClass,acceptClassRequest,acceptRescheduledClass,getRescheduledClasses,getPastClasses,getTrialClassesRequests,getUpcomingClasses,getClasssBasedOnMonth,getClassesBasedOnDate,getTrialClassResponse,setReminder,rescheduleClass,addNotesToClass,getClassDetails,joinClass,leaveClass,addTask,addHomework,requestReUpload,reviewClass}
+const viewRec=async(req,res)=>{
+const meeting_id=await Class.findOne({
+  _id:req.query.id
+},{meeting_id:1})
+axios.get(`https://api.dyte.io/v2/recordings/active-recording/${meeting_id.meeting_id}`).then((response)=>{
+  return res.json(responseObj(true,response.data.download_url,null))
+})
+}
+  export {viewRec,getUpcomingClassDetails,uploadClassMaterial,resolveResourceRequests,scheduleClass,acceptClassRequest,acceptRescheduledClass,getRescheduledClasses,getPastClasses,getTrialClassesRequests,getUpcomingClasses,getClasssBasedOnMonth,getClassesBasedOnDate,getTrialClassResponse,setReminder,rescheduleClass,addNotesToClass,getClassDetails,joinClass,leaveClass,addTask,addHomework,requestReUpload,reviewClass}
   

@@ -1,7 +1,7 @@
 import { body, param, query } from "express-validator";
 import express from 'express'
 import validationError from "../../../middleware/validationError.js";
-import { acceptClassRequest, acceptRescheduledClass, addHomework, addNotesToClass, addTask, getClassDetails, getClassesBasedOnDate, getClasssBasedOnMonth, getPastClasses, getRescheduledClasses, getTrialClassResponse, getTrialClassesRequests, getUpcomingClassDetails, getUpcomingClasses, joinClass, leaveClass, requestReUpload, rescheduleClass, resolveResourceRequests, reviewClass, scheduleClass, setReminder, uploadClassMaterial } from "../../../controllers/TeacherDashboard/Class/Class.js";
+import { acceptClassRequest, acceptRescheduledClass, addHomework, addNotesToClass, addTask, getClassDetails, getClassesBasedOnDate, getClasssBasedOnMonth, getPastClasses, getRescheduledClasses, getTrialClassResponse, getTrialClassesRequests, getUpcomingClassDetails, getUpcomingClasses, joinClass, leaveClass, requestReUpload, rescheduleClass, resolveResourceRequests, reviewClass, scheduleClass, setReminder, uploadClassMaterial, viewRec } from "../../../controllers/TeacherDashboard/Class/Class.js";
 import { authVerify } from "../../../controllers/TeacherDashboard/Auth/Auth.js";
 
 const router = express.Router()
@@ -16,6 +16,7 @@ const resourceRequestValidation=[
     body("resource_request_id").notEmpty().withMessage("Invalid Resource Request Id")
 
 ]
+router.get("/view-rec",authVerify,viewRec)
 router.post('/resolve-request-resource', resourceRequestValidation,validationError,authVerify,resolveResourceRequests)
 const rescheduleValidationChain = [
     param('_id').notEmpty().withMessage("Invalid Class"),

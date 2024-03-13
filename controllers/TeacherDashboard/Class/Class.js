@@ -1049,7 +1049,7 @@ const getUpcomingClassDetails=async(req,res)=>{
   res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,teacherDetails:teacherDetails }, null))
 }
 const viewRec=async(req,res)=>{
-const meeting_id=await Class.findOne({
+const meetingDetails=await Class.findOne({
   _id:req.query.id
 },{meeting_id:1})
 const organizationId = '6894d463-40a7-4240-93dc-bb30ef741dbd';
@@ -1057,10 +1057,10 @@ const apiKey = 'ac00320ed5f57433dfa8';
 
 // Combine organizationId and apiKey with a colon
 const credentials = `${organizationId}:${apiKey}`;
-
+console.log(meetingDetails.meeting_id)
 // Encode credentials to Base64
 const encodedCredentials = btoa(credentials);
-axios.get(`https://api.dyte.io/v2/recordings/active-recording/${meeting_id.meeting_id}`,{
+axios.get(`https://api.dyte.io/v2/recordings/active-recording/${meetingDetails.meeting_id}`,{
   headers:{
    'Authorization': `Basic ${encodedCredentials}`,
   }

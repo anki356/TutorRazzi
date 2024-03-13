@@ -391,7 +391,7 @@ const joinClass = async (req, res, next) => {
     const encodedCredentials = btoa(credentials);
     if(classResponse.meeting_id){
         console.log("hello")
-        axios.post(`https://api.dyte.io/v2/meetings/${classResponse.meeting_id}/participants`,{name:'student',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+        axios.post(`https://api.dyte.io/v2/meetings/${classResponse.meeting_id}/participants`,{name:'parent',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
             headers:{
              'Authorization': `Basic ${encodedCredentials}`,
             }

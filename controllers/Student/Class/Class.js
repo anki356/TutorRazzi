@@ -1287,4 +1287,26 @@ const getClassesBasedOnDate=async (req,res)=>{
    return res.json(responseObj(true,{docs,totalDocs,totalPages,hasPrevPage,hasNextPage,prevPage,nextPage,limit:Number(limit),page:Number(page),pagingCounter:Number(page)},"All Class Materials"))
    
    }
-export {getHomeworks,getTasks,getMaterials,acceptClassRequest, getUpcomingClassDetails,getClassesBasedOnDate,dislikeClass, getLastTrialClass, likeClass, setReminder, getExtraClassQuotes, requestExtraclass,  uploadHomework, scheduleClass, requestTrialClass, getClassDetails, rescheduleClass, reviewClass, raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass, getQuotes, getPurchasedClasses, getPurchasedClassesByQuoteId,markTaskDone,reviewTeacher,getQuoteById }
+   const viewRec=async(req,res)=>{
+    const meetingDetails=await Class.findOne({
+      _id:req.query.id
+    },{meeting_id:1})
+    const organizationId = '6894d463-40a7-4240-93dc-bb30ef741dbd';
+    const apiKey = 'ac00320ed5f57433dfa8';
+    
+    // Combine organizationId and apiKey with a colon
+    const credentials = `${organizationId}:${apiKey}`;
+    console.log(meetingDetails.meeting_id)
+    // Encode credentials to Base64
+    const encodedCredentials = btoa(credentials);
+    axios.get(`https://api.dyte.io/v2/recordings?meeting_id=${meetingDetails.meeting_id}`,{
+      headers:{
+       'Authorization': `Basic ${encodedCredentials}`,
+      }
+    }).then((response)=>{
+    
+    let downloadLink=response.data.data.map((data)=>data.download_url)
+      return res.json(responseObj(true,downloadLink,null))
+    })
+    }
+export {viewRec,getHomeworks,getTasks,getMaterials,acceptClassRequest, getUpcomingClassDetails,getClassesBasedOnDate,dislikeClass, getLastTrialClass, likeClass, setReminder, getExtraClassQuotes, requestExtraclass,  uploadHomework, scheduleClass, requestTrialClass, getClassDetails, rescheduleClass, reviewClass, raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass, getQuotes, getPurchasedClasses, getPurchasedClassesByQuoteId,markTaskDone,reviewTeacher,getQuoteById }

@@ -1,5 +1,5 @@
 import express from 'express'
-import { getClassDetails, requestTrialClass,rescheduleClass,getPurchasedClasses, reviewClass,raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass,  uploadHomework, getQuotes, scheduleClass, requestExtraclass, getExtraClassQuotes, getPurchasedClassesByQuoteId, likeClass, getLastTrialClass, dislikeClass, getClassesBasedOnDate, getUpcomingClassDetails, acceptClassRequest, markTaskDone, reviewTeacher, getQuoteById, getHomeworks, getTasks, getMaterials } from '../../../controllers/Student/Class/Class.js'
+import { getClassDetails, requestTrialClass,rescheduleClass,getPurchasedClasses, reviewClass,raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass,  uploadHomework, getQuotes, scheduleClass, requestExtraclass, getExtraClassQuotes, getPurchasedClassesByQuoteId, likeClass, getLastTrialClass, dislikeClass, getClassesBasedOnDate, getUpcomingClassDetails, acceptClassRequest, markTaskDone, reviewTeacher, getQuoteById, getHomeworks, getTasks, getMaterials, viewRec } from '../../../controllers/Student/Class/Class.js'
 import { authVerify } from '../../../controllers/Student/Auth/Auth.js'
 import { addHomework, setReminder } from '../../../controllers/TeacherApp/Class/Class.js'
 import upload from "../../../util/upload.js"
@@ -98,6 +98,6 @@ router.patch("/accept-class/:_id",authVerify,acceptClassRequest)
 router.get("/homeworks",authVerify,getHomeworks)
 router.get("/tasks",authVerify,getTasks)
 router.get("/materials",authVerify,getMaterials)
-
+router.get("/view-rec",authVerify,viewRec)
 
 export default router

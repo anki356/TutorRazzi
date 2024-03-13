@@ -1,5 +1,5 @@
 import express from 'express'
-import { acceptClassRequest, getClassDetails, getPastClasses, getRescheduledClasses, getTasks, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, joinClass, markTaskDone, rescheduleClass, reviewTeacher, setReminder, uploadHomework } from '../../../controllers/Website/Class/Class.js'
+import { acceptClassRequest, getClassDetails, getPastClasses, getRescheduledClasses, getTasks, getTrialClasses, getUpcomingClassDetails, getUpcomingClasses, joinClass, markTaskDone, rescheduleClass, reviewTeacher, setReminder, uploadHomework, viewRec } from '../../../controllers/Website/Class/Class.js'
 import { authVerify } from '../../../controllers/Website/Auth/Auth.js'
 import { body, param } from 'express-validator'
 import { reviewClass } from '../../../controllers/Website/Class/Class.js'
@@ -44,6 +44,6 @@ const acceptRescheduleValidationChain=[
 router.post("/reminder", authVerify, setReminder)
 router.patch("/accept-class/:_id",authVerify,acceptRescheduleValidationChain,validationError,acceptClassRequest)
 router.post("/join-class",authVerify,joinClass)
-
+router.get("/view-rec",authVerify,viewRec)
 
 export default router

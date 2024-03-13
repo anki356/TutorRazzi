@@ -1065,6 +1065,7 @@ axios.get(`https://api.dyte.io/v2/recordings?meeting_id=${meetingDetails.meeting
    'Authorization': `Basic ${encodedCredentials}`,
   }
 }).then((response)=>{
+  console.log(response.data)
   return res.json(responseObj(true,response.data.download_url,null))
 })
 }

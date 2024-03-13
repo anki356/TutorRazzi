@@ -140,10 +140,10 @@ let homeworkResponse=await HomeWork.find({
     class_id:req.query.class_id
 }).populate({
   path:"answer_document_id"
-})
+}).limit(3)
 let taskResponse=await Task.find({
     class_id:req.query.class_id
-})
+}).limit(3)
 
 
     res.json(responseObj(true, {classDetails:classDetails,ratingsResponse:classRatingsResponse?classRatingsResponse.rating:null,teacherRatings:teacherRatings?teacherRatings.rating:null,homeworkResponse,taskResponse}, "Class Details successfully fetched"))
@@ -734,5 +734,65 @@ const dislikeClass = async (req, res, next) => {
         // let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
         res.json(responseObj(true, { classDetails: classDetails,teacherDetails:teacherDetails[0] }, null))
       }
-
-export {getUpcomingClassDetails,likeClass,dislikeClass,getLastTrialClass,getClassesBasedOnDate,acceptClassRequest,requestExtraclass,getExtraClassQuotes,requestTrialClass,scheduleClass,setReminder,getPurchasedClassesByQuoteId,getClassDetails,rescheduleClass,reviewClass,raiseRequestResource,getClassQuotes,joinClass,leaveClass,getPurchasedClasses,}
+      const getHomeworks=async(req,res)=>{
+        let query={
+         class_id:req.query.class_id
+        }
+        let {limit,page}=req.query
+        let options={
+         limit,page
+        }
+        HomeWork.paginate(query,options,(err,result)=>{
+         if(result.docs.length===0){
+           return res.json(responseObj(false,null,"No Homework Found"))
+         }
+         return res.json(responseObj(true,result,"All Homeworks in the Class"))
+        })
+       // res.json(responseObj(true, {homeworkResponse:homeworkResponse}, "HomeWork Details successfully fetched"))
+       }
+       const getTasks=async(req,res)=>{
+         let query={
+           class_id:req.query.class_id
+          }
+          let {limit,page}=req.query
+          let options={
+           limit,page
+          }
+          Task.paginate(query,options,(err,result)=>{
+           if(result){
+             if(result.docs.length===0){
+               return res.json(responseObj(false,null,"No Task Found"))
+             }
+             return res.json(responseObj(true,result,"All tasks in the Class"))
+           }
+          
+          })
+       }
+       const getMaterials=async(req,res)=>{
+       let classMaterials=await Class.findOne({
+         _id:req.query.class_id
+       }).select({"materials":1})
+       if(classMaterials===null){
+         return res.json(responseObj(false,null,"Invalid Class Id"));
+       }
+       if (!classMaterials.materials.length>0) {
+         return res.json(responseObj(false,null,"No Materials Found"));
+       }
+       let {limit,page}=req.query
+       
+       let totalDocs=classMaterials.materials.length
+       classMaterials = await Class.findOne(
+         { _id: req.query.class_id }, // Query
+         { materials: { $slice: [(Number(page - 1)) * Number(limit), Number(limit)] } } // Projection
+       );
+       let docs=classMaterials
+       let totalPages=Math.ceil(totalDocs/Number(limit))
+       let hasPrevPage=Number(page)>1
+       let hasNextPage=Number(page)<totalPages
+       let prevPage=hasPrevPage?Number(page)-1:null
+       let nextPage=hasNextPage?Number(page)+1:null
+       
+       return res.json(responseObj(true,{docs,totalDocs,totalPages,hasPrevPage,hasNextPage,prevPage,nextPage,limit:Number(limit),page:Number(page),pagingCounter:Number(page)},"All Class Materials"))
+       
+       }
+export {getHomeworks,getTasks,getMaterials,getUpcomingClassDetails,likeClass,dislikeClass,getLastTrialClass,getClassesBasedOnDate,acceptClassRequest,requestExtraclass,getExtraClassQuotes,requestTrialClass,scheduleClass,setReminder,getPurchasedClassesByQuoteId,getClassDetails,rescheduleClass,reviewClass,raiseRequestResource,getClassQuotes,joinClass,leaveClass,getPurchasedClasses,}

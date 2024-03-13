@@ -395,7 +395,7 @@ const joinClass = async (req, res, next) => {
              'Authorization': `Basic ${encodedCredentials}`,
             }
         }).then((response)=>{
-            return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+            return res.json(responseObj(true, {tokenData:response.data.data}, "Class Joined"))
         }).catch(err=>{
          console.log(err)
         }) 
@@ -419,7 +419,7 @@ const joinClass = async (req, res, next) => {
                 'Authorization': `Basic ${encodedCredentials}`,
                }
            }).then((response)=>{
-               return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+               return res.json(responseObj(true, {tokenData:response.data.data}, "Class Joined"))
            }).catch(err=>{
             console.log(err)
            })

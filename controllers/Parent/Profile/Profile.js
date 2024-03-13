@@ -13,7 +13,7 @@ import Exam from "../../../models/Exam.js"
 const ObjectID=mongoose.Types.ObjectId
 const getAllExams=async(req,res,next)=>{
   let query={
-    student_id:req.query.student_id
+    student_id:req.user._id
   }
   if(req.query.subject){
 query["subject.name"]=req.query.subject

@@ -581,10 +581,14 @@ return res.json(responseObj(true,{"totalRescheduledClasses":recheduledClasses,"a
   
   const getUserProfile=async(req,res,next)=>{
     let userprofile={};
-    
-    userprofile=await Parent.findOne({user_id:req.user._id})
-  
-    return res.json(responseObj(true,userprofile,null))
+   
+    userprofile=await Student.findOne({user_id:req.user._id},{preferred_name:1,curriculum:1,grade:1,school:1,address:1,city:1,state:1,country:1,subjects:1}).populate({path:"user_id",select:{
+      email:1,mobile_number:1,profile_image:1
+    }}).populate({path:'parent_id',select:{
+        email:1,mobile_number:1
+      }
+    })
+    res.json(responseObj(true,userprofile,''))
   }
   const getHomeworks=async(req,res,next)=>{
  
@@ -625,48 +629,71 @@ return res.json(responseObj(true,{"totalRescheduledClasses":recheduledClasses,"a
    
   }
 
-  const editUserProfile=async (req,res)=>{
-    let parentResponse=await Parent.findOne({user_id:req.user._id})
-    if(parentResponse===null){
-      parentResponse=await Parent.create({
-        ...req.body,
-        user_id:req.user._id
-      })
-    }
-    else{
-      parentResponse=await Parent.updateOne({
-        user_id:req.user._id
+  const editUserProfile=async(req,res)=>{
+    if(req.files?.download){
+  
+      let fileName=await upload(req.files?.download)
+      User.updateOne({
+        _id:req.user._id
       },{
         $set:{
-          ...req.body
+         profile_image:fileName
         }
       })
     }
-    let userResponse=await User.updateOne({
+    User.updateOne({
       _id:req.user._id
     },{
       $set:{
-        name:req.body.preferred_name
+      mobile_number:req.body.mobile_number,
+      name:req.body.name,
       }
     })
-    if(req.files){
-      const photoResponse=await User.findOne({
-        _id:req.user._id
-      },{
-        profile_image:1
-      })
-      if(photoResponse!==null){
-        unlinkFile(photoResponse.profile_image)
+    // let password= await  bcrypt.hash(makeId(5), 10)
+  
+   
+   let studentResponse=await Student.findOne({
+    user_id:req.user._id
+   })
+  
+    studentResponse =await Student.updateOne({
+      user_id:req.user._id
+    },{
+      $set:{
+        preferred_name:req.body.name,
+        gender:req.body.gender,
+        city:req.body.city,
+        state:req.body.state,
+        country:req.body.country,
+        grade:{name:req.body.grade},
+        age:req.body.age,
+        school:req.body.school,
+        address:req.body.address,
+        subjects:[
+            {
+                name:req.body.subject[0]
+            },{
+                name:req.body.subject[1]
+            },{
+                name:req.body.subject[2]
+            }
+        ],
+        curriculum:{
+            name:req.body.curriculum
+        },
+        // pincode:req.body.pincode
       }
-      userResponse=await User.updateOne({
-        _id:req.user._id
+    })
+    if(req.body.parent_mobile_number){
+      await User.updateOne({
+        _id:studentDetails.parent_id
       },{
         $set:{
-          profile_image:req.files[0].filename
+          mobile_number:req.body.parent_mobile_number
         }
       })
     }
-    return res.json(responseObj(true,parentResponse,null))
+    return res.json(responseObj(true,null,"Student Profile Edited"))
   }
 
   const getAllPayments=async(req,res,next)=>{

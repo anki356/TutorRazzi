@@ -7,6 +7,7 @@ import Report from "../../../models/Report.js"
 import Class from "../../../models/Class.js"
 import { addNotifications } from "../../../util/addNotification.js"
 import MonthlyReport from "../../../models/MonthlyReport.js"
+import Student from "../../../models/Student.js"
 const ObjectID = mongoose.Types.ObjectId
 const getMonthlyReport = async (req, res, next) => {
     const months = [
@@ -79,7 +80,16 @@ const getMonthlyReportDetails = async (req, res) => {
         student_id: req.user._id, month: reportDetails.month,
         year: reportDetails.year, teacher_id: reportDetails.teacher_id
     })
-    res.json(responseObj(true, { ratings: averageGrade[0]?.averageRating ? averageGrade[0]?.averageRating : 0, report: reportDetails.reports, additionalComment: additionalComment }, null))
+    const studentDetails=await Student.findOne({
+        user_id:req.user._id
+    },{
+        "grade":1,"school":1,"preferred_name":1
+    }).populate(
+       { path:"user_id",select:{
+        "profile_image":1
+       }}
+    )
+    res.json(responseObj(true, { studentDetails,ratings: averageGrade[0]?.averageRating ? averageGrade[0]?.averageRating : 0, report: reportDetails.reports, additionalComment: additionalComment }, null))
 }
 
 const getAllSubjects = async (req, res) => {

@@ -193,16 +193,75 @@ const rescheduleClass=async(req,res,next)=>{
     res.json(responseObj(true,null,"Rescheduled"))
   
   }
-const reviewClass=async(req,res,next)=>{
-    const reviewResponse=await Review.insertMany({
-        class_id:req.body.class_id,
-        message:req.body?.message,
-        rating:req.body.rating,
+  const reviewClass = async (req, res, next) => {
+    let classDetails=await Class.findOne({
+      _id : req.body.class_id
+    })
+    if(classDetails===null){
+      throw new Error("Incorrect Class ID")
+    }
+    let reviewResponse=await Review.findOne({
+      class_id:req.body.class_id,
+      given_by:req.user._id
+    })
+  
+    if(reviewResponse===null){
+      reviewResponse = await Review.insertMany({
+        class_id: req.body.class_id,
+        message: req.body?.message,
+        rating: req.body.ratings,
         given_by:req.user._id
     })
-   
-    return res.json(responseObj(true,reviewResponse,null))
+    }
+    else{
+      return res.json(responseObj(false,null,"You have already reviewed"))
+    }
+  
+    const AcademicManangerResponse=await AcademicManager.findOne({
+      students:{
+           $elemMatch: {
+            $eq: req.user._id
+        }
+      }
+  })
+  
+ 
+    // addNotifications(AcademicManangerResponse.user_id,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
+    
+   addNotifications(AcademicManangerResponse.user_id,"A Class Reviewed","A class of "+classDetails.subject.name+" Reviewed as "+ req.body.ratings+ "by "+req.user.name )
+   addNotifications(classDetails.teacher_id, "A Class Reviewed","A class of "+classDetails.subject.name+" Reviewed as "+ req.body.ratings+ "by "+req.user.name)
+    res.json(responseObj(true, reviewResponse, "Review Created Successfully"))
 }
+const reviewTeacher = async (req, res, next) => {
+    let classDetails=await Class.findOne({
+        _id : req.body.class_id
+      })
+      if(classDetails===null){
+        throw new Error("Incorrect Class ID")
+      }
+    let reviewResponse=await Review.findOne({
+      class_id:req.body.class_id,
+      given_by:req.user._id,
+      teacher_id:req.body.teacher_id
+    })
+    if(!reviewResponse){
+      reviewResponse = await Review.insertMany({
+        message: req.body.message?req.body.message:null,
+        rating: req.body.ratings,
+        teacher_id: req.body.teacher_id,
+        class_id: req.body.class_id,
+        given_by:req.user._id
+    })
+    }
+    else{
+     return res.json(responseObj(false,null,"You have already reviewed"))
+    }
+     
+    addNotifications(classDetails.teacher_id, "You are  Reviewed","You are reviewed for class of "+classDetails.subject.name+" Reviewed as "+ req.body.ratings+ "by "+req.user.name)
+    return res.json(responseObj(true,reviewResponse,"Teacher Review Recorded"))
+    
+  
+  }
 const getClassesBasedOnDate=async (req,res)=>{
     const start_time=moment(req.body.date).startOf('day')
     const end_time=moment(req.body.date).endOf('day')
@@ -796,4 +855,4 @@ const dislikeClass = async (req, res, next) => {
        return res.json(responseObj(true,{docs,totalDocs,totalPages,hasPrevPage,hasNextPage,prevPage,nextPage,limit:Number(limit),page:Number(page),pagingCounter:Number(page)},"All Class Materials"))
        
        }
-export {getHomeworks,getTasks,getMaterials,getUpcomingClassDetails,likeClass,dislikeClass,getLastTrialClass,getClassesBasedOnDate,acceptClassRequest,requestExtraclass,getExtraClassQuotes,requestTrialClass,scheduleClass,setReminder,getPurchasedClassesByQuoteId,getClassDetails,rescheduleClass,reviewClass,raiseRequestResource,getClassQuotes,joinClass,leaveClass,getPurchasedClasses,}
+export {getHomeworks,reviewTeacher,getTasks,getMaterials,getUpcomingClassDetails,likeClass,dislikeClass,getLastTrialClass,getClassesBasedOnDate,acceptClassRequest,requestExtraclass,getExtraClassQuotes,requestTrialClass,scheduleClass,setReminder,getPurchasedClassesByQuoteId,getClassDetails,rescheduleClass,reviewClass,raiseRequestResource,getClassQuotes,joinClass,leaveClass,getPurchasedClasses,}

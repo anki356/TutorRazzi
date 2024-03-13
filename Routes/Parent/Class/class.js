@@ -1,5 +1,5 @@
 import express from 'express'
-import { getClassDetails,requestExtraclass,getExtraClassQuotes, requestTrialClass,scheduleClass,rescheduleClass, reviewClass,raiseRequestResource,getClassQuotes, joinClass, leaveClass, getPurchasedClasses, getPurchasedClassesByQuoteId, setReminder, getClassesBasedOnDate, getLastTrialClass, likeClass, dislikeClass, getUpcomingClassDetails, acceptClassRequest, getHomeworks, getTasks, getMaterials } from '../../../controllers/Parent/Class/Class.js'
+import { getClassDetails,requestExtraclass,getExtraClassQuotes, requestTrialClass,scheduleClass,rescheduleClass, reviewClass,raiseRequestResource,getClassQuotes, joinClass, leaveClass, getPurchasedClasses, getPurchasedClassesByQuoteId, setReminder, getClassesBasedOnDate, getLastTrialClass, likeClass, dislikeClass, getUpcomingClassDetails, acceptClassRequest, getHomeworks, getTasks, getMaterials, reviewTeacher } from '../../../controllers/Parent/Class/Class.js'
 import { authVerify } from '../../../controllers/Parent/Auth/Auth.js'
 import validationError from '../../../middleware/validationError.js'
 import { body,param,query } from 'express-validator'
@@ -22,10 +22,7 @@ const trialClassValidationChain=[
         body('start_time').notEmpty().isAfter(new Date().toDateString()).withMessage("Start Time must be After current time"),
        
         ]
-        const classReviewValidationChain=[
-            body('class_id').notEmpty().withMessage("Invalid Class"),
-            body('rating').notEmpty().isFloat({ min: 0, max: 5 }).withMessage("Must be between 0 and 5")
-        ]
+       
         const requestValidationChain=[
             body('class_id').notEmpty().withMessage("Invalid Class"),
         
@@ -43,7 +40,20 @@ const trialClassValidationChain=[
 router.post("/request-Trial-Class",authVerify,trialClassValidationChain,validationError,requestTrialClass)
 router.get("/get-Class-Details",authVerify,getClassDetails)
 router.patch("/reschedule-class/:id",authVerify,rescheduleValidationChain,validationError,rescheduleClass)
-router.post("/review-class",authVerify,classReviewValidationChain,validationError,reviewClass)
+
+const classReviewValidationChain=[
+    body('class_id').notEmpty().withMessage("Invalid Class"),
+    body('ratings').notEmpty().isFloat({ min: 1, max: 5 }).withMessage("Must be between 1 and 5")
+]
+router.post("/review-class",authVerify,classReviewValidationChain,validationError,reviewTeacher)
+const reviewChain=[
+    body('teacher_id').notEmpty().withMessage("Teacher ID is required"),
+    body('class_id').notEmpty().withMessage("Class Id is required"),
+    body('ratings').notEmpty().withMessage("Ratings is required").isFloat({
+        min:1,max:5
+    }).withMessage("Rating should be between 1 and 5")
+]
+router.post('/review-teacher-class',authVerify,reviewChain,validationError,reviewTeacher)
 router.post("/raise-request-resource",authVerify,requestValidationChain,validationError,raiseRequestResource)
 router.get("/class-quotes",authVerify,getClassQuotes)
 router.post("/join-class",authVerify,classValidatonChain,validationError,joinClass)

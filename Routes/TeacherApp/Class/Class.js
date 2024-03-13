@@ -51,7 +51,7 @@ const acceptRescheduleValidationChain=[
 ]
 const classReviewValidationChain=[
     body('class_id').notEmpty().custom((value)=>mongoose.Types.ObjectId.isValid(value)).withMessage("Invalid Class"),
-    body('rating').notEmpty().isFloat({ min: 0, max: 5 }).withMessage("Must be between 0 and 5")
+    body('rating').notEmpty().isFloat({ min: 1, max: 5 }).withMessage("Must be between 0 and 5")
 ]
 router.post("/review-class",authVerify,classReviewValidationChain,validationError,reviewClass)
 router.patch("/accept-rescheduled-class/:_id",authVerify,acceptRescheduleValidationChain,validationError,acceptRescheduledClass)

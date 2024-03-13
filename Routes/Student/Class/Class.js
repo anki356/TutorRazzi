@@ -37,7 +37,7 @@ router.get("/get-Class-Details",authVerify,getClassDetails)
 router.patch("/reschedule-class/:_id",authVerify,rescheduleValidationChain,validationError,rescheduleClass)
 const classReviewValidationChain=[
     body('class_id').notEmpty().withMessage("Invalid Class"),
-    body('ratings').notEmpty().isFloat({ min: 0, max: 5 }).withMessage("Must be between 0 and 5")
+    body('ratings').notEmpty().isFloat({ min: 1, max: 5 }).withMessage("Must be between 1 and 5")
 ]
 router.post("/review-class",authVerify,classReviewValidationChain,validationError,reviewClass)
 const requestValidationChain=[

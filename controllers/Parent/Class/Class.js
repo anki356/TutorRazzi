@@ -22,6 +22,7 @@ import Reminder from "../../../models/Reminder.js"
 import { addNotifications } from "../../../util/addNotification.js"
 import AcademicManager from "../../../models/AcademicManager.js"
 import User from "../../../models/User.js"
+import axios from "axios"
 const requestTrialClass = async (req, res, next) => {
     const AcademicManangerResponse=await AcademicManager.findOne({
         students:{

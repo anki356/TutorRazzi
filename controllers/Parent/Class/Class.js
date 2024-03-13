@@ -333,25 +333,103 @@ select:{
 }})
     res.json(responseObj(true,Quotes,null))
 }
-const joinClass=async (req,res,next)=>{
+const joinClass = async (req, res, next) => {
+    let classResponse = await Class.findOne({
+        _id: req.body.class_id,
+        // student_id:req.user._id,
+        // status:"Scheduled",
+       
+    },  {
+      start_time: 1,
+      end_time: 1,
+      student_id:1,
+      subject:1,
+      meeting_id:1,
+      teacher_id:1,
+      status:1
+  })
+  if(classResponse===null){
+  return res.json(responseObj(false,null,"Invalid Class"))
+  }
+  classResponse = await Class.findOne({
+  _id: req.body.class_id,
+  student_id:req.user._id,
+  // status:"Scheduled"
+  }, {
+  start_time: 1,
+  end_time: 1,
+  student_id:1,
+  subject:1,
+  meeting_id:1,
+  teacher_id:1,
+  status:1
+  })
+  if(classResponse===null){
+  return res.json(responseObj(false,null,"Invalid Student Id"))
+  }
+  if(classResponse.status!=="Scheduled"){
+  return res.json(responseObj(false,null,"Class Status is "+classResponse.status))
+  }
+  if ((moment().utc().isBefore(moment.utc(classResponse.start_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('Class has not Started Yet')
+  }
+  if ((moment().utc().isAfter(moment.utc(classResponse.end_time,"YYYY-MM-DDTHH:mm:ss").subtract(5,'h').subtract(30,'m')))) {      throw new Error('Class has been Finished')
+  }
+  
+   
+ 
+  
+  
+   
+    const organizationId = '6894d463-40a7-4240-93dc-bb30ef741dbd';
+    const apiKey = 'ac00320ed5f57433dfa8';
     
-    let classResponse;
-    classResponse=await Class.updateOne({
-        _id : req.body.class_id},{
-
-$set:{
-    status:'Done'
-}
-    })
-    let attendanceResponse=await Attendance.insertMany({
-        check_in_datetime:moment().format("YYYY-MM-DDTHH:mm:ss"),
-        parent_id:req.user._id,
-        class_id:req.body.class_id,
-        
-    })
-    res.json(responseObj(true,attendanceResponse,null))
-
-}
+    // Combine organizationId and apiKey with a colon
+    const credentials = `${organizationId}:${apiKey}`;
+    
+    // Encode credentials to Base64
+    const encodedCredentials = btoa(credentials);
+    if(classResponse.meeting_id){
+        console.log("hello")
+        axios.post(`https://api.dyte.io/v2/meetings/${classResponse.meeting_id}/participants`,{name:'student',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+            headers:{
+             'Authorization': `Basic ${encodedCredentials}`,
+            }
+        }).then((response)=>{
+            return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+        }).catch(err=>{
+         console.log(err)
+        }) 
+    }
+    else{
+        axios.post("https://api.dyte.io/v2/meetings",{ record_on_start:true},{
+            headers:{
+                'Authorization': `Basic ${encodedCredentials}`,
+            }
+          }).then(async(response)=>{
+           await Class.updateOne({
+            _id:req.body.class_id
+           },{
+            $set:{
+                meeting_id:response.data.data.id
+            }
+           })
+           
+           axios.post(`https://api.dyte.io/v2/meetings/${response.data.data.id}/participants`,{name:'parent',preset_name:'group_call_participant',custom_participant_id:req.user.email},{
+               headers:{
+                'Authorization': `Basic ${encodedCredentials}`,
+               }
+           }).then((response)=>{
+               return res.json(responseObj(true, {attendanceResponse:attendanceResponse,tokenData:response.data.data}, "Class Joined"))
+           }).catch(err=>{
+            console.log(err)
+           })
+        })
+    }
+    
+   
+  
+  
+  }
 const getPurchasedClasses=async(req,res,next)=>{
    
     let query={student_id:req.query.student_id}

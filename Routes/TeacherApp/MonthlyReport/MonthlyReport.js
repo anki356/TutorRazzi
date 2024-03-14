@@ -6,7 +6,7 @@ import validationError from "../../../middleware/validationError.js";
 const router=express.Router()
 router.get("/get-monthly-report",authVerify,getMonthlyReport)
 const ReportValidation=[
-    body('subject').notEmpty().withMessage("Subject is required"),
+    // body('subject').notEmpty().withMessage("Subject is required"),
     body('subject_knowledge_and_understanding').notEmpty().withMessage("Subject knowledge rating cannot be empty"),
     body('class_participation_and_engagement').notEmpty().withMessage("Class participation and engagement  rating cannot be empty"),
     body('homeworks_and_assignment_completion').notEmpty().withMessage("Homework and assignment completion rating cannot be empty"),
@@ -98,7 +98,8 @@ const ReportValidation=[
     body('responsibility_and_accountability_message').notEmpty().withMessage("Responsiblity and Accountability message cannot be empty"),
     body('comments').notEmpty().withMessage(" Additional Comments cannot be empty"),
     body('initiative_and_self_direction').notEmpty().withMessage(" Initiative rating  cannot be empty"),
-    body('initiative_and_self_direction_message').notEmpty().withMessage(" Initiative Message  cannot be empty")
+    body('initiative_and_self_direction_message').notEmpty().withMessage(" Initiative Message  cannot be empty"),
+    body('monthly_report_id').notEmpty().withMessage(" IMonthly Report Id  cannot be empty")
 ]
 router.post("/add-monthly-report",authVerify,ReportValidation,validationError,addMonthlyReport)
 router.get("/all-subjects",authVerify,getAllSubjects)

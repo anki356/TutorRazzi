@@ -72,8 +72,11 @@ const getScheduledClasses=async (req,res,next)=>{
             start_time:-1
         }
     }
-let query={status:'Scheduled',
-student_id:new ObjectId(req.query.student_id)}
+let query={quote_id:req.query.quote_id,
+student_id:new ObjectId(req.query.student_id),
+
+
+}
 
 if(req.query.search) {
     let student_ids=await User.find({
@@ -88,9 +91,9 @@ if(req.query.search) {
       {"name":  {$regex: req.query.search, $options: 'i' }
        
       },
-      {"student_id":{
-        $in:student_ids.map((data)=>data._id)
-      }},
+      // {"student_id":{
+      //   $in:student_ids.map((data)=>data._id)
+      // }}
       
     ];
   }

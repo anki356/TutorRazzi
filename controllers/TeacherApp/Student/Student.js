@@ -65,7 +65,9 @@ const getScheduledClasses=async (req,res,next)=>{
         select:{
             start_time:1,
             subject:1,
-           
+           status:1,
+           is_rescheduled:1,
+           rescheduled_by:1
 
         },
         sort:{

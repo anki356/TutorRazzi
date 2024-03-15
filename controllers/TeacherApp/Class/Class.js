@@ -90,7 +90,7 @@ const scheduleClass = async (req, res, next) => {
 
 const getClassDetails = async (req, res, next) => {
   let classDetails = {}
-  classDetails = await Class.findOne({ _id: req.query.class_id,end_time:{$lte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")} }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,  materials: { $slice: [0* 3, 3] }, recordings: 1,class_type:1 }).populate({
+  classDetails = await Class.findOne({ _id: req.query.class_id,end_time:{$lte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")} }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1,  materials: { $slice: [0* 3, 3] }, recordings: 1,class_type:1 }).populate({
     path: 'teacher_id', select: {
      name: 1,profile_image:1
     }
@@ -768,7 +768,7 @@ const getClassesBasedOnDate=async (req,res)=>{
 }
 const getUpcomingClassDetails=async(req,res)=>{
   let classDetails = {}
-  classDetails = await Class.findOne({ _id: req.query.class_id,end_time:{$gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")} }, { start_time: 1, end_time: 1, details: 1, grade: 1,  teacher_id: 1, notes: 1,student_id:1,subject:1 ,other_information:1})
+  classDetails = await Class.findOne({ _id: req.query.class_id,end_time:{$gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")} }, { start_time: 1, end_time: 1, details: 1, grade: 1,  teacher_id: 1,student_id:1,subject:1 ,other_information:1})
   if(classDetails===null){
     throw new Error("Incorrect Class Id")
   }

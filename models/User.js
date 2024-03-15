@@ -65,9 +65,12 @@ UserSchema.methods.signJWT =function () {
   }
   UserSchema.set('toJSON', { virtuals: true });
   UserSchema.virtual('profile_image_url').get(function () {
-    if(this.profile_image!==undefined) {
+    if(this.profile_image!==undefined&& this.profile_image!==null) {
  
         return process.env.CLOUD_API+"/"+this.profile_image
+    }
+    else if (this.profile_image===null){
+      return null
     }
  })
 UserSchema.plugin(mongoosePaginate)

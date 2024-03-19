@@ -943,29 +943,46 @@ const getUpcomingClasses=async(req,res,next)=>{
         'profile_image': 1
       }
     })
-    let homeworkResponse=await HomeWork.find({
-      class_id:req.query.class_id
-  }).populate({
-    path:"answer_document_id"
-  })
-  let taskResponse=await Task.find({
-      class_id:req.query.class_id
-  })
-    
-    let reminderResponse = await Reminder.findOne({ class_id:req.query.class_id })
-    
-    let classRatingsResponse=await Review.findOne({
-      class_id:req.query.class_id,
-      given_by:classDetails.student_id,
-      teacher_id:null
-    })
-   let teacherRatings=await Review.findOne({
-    class_id:req.query.class_id,
-    given_by:classDetails.student_id,
-    teacher_id:classDetails.teacher_id
+  
+  
+  
+    res.json(responseObj(true, { classDetails: classDetails, studentDetails:studentDetails,teacherDetails:teacherDetails}, null))
+  }
+  
+  const selectSlotTrialClass=async(req,res)=>{
+    let details=await Class.findOne({_id:req.params.id})
+  
+  const trialClassResponse=await Class.updateOne({
+  _id:req.params.id
+  },{
+  $set:{
+    start_time:req.body.start_time,
+    end_time:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss"),
+    slots:null,
+    status:"Scheduled"
+  }
+  
   })
   
-    res.json(responseObj(true, { classDetails: classDetails, reminderResponse: reminderResponse,studentDetails:studentDetails,homeworkResponse:homeworkResponse,taskResponse:taskResponse,teacherDetails:teacherDetails ,ratingsResponse:classRatingsResponse?classRatingsResponse.rating:0,teacherRatings:teacherRatings?teacherRatings.rating:0}, null))
+  const AcademicManangerResponse=await AcademicManager.findOne({
+  teachers:{
+       $elemMatch: {
+            $eq: req.user._id
+        }
+  }
+  })
+  addNotifications(details.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+details.subject.name+" on "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
+  
+  addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+details.subject.name+" at time "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
+  return res.json(responseObj(true,null,"Class Slot has been selected"))
+  }
+  const getSlots=async(req,res)=>{
+    let SlotDetails=await Class.findOne({
+      _id:req.query.id
+    },{
+      slots:1
+    })
+    return res.json(responseObj(true,SlotDetails,"Slot List"))
   }
   const getQuotes=async(req,res)=>{
     let classDetails = {}
@@ -1154,5 +1171,5 @@ const viewRec=async(req,res)=>{
     return res.json(responseObj(true,downloadLink,null))
   })
   }
-export {viewRec,requestReUpload,markTaskDone,getRescheduledClasses, acceptClassRequest, reviewClass,reviewTeacher,getClassDetails,getPastClasses,getUpcomingClasses,getHomeworks, addExtraClassQuote, getTrialClasses,getResourceRequests,notifyTeacher,notifyStudent,resolveHomework,acceptTrialClassRequest ,rescheduleClass,getUpcomingClassDetails,getTrialClassDetails,getQuotes,joinClass}
+export {selectSlotTrialClass,getSlots,viewRec,requestReUpload,markTaskDone,getRescheduledClasses, acceptClassRequest, reviewClass,reviewTeacher,getClassDetails,getPastClasses,getUpcomingClasses,getHomeworks, addExtraClassQuote, getTrialClasses,getResourceRequests,notifyTeacher,notifyStudent,resolveHomework,acceptTrialClassRequest ,rescheduleClass,getUpcomingClassDetails,getTrialClassDetails,getQuotes,joinClass}
 

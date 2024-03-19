@@ -40,7 +40,7 @@ const getQuotes=async (req,res,next)=>{
     teacher_id:req.user._id
    }
     Quote.paginate(query,options,(err,pendingClassQuotes)=>{
-if(pendingClassQuotes.docs.length===0){
+if(pendingClassQuotes&&pendingClassQuotes.docs.length===0){
     res.json(responseObj(false,[],"No Class quotes found"))
    
 }

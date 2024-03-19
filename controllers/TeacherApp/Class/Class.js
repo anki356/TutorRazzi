@@ -1009,6 +1009,7 @@ const AcademicManangerResponse=await AcademicManager.findOne({
 addNotifications(details.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+details.subject.name+" on "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
 
 addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+details.subject.name+" at time "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
+return res.json(responseObj(true,null,"Class Slot has been selected"))
   }
   const getSlots=async(req,res)=>{
     let SlotDetails=await Class.findOne({

@@ -37,7 +37,7 @@ const getMonthlyReport = async (req, res, next) => {
         {$project:{
             averageRating: {$round:[{$avg: "$reports.rating"},0] },
             status:1,
-            month: { $arrayElemAt: [months, "$month"] },
+            month: { $arrayElemAt: [months, {$add:["$month",1]}] },
             year:1,
 
         }}

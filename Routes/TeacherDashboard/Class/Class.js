@@ -1,7 +1,7 @@
 import { body, param, query } from "express-validator";
 import express from 'express'
 import validationError from "../../../middleware/validationError.js";
-import { acceptClassRequest, acceptRescheduledClass, addHomework, addNotesToClass, addTask, getClassDetails, getClassesBasedOnDate, getClasssBasedOnMonth, getPastClasses, getRescheduledClasses, getTrialClassResponse, getTrialClassesRequests, getUpcomingClassDetails, getUpcomingClasses, joinClass, leaveClass, requestReUpload, rescheduleClass, resolveResourceRequests, reviewClass, scheduleClass, setReminder, uploadClassMaterial, viewRec } from "../../../controllers/TeacherDashboard/Class/Class.js";
+import { acceptClassRequest, acceptRescheduledClass, addHomework, addNotesToClass, addTask, getClassDetails, getClassesBasedOnDate, getClasssBasedOnMonth, getPastClasses, getRescheduledClasses, getSlots, getTrialClassDetails, getTrialClassResponse, getTrialClassesRequests, getUpcomingClassDetails, getUpcomingClasses, joinClass, leaveClass, requestReUpload, rescheduleClass, resolveResourceRequests, reviewClass, scheduleClass, selectSlotTrialClass, setReminder, uploadClassMaterial, viewRec } from "../../../controllers/TeacherDashboard/Class/Class.js";
 import { authVerify } from "../../../controllers/TeacherDashboard/Auth/Auth.js";
 
 const router = express.Router()
@@ -83,4 +83,8 @@ const scheduleClassValidation=[
 
 router.patch("/schedule-class/:_id",authVerify,scheduleClassValidation,validationError,scheduleClass)
 router.get("/upcoming-class-details",authVerify,getUpcomingClassDetails)
+router.get("/trial-class-details",authVerify,getTrialClassDetails)
+router.patch("/select-slot/:id",authVerify,selectSlotTrialClass)
+
+router.get("/slots",authVerify,getSlots)
 export default router

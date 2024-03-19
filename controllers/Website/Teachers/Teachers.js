@@ -426,31 +426,32 @@ const requestTrialClass = async (req, res, next) => {
               if(classScheduled.length!==0){
                throw new Error('This time slot has been already scheduled')  
               }
-        let newClassResponse = await Class.insertMany({
-            teacher_id: req.body.teacher_id,
-            student_id: req.user._id,
-            start_time: moment(element).format("YYYY-MM-DDTHH:mm:ss"),
-            end_time: moment(element).add(1, 'h').format("YYYY-MM-DDTHH:mm:ss"),
-            subject: { name: req.body.subject },
-            curriculum: { name: req.body.curriculum },
-            grade: { name: studentResponse.grade.name },
-            class_type: "Trial",
-            status: "Pending",
-            is_rescheduled: false,
-            details: req.body.details ? req.body.details : null
-        })
-        classResponseArray.push(newClassResponse)
+        
+      
 
 
 
     });
-   
+    let newClassResponse = await Class.create({
+        teacher_id: req.body.teacher_id,
+        student_id: req.user._id,
+       
+        subject: { name: req.body.subject },
+        curriculum: { name: req.body.curriculum },
+        grade: { name: studentResponse.grade.name },
+        class_type: "Trial",
+        status: "Pending",
+        is_rescheduled: false,
+        details: req.body.details ? req.body.details : null,
+        slots:req.body.start_time
+    })
+
     const teacherResponse=await Teacher.findOne({
         user_id:req.body.teacher_id
     })
     addNotifications(AcademicManangerResponse.user_id,"New Trial Class Requested","New Trial Class Requested By "+ req.user.name+" by teacher "+teacherResponse.preferred_name+" of subject "+req.body.subject)
     addNotifications(req.body.teacher_id,"New Trial Class Requested","New Trial Class Requested By "+ req.user.name+" of subject "+req.body.subject)
-    res.json(responseObj(true, classResponseArray, "Trial Class request created Successfully"))
+    res.json(responseObj(true, newClassResponse, "Trial Class request created Successfully"))
     }else{
         return res.json(responseObj(false, null,"Academic Manager is not assigned to you"))
     }

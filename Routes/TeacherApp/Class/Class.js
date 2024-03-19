@@ -1,9 +1,10 @@
 import express from 'express'
-import { addTask, addHomework,joinClass,leaveClass, acceptRescheduledClass,getClassDetails, getRescheduledClasses, rescheduleClass, setReminder, addNotesToClass, getPastClasses, uploadClassMaterial, getClassesBasedOnDate, reviewClass, requestReUpload, scheduleClass, resolveResourceRequests, getUpcomingClassDetails, addOtherInfo, acceptClassRequest, getHomeworks, getTasks, getMaterials, viewRec } from '../../../controllers/TeacherApp/Class/Class.js'
+import { addTask, addHomework,joinClass,leaveClass, acceptRescheduledClass,getClassDetails, getRescheduledClasses, rescheduleClass, setReminder, addNotesToClass, getPastClasses, uploadClassMaterial, getClassesBasedOnDate, reviewClass, requestReUpload, scheduleClass, resolveResourceRequests, getUpcomingClassDetails, addOtherInfo, acceptClassRequest, getHomeworks, getTasks, getMaterials, viewRec, getTrialClassDetails, selectSlotTrialClass, getSlots } from '../../../controllers/TeacherApp/Class/Class.js'
 import { authVerify } from '../../../controllers/TeacherApp/Auth/Auth.js'
 import upload from "../../../util/upload.js"
 import { body,param,query } from 'express-validator'
 import validationError from '../../../middleware/validationError.js'
+
 const router=express.Router()
 const classValidationChain=[
     body('class_id').notEmpty().withMessage("Invalid Class Id"),
@@ -79,5 +80,8 @@ router.get("/upcoming-class-details",authVerify,getUpcomingClassDetails)
 router.post("/other-info",authVerify,addOtherInfo)
 router.patch("/accept-class/:_id",authVerify,acceptRescheduleValidationChain,validationError,acceptClassRequest)
 router.get("/view-rec",authVerify,viewRec)
+router.get("/trial-class-details",authVerify,getTrialClassDetails)
+router.patch("/select-slot/:id",authVerify,selectSlotTrialClass)
+router.get("/slots",authVerify,getSlots)
 
 export default router

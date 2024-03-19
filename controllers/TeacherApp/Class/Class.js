@@ -806,65 +806,7 @@ const getUpcomingClassDetails=async(req,res)=>{
 
 const acceptClassRequest = async (req, res, next) => {
   let details=await Class.findOne({_id:req.params._id})
-if(details.class_type==='Trial' && details.is_rescheduled===false){
-  let classDetails = await Class.find({
-    $and: [   { start_time:{$gte:details.start_time}},
-      {start_time:{
-        $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
-      }},
-      {end_time:{$gte:details.start_time}},
-      {end_time:{
-        $lte:moment(details.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss")
-      }}, {
-      $or: [{
-        teacher_id: req.user._id
-      }, {
-        student_id: details.student_id
-      }]
-    },{
-      status:"Scheduled"
-    }]
-  })
-  if (classDetails.length > 0) {
-    throw new Error("Class in this slot is booked already. Kindly Reschedule")
-  }
 
-  let classUpdateResponse=await  Class.updateMany({
-    student_id:details.student_id,
-    teacher_id:req.user._id,
-    class_type:"Trial",
-    "subject.name":details.subject.name
-  },{
-    $set:{
-      status:"Cancelled"
-    }
-  })
-  let classResponse = await Class.updateOne({
-    _id: req.params._id
-  }, {
-    $set: {
-      status: 'Scheduled'
-    }
-  })
-  const AcademicManangerResponse=await AcademicManager.findOne({
-    teachers:{
-         $elemMatch: {
-            $eq: req.user._id
-        }
-    }
-  })
-  
-  
-  // addNotifications(,"Task Added", "A Task has been added by "+req.user.name+" of title"+ req.body.title)
-  
-  
-    addNotifications(details.student_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" on "+moment(details.start_time).format("DD-MM-YYYY")+" at "+moment(details.start_time).format("HH:mm:ss")+  " by teacher "+ req.user.name)
-  
-    addNotifications(AcademicManangerResponse.user_id,"Accepted Class Request","Accepted Class Request of subject "+details.subject.name+" at time "+moment(details.start_time).format("DD-MM-YYYY")+" at "+moment(details.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
-  
-  
-  return res.json(responseObj(true, null, "Accepted Class Request"))
-}else{
   let classDetails= await Class.find({
     $and: [   { start_time:{$gte:details.start_time}},
       {start_time:{
@@ -881,7 +823,7 @@ if(details.class_type==='Trial' && details.is_rescheduled===false){
   status:"Scheduled"
 }]})
 if(classDetails.length!==0){
-throw new Error("Slot Already Booked")
+throw new Error("Slot Already Booked.Kindly Pick another Slot")
    
 }
 let classResponse=await Class.findOne(
@@ -919,7 +861,7 @@ const AcademicManangerResponse=await AcademicManager.findOne({
 
 return res.json(responseObj(true,null,"Accepted Rescheduled Request"))
 
-}
+
   
 
 
@@ -1007,4 +949,73 @@ const viewRec=async(req,res)=>{
     return res.json(responseObj(true,downloadLink,null))
   })
   }
-export {viewRec,acceptClassRequest,getUpcomingClassDetails,scheduleClass,resolveResourceRequests,getHomeworks,getTasks,getMaterials, requestReUpload,getClassesBasedOnDate,reviewClass,setReminder,uploadClassMaterial, acceptRescheduledClass,getClassDetails, addTask, rescheduleClass, getRescheduledClasses, addHomework, addNotesToClass, joinClass, leaveClass, getPastClasses,addOtherInfo }
+  const getTrialClassDetails = async (req, res, next) => {
+    let classDetails = {}
+    classDetails = await Class.findOne({ _id: req.query.class_id,class_type:"Trial" }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,  materials: 1, recordings: 1,response:1,reason_disliking:1,curriculum:1 }).populate({
+      path: 'teacher_id', select: {
+       name: 1,profile_image:1
+      }
+    }).populate({
+      path: 'student_id', select: {
+        name: 1,mobile_number:1,profile_image:1
+      }
+    })
+    if(classDetails===null){
+      return res.json(responseObj(false,null,"Invalid Class Id"))
+    }
+    let studentDetails=await Student.findOne({user_id:classDetails.student_id},{
+      grade:1,
+      curriculum:1,
+      school:1,
+      user_id:1
+    })
+    let teacherDetails=await Teacher.findOne({user_id:classDetails.teacher_id},{
+    preferred_name:1,
+    exp_details:1
+  
+    }).populate({
+      path: 'user_id', select: {
+        'profile_image': 1
+      }
+    })
+  
+ 
+  
+    res.json(responseObj(true, { classDetails: classDetails, studentDetails:studentDetails,teacherDetails:teacherDetails}, null))
+  }
+
+  const selectSlotTrialClass=async(req,res)=>{
+    let details=await Class.findOne({_id:req.params.id})
+  
+const trialClassResponse=await Class.updateOne({
+  _id:req.params.id
+},{
+  $set:{
+    start_time:req.body.start_time,
+    end_time:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss"),
+    slots:null,
+    status:"Scheduled"
+  }
+
+})
+
+const AcademicManangerResponse=await AcademicManager.findOne({
+  teachers:{
+       $elemMatch: {
+            $eq: req.user._id
+        }
+  }
+})
+addNotifications(details.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+details.subject.name+" on "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
+
+addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+details.subject.name+" at time "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
+  }
+  const getSlots=async(req,res)=>{
+    let SlotDetails=await Class.findOne({
+      _id:req.query.id
+    },{
+      slots:1
+    })
+    return res.json(responseObj(true,SlotDetails,"Slot List"))
+  }
+export {viewRec,acceptClassRequest,getUpcomingClassDetails,scheduleClass,resolveResourceRequests,getHomeworks,getTasks,getMaterials, requestReUpload,getClassesBasedOnDate,reviewClass,setReminder,uploadClassMaterial, acceptRescheduledClass,getClassDetails, addTask, rescheduleClass, getRescheduledClasses, addHomework, addNotesToClass, joinClass, leaveClass, getPastClasses,addOtherInfo,getTrialClassDetails,selectSlotTrialClass,getSlots }

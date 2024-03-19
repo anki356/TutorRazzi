@@ -111,8 +111,10 @@ other_information:{
 },
 meeting_id:{
     type:String
-}
-   
+},
+ slots:{
+type:[String]
+ }  
 },{
      
     versionKey: false

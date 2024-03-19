@@ -234,12 +234,7 @@ const getTrialClassesRequests = async (req, res, next) => {
     $and: [{
       teacher_id: req.user._id,
       class_type: 'Trial',
-      end_time: {
-        "$gte": moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
-      },
-      status:{
-        $ne:"Cancelled"
-      }
+
     }]
   }
   if(req.query.search) {
@@ -1070,5 +1065,74 @@ let downloadLink=response.data.data.map((data)=>data.download_url)
   return res.json(responseObj(true,downloadLink,null))
 })
 }
-  export {viewRec,getUpcomingClassDetails,uploadClassMaterial,resolveResourceRequests,scheduleClass,acceptClassRequest,acceptRescheduledClass,getRescheduledClasses,getPastClasses,getTrialClassesRequests,getUpcomingClasses,getClasssBasedOnMonth,getClassesBasedOnDate,getTrialClassResponse,setReminder,rescheduleClass,addNotesToClass,getClassDetails,joinClass,leaveClass,addTask,addHomework,requestReUpload,reviewClass}
+const getTrialClassDetails = async (req, res, next) => {
+  let classDetails = {}
+  classDetails = await Class.findOne({ _id: req.query.class_id,class_type:"Trial" }, { start_time: 1, end_time: 1, details: 1, grade: 1, subject: 1, teacher_id: 1, notes: 1,  materials: 1, recordings: 1,response:1,reason_disliking:1,curriculum:1 }).populate({
+    path: 'teacher_id', select: {
+     name: 1,profile_image:1
+    }
+  }).populate({
+    path: 'student_id', select: {
+      name: 1,mobile_number:1,profile_image:1
+    }
+  })
+  if(classDetails===null){
+    return res.json(responseObj(false,null,"Invalid Class Id"))
+  }
+  let studentDetails=await Student.findOne({user_id:classDetails.student_id},{
+    grade:1,
+    curriculum:1,
+    school:1,
+    user_id:1
+  })
+  let teacherDetails=await Teacher.findOne({user_id:classDetails.teacher_id},{
+  preferred_name:1,
+  exp_details:1
+
+  }).populate({
+    path: 'user_id', select: {
+      'profile_image': 1
+    }
+  })
+
+
+
+  res.json(responseObj(true, { classDetails: classDetails, studentDetails:studentDetails,teacherDetails:teacherDetails}, null))
+}
+
+const selectSlotTrialClass=async(req,res)=>{
+  let details=await Class.findOne({_id:req.params.id})
+
+const trialClassResponse=await Class.updateOne({
+_id:req.params.id
+},{
+$set:{
+  start_time:req.body.start_time,
+  end_time:moment(req.body.start_time).add(1,'h').format("YYYY-MM-DDTHH:mm:ss"),
+  slots:null,
+  status:"Scheduled"
+}
+
+})
+
+const AcademicManangerResponse=await AcademicManager.findOne({
+teachers:{
+     $elemMatch: {
+          $eq: req.user._id
+      }
+}
+})
+addNotifications(details.student_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+details.subject.name+" on "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
+
+addNotifications(AcademicManangerResponse.user_id,"Accepted Rescheduled Request","Accepted Rescheduled Request of subject "+details.subject.name+" at time "+moment(req.body.start_time).format("DD-MM-YYYY")+ " at "+moment(req.body.start_time).format("HH:mm:ss")+" by teacher "+ req.user.name)
+}
+const getSlots=async(req,res)=>{
+  let SlotDetails=await Class.findOne({
+    _id:req.query.id
+  },{
+    slots:1
+  })
+  return res.json(responseObj(true,SlotDetails,"Slot List"))
+}
+  export {getSlots,getTrialClassDetails,selectSlotTrialClass,viewRec,getUpcomingClassDetails,uploadClassMaterial,resolveResourceRequests,scheduleClass,acceptClassRequest,acceptRescheduledClass,getRescheduledClasses,getPastClasses,getTrialClassesRequests,getUpcomingClasses,getClasssBasedOnMonth,getClassesBasedOnDate,getTrialClassResponse,setReminder,rescheduleClass,addNotesToClass,getClassDetails,joinClass,leaveClass,addTask,addHomework,requestReUpload,reviewClass}
   

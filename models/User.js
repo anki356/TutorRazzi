@@ -21,7 +21,7 @@ default:null
     },
     mobile_number: {
         type: Number,
-        
+        default:null
        
     },
     role: {

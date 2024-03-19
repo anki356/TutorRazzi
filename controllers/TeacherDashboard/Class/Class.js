@@ -234,8 +234,19 @@ const getTrialClassesRequests = async (req, res, next) => {
     $and: [{
       teacher_id: req.user._id,
       class_type: 'Trial',
-
-    }]
+      // status: 'Pending'
+    },{$or:[{
+status:{
+$nin:["Scheduled"]
+}
+    },{
+      status:{
+        $in:["Scheduled"]
+      },
+      end_time:{
+        $gte:moment().add(5,'h').add(30,'m').format("YYYY-MM-DDTHH:mm:ss")
+      }
+    }]}]
   }
   if(req.query.search) {
     let student_ids=await User.find({

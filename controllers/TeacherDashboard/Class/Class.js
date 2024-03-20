@@ -286,7 +286,10 @@ $nin:["Scheduled"]
       path:'student_id'
     },{
       path:"teacher_id"
-    }]
+    }],
+    select:{
+      createdAt:0
+    }
   }
   Class.paginate(query, options, (err, result) => {
    

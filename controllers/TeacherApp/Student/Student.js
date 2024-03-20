@@ -80,7 +80,9 @@ student_id:new ObjectId(req.query.student_id),
 
 
 }
-
+let quoteDetails=await Quote.findOne({
+  _id:req.query.quote_id
+})
 if(req.query.search) {
     let student_ids=await User.find({
       name:{
@@ -107,7 +109,7 @@ if(scheduledClasses.docs.length===0){
   return  res.json(responseObj(true,[],"No Classes Found"))
 }
 
-      return  res.json(responseObj(true,scheduledClasses,null))
+      return  res.json(responseObj(true,{subject:quoteDetails.subject_curriculum_grade.subject,class_count:quoteDetails.class_count,scheduledClasses},null))
     })
     
 }

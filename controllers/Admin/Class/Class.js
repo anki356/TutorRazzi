@@ -321,8 +321,8 @@ start_time:1
         }
       }).then((response)=>{
       
-      let downloadLink=response.data.data.map((data)=>data.download_url)
-        return res.json(responseObj(true,downloadLink,null))
+        let data=response.data.data.map((data)=>{return {name:data.output_file_name,url:data.download_url}})
+        return res.json(responseObj(true,data,null))
       })
       }
     export {viewRec,getUpcomingClasses,getPastClasses,getRescheduledClasses,getTrialClasses,getUpcomingClassDetails,getClassDetails}

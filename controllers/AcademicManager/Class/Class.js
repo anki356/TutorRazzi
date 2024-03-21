@@ -1167,8 +1167,8 @@ const viewRec=async(req,res)=>{
     }
   }).then((response)=>{
   
-  let downloadLink=response.data.data.map((data)=>data.download_url)
-    return res.json(responseObj(true,downloadLink,null))
+    let data=response.data.data.map((data)=>{return {name:data.output_file_name,url:data.download_url}})
+    return res.json(responseObj(true,data,null))
   })
   }
 export {selectSlotTrialClass,getSlots,viewRec,requestReUpload,markTaskDone,getRescheduledClasses, acceptClassRequest, reviewClass,reviewTeacher,getClassDetails,getPastClasses,getUpcomingClasses,getHomeworks, addExtraClassQuote, getTrialClasses,getResourceRequests,notifyTeacher,notifyStudent,resolveHomework,acceptTrialClassRequest ,rescheduleClass,getUpcomingClassDetails,getTrialClassDetails,getQuotes,joinClass}

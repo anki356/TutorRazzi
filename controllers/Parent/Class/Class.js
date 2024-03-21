@@ -955,8 +955,8 @@ const dislikeClass = async (req, res, next) => {
           }
         }).then((response)=>{
         
-        let downloadLink=response.data.data.map((data)=>data.download_url)
-          return res.json(responseObj(true,downloadLink,null))
+          let data=response.data.data.map((data)=>{return {name:data.output_file_name,url:data.download_url}})
+          return res.json(responseObj(true,data,null))
         })
         }
 export {viewRec,getHomeworks,reviewTeacher,getTasks,getMaterials,getUpcomingClassDetails,likeClass,dislikeClass,getLastTrialClass,getClassesBasedOnDate,acceptClassRequest,requestExtraclass,getExtraClassQuotes,requestTrialClass,scheduleClass,setReminder,getPurchasedClassesByQuoteId,getClassDetails,rescheduleClass,reviewClass,raiseRequestResource,getClassQuotes,joinClass,leaveClass,getPurchasedClasses,}

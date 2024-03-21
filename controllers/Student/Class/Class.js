@@ -1309,8 +1309,8 @@ const getClassesBasedOnDate=async (req,res)=>{
       }
     }).then((response)=>{
     
-    let downloadLink=response.data.data.map((data)=>data.download_url)
-      return res.json(responseObj(true,downloadLink,null))
+        let data=response.data.data.map((data)=>{return {name:data.output_file_name,url:data.download_url}})
+        return res.json(responseObj(true,data,null))
     })
     }
 export {viewRec,getHomeworks,getTasks,getMaterials,acceptClassRequest, getUpcomingClassDetails,getClassesBasedOnDate,dislikeClass, getLastTrialClass, likeClass, setReminder, getExtraClassQuotes, requestExtraclass,  uploadHomework, scheduleClass, requestTrialClass, getClassDetails, rescheduleClass, reviewClass, raiseRequestResource, joinClass, leaveClass, acceptRescheduledClass, getQuotes, getPurchasedClasses, getPurchasedClassesByQuoteId,markTaskDone,reviewTeacher,getQuoteById }

@@ -225,7 +225,7 @@ const getMonthlyReportDetails = async (req, res) => {
         student_id: reportDetails.student_id, month: reportDetails.month,
         year: reportDetails.year, teacher_id: req.user._id
     })
-    res.json(responseObj(true, { ratings: averageGrade[0]?.averageRating ? averageGrade[0]?.averageRating : 0, report: reportDetails.reports, additionalComment: additionalComment }, null))
+    res.json(responseObj(true, { ratings: averageGrade[0]?.averageRating ? averageGrade[0]?.averageRating : 0, report: reportDetails.reports, additionalComment: additionalComment,month:reportDetails.month,year:reportDetails.year }, null))
 }
 const isStudentReportPending = async (req, res) => {
 

@@ -226,7 +226,7 @@ const getMonthlyReportDetails = async (req, res) => {
         student_id: reportDetails.student_id, month: reportDetails.month,
         year: reportDetails.year, teacher_id: req.user._id
     })
-    res.json(responseObj(true, { ratings: averageGrade[0]?.averageRating ? averageGrade[0]?.averageRating : 0, report: reportDetails.reports, additionalComment: additionalComment }, null))
+    res.json(responseObj(true, { ratings: averageGrade[0]?.averageRating ? averageGrade[0]?.averageRating : 0, report: reportDetails.reports, additionalComment: additionalComment,month:reportDetails.month,year:reportDetails.year }, null))
 }
 const isStudentReportPending = async (req, res) => {
 
@@ -263,8 +263,8 @@ const getAllSubjects = async (req, res) => {
     }, {
         subject: 1
     })
-    subjects = subjects.map((data) => {
-        return data.subject.name
+    subjects = subjects.map((data,index) => {
+        return {id:index+1,label:data.subject.name}
     }).filter((data, index, self) => {
         return self.indexOf(data) === index
     })

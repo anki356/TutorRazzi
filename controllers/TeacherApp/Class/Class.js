@@ -930,7 +930,7 @@ return res.json(responseObj(true,{docs,totalDocs,totalPages,hasPrevPage,hasNextP
 const viewRec=async(req,res)=>{
   const meetingDetails=await Class.findOne({
     _id:req.query.id
-  },{meeting_id:1})
+  },{meeting_id:1,subject:1})
   const organizationId = '6894d463-40a7-4240-93dc-bb30ef741dbd';
   const apiKey = 'ac00320ed5f57433dfa8';
   
@@ -945,7 +945,7 @@ const viewRec=async(req,res)=>{
     }
   }).then((response)=>{
   
-    let data=response.data.data.map((data)=>{return {name:data.output_file_name,url:data.download_url}})
+    let data=response.data.data.map((data)=>{return {name:meetingDetails.subject.name+" :"+data.started_time+" -"+data.stopped_time,url:data.download_url}})
     return res.json(responseObj(true,data,null))
   })
   }

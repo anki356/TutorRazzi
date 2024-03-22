@@ -955,7 +955,7 @@ const dislikeClass = async (req, res, next) => {
           }
         }).then((response)=>{
         
-          let data=response.data.data.map((data)=>{return {name:data.output_file_name,url:data.download_url}})
+          let data=response.data.data.map((data)=>{return {name:meetingDetails.subject.name+" :"+data.started_time+" -"+data.stopped_time,url:data.download_url}})
           return res.json(responseObj(true,data,null))
         })
         }

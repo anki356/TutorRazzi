@@ -1017,6 +1017,7 @@ return res.json(responseObj(true,null,"Class Slot has been selected"))
     },{
       slots:1
     })
+   SlotDetails= SlotDetails.slots.map((data,index)=>{return {id:index+1,label:data}})
     return res.json(responseObj(true,SlotDetails,"Slot List"))
   }
 export {viewRec,acceptClassRequest,getUpcomingClassDetails,scheduleClass,resolveResourceRequests,getHomeworks,getTasks,getMaterials, requestReUpload,getClassesBasedOnDate,reviewClass,setReminder,uploadClassMaterial, acceptRescheduledClass,getClassDetails, addTask, rescheduleClass, getRescheduledClasses, addHomework, addNotesToClass, joinClass, leaveClass, getPastClasses,addOtherInfo,getTrialClassDetails,selectSlotTrialClass,getSlots }

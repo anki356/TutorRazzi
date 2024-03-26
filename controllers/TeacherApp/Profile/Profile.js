@@ -49,6 +49,35 @@ if(req.body.preferred_name){
   })
   res.json(responseObj(true, { teacherResponse:teacherResponse, userResponse:userResponse }, null))
 }
+const getEditProfile=async(req,res)=>{
+  let profileDetails
+  if(req.query.parameter==='basic'){
+
+    profileDetails=await Teacher.findOne(
+      {_id:req.query.id},{bio:1,city:1,state:1,country:1}
+    ).populate({
+      path:"user_id",
+      select:{
+        name:1,profile_image:1,mobile_number:1,email:1
+      }
+    })
+  }
+  else if(req.query.parameter==='subject_curriculum'){
+    profileDetails=await Teacher.findOne(
+      {_id:req.query.id},{subject_curriculum:1}
+    )
+  }
+  else if(req.query.parameter==='degree_details'){
+    profileDetails=await Teacher.findOne(
+      {_id:req.query.id},{degree:1}
+    )
+  }
+  return res.json(responseObj(true,profileDetails,""))
+
+}
+
+
+
 const editSubjectCurriculum=async(req,res)=>{
 
 
@@ -757,4 +786,4 @@ $nin:["Scheduled","Pending"]
   const totalRescheduledClasses=await Class.countDocuments(query)
   return res.json(responseObj(true,{totalTrialClass,totalRescheduledClasses,totalPastClasses,totalUpcomingClasses},"Total of all Types of Classes"))
 }
-export {editDegreeDetails,editExpDetails,getAllCurriculums,getSubjectCurriculum,getDetails,getTrialClassesRequests, editProfile, getUpcomingClasses,getTotal, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain,editSubjectCurriculum };
+export {editDegreeDetails,editExpDetails,getEditProfile,getAllCurriculums,getSubjectCurriculum,getDetails,getTrialClassesRequests, editProfile, getUpcomingClasses,getTotal, overallPerformance, getTotalStudents, acceptTrialClassRequest, getAllExams, getTrialClasses, getMyProfile, editPhoto,viewProfileMain,editSubjectCurriculum };

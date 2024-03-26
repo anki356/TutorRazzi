@@ -1,7 +1,7 @@
 import express from 'express'
 const router = new express.Router()
 import upload from '../../../util/upload.js'
-import  {getTotalStudents, getTrialClassesRequests, getUpcomingClasses,overallPerformance,acceptTrialClassRequest, getTrialClasses, getMyProfile, editPhoto, editProfile, viewProfileMain, getDetails, editSubjectCurriculum, getSubjectCurriculum, getAllCurriculums, editDegreeDetails, editExpDetails, getTotal} from "../../../controllers/TeacherApp/Profile/Profile.js"
+import  {getTotalStudents, getTrialClassesRequests, getUpcomingClasses,overallPerformance,acceptTrialClassRequest, getTrialClasses, getMyProfile, editPhoto, editProfile, viewProfileMain, getDetails, editSubjectCurriculum, getSubjectCurriculum, getAllCurriculums, editDegreeDetails, editExpDetails, getTotal, getEditProfile} from "../../../controllers/TeacherApp/Profile/Profile.js"
 import { authVerify } from '../../../controllers/TeacherApp/Auth/Auth.js'
 import validationError from '../../../middleware/validationError.js'
 import { body,param } from 'express-validator'
@@ -15,6 +15,7 @@ const acceptRescheduleValidationChain=[
     param('_id').notEmpty().withMessage("Invalid Class"),
    
 ]
+router.get("/edit-profile",authVerify,getEditProfile)
 const editProfileValidation=[
     body('name').notEmpty().withMessage("Name is required"),
     body('name').isLength({ min: 3 }).withMessage('Name must be at least 3 characters long'),

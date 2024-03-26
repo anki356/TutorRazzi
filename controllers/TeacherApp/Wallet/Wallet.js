@@ -65,9 +65,8 @@ const PaymentResponse=await Payment.insertMany({
     payment_type:'Debit',
     amount:req.body.amount,
     wallet_id:WalletResponse._id,
-    trx_ref_no:req.body.trx_ref_no,
     net_amount:req.body.amount,
-    status:"Paid"
+    status:"Pending"
 
 })
 res.json(responseObj(true,{WalletResponse,PaymentResponse},null))

@@ -45,13 +45,7 @@ const amountResponse=await Payment.find({sender_id:new ObjectId(req.user._id)},{
 res.json(responseObj(true,{walletBalance:walletBalance,"last_week_earnings":total_earnings_response.length>0?total_earnings_response[0].totalEarnings*95/100:0,"last_withdrawl":amountResponse.length>0?amountResponse[0].amount:0},null))
 }
 const withdraw=async (req,res,next)=>{
-    const unique=await Payment.findOne({
-        trx_ref_no:req.body.trx_ref_no
-    })
-    if(unique!==null)
-    {
-        return resjson(responseObj(false,null,"Transaction number must be unique"))
-    }
+   
 const WalletResponse=await Wallet.findOneAndUpdate({
     user_id:req.user._id
 },{

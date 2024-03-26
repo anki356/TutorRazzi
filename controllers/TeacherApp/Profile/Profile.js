@@ -54,25 +54,28 @@ const getEditProfile=async(req,res)=>{
   if(req.query.parameter==='basic'){
 
     profileDetails=await Teacher.findOne(
-      {_id:req.user._id},{bio:1,city:1,state:1,country:1}
+      {user_id:req.user._id},{bio:1,city:1,state:1,country:1}
     ).populate({
       path:"user_id",
       select:{
         name:1,profile_image:1,mobile_number:1,email:1
       }
     })
+    return res.json(responseObj(true,profileDetails,""))
   }
   else if(req.query.parameter==='subject_curriculum'){
     profileDetails=await Teacher.findOne(
-      {_id:req.user._id},{subject_curriculum:1}
+      {user_id:req.user._id},{subject_curriculum:1}
     )
+    return res.json(responseObj(true,profileDetails.subject_curriculum,""))
   }
   else if(req.query.parameter==='degree_details'){
     profileDetails=await Teacher.findOne(
-      {_id:req.user._id},{degree:1}
+      {user_id:req.user._id},{degree:1}
     )
+    return res.json(responseObj(true,profileDetails.degree,""))
   }
-  return res.json(responseObj(true,profileDetails,""))
+ 
 
 }
 
